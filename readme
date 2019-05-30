@@ -25,3 +25,7 @@ git push origin master
 
 # name : ParkMinYoung
 
+# execute time : 2019-05-30 11:01:22 : 
+git config --global user.name "ParkMinYoung" 
+
+
