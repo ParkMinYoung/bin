@@ -3,13 +3,14 @@
 . ~/.bash_function
 
 if [ $# -ge 2 ]; then
-	
-	README=readme
-	file=${3:-$README}
 
-	sed -n $1,$2p $file
+        README=readme
+        file=${3:-$README}
+
+        sed -n $1,$2p $file
 
 else
-	cat -n readme
-	usage "line_number[14] line_number[15] [readme]"
+        cat -n readme
+        usage "line_number[14] line_number[15] [readme]"
 fi
+

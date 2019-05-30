@@ -1,0 +1,17 @@
+#!/bin/bash
+
+. ~/.bash_function
+
+
+DB=${3:-${HOME}/.minyoungrc}
+IN=$(readlink -f $2)
+
+
+if [ $# -ge 2 ];then
+
+	echo "$1=$IN" >> $DB
+
+else
+
+	usage "Variable_Name DIR_or_File_Name [DB_Name]"
+fi

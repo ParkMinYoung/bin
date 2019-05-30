@@ -1,1 +1,27 @@
 cat ~/src/short_read_assembly/bin/$1.readme
+# execute time : 2019-05-30 10:32:11 : 
+git add .
+
+
+# execute time : 2019-05-30 10:34:13 : 
+git commit -m "first upload" 
+
+
+# execute time : 2019-05-30 10:34:37 : 
+git config --global user.email "p791227@gmail.com"
+
+
+# execute time : 2019-05-30 10:34:53 : 
+git config --global user.name "ParkMinyoung"
+
+
+# execute time : 2019-05-30 10:35:05 : ready to upload
+git commit -m "first upload" 
+
+
+# execute time : 2019-05-30 10:48:44 : 
+git push origin master
+
+
+# name : ParkMinYoung
+

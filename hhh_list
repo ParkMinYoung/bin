@@ -1,0 +1,5 @@
+#!/bin/bash
+
+DB=${2:-${HOME}/.minyoungrc}
+
+cat -n $DB

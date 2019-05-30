@@ -1,55 +1,53 @@
 #!/bin/bash
-
 . ~/.bash_function
 
-FILE=/home/adminrig/src/short_read_assembly/bin/AnalysisDIR
+DB=${HOME}/bin/mark.db
 
 
 case $1 in
 
-	show)
-#			cat -n $FILE
-			cat -n $FILE | sed 's/^ \+//g;s/( )/()/g'|  awk -F'\t' '{printf "%+2s\t%-22s\t%-60s\t%-30s\n", $1, $2, $3, $4}'
-			;;
+        show)
+#                       cat -n $DB
+                        cat -n $DB | sed 's/^ \+//g;s/( )/()/g'|  awk -F'\t' '{printf "%+2s\t%-22s\t%-60s\t%-30s\n", $1, $2, $3, $4}'
+                        ;;
 
-	cd)
-			DIR=$(cut -f2 $FILE | sed -n "$2"p) 
-			echo "Go to $DIR"
-			cd $DIR && exec bash
-			;;
-	
-	edit)
-			vi $FILE
-			;;
-	
-	rm_dup)
-			
-			echo "Removal Redundant Directories"
-			\mv -f $FILE $FILE.bak
-			UniqueLine.sh $FILE.bak 2 > $FILE
-			;;	
-	
-	del)
+        cd)
+                        DIR=$(cut -f2 $DB | sed -n "$2"p) 
+                        echo "Go to $DIR"
+                        cd $DIR && exec bash
+                        ;;
+        
+        edit)
+                        vi $DB
+                        ;;
+        
+        rm_dup)
+                        
+                        echo "Removal Redundant Directories"
+                        \mv -f $DB $DB.bak
+                        UniqueLine.sh $DB.bak 2 > $DB
+                        ;;      
+        
+        del)
 
-			echo "Removal Line : $2"
-			sed -n "$2p" $FILE
-			sed -i.bak "$2d" $FILE
-			;;
+                        echo "Removal Line : $2"
+                        sed -n "$2p" $DB
+                        sed -i.bak "$2d" $DB
+                        ;;
 
-	back)
+        back)
 
-			echo "deletion back"
-			if [ -f "$FILE.bak" ];then
-				\mv -f $FILE.bak $FILE
-			else
-				echo "Nothing Back"
-			fi
-			;;
+                        echo "deletion back"
+                        if [ -f "$DB.bak" ];then
+                                \mv -f $DB.bak $DB
+                        else
+                                echo "Nothing Back"
+                        fi
+                        ;;
 
-	*)
-			echo -e $(date +'%Y-%m-%d %H:%M:%S')"\t"$PWD"\t""$@" >> $FILE
-			;;
+        *)
+                        echo -e $(date +'%Y-%m-%d %H:%M:%S')"\t"$PWD"\t""$@" >> $DB
+                        ;;
 
 esac
-
 

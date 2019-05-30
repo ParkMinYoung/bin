@@ -1,0 +1,10 @@
+
+while [ $(qstat -f  | grep -f $1 | wc -l) -gt 0 ]
+
+do
+	sleep 60
+
+done
+
+
+

@@ -4,7 +4,7 @@
 #$ -cwd
 #$ -pe make 1
 #$ -S /bin/bash
-#$ -q high.q
+##$ -q high.q
 #$ -j y
 #$ -e TMP
 #$ -o TMP

@@ -1,0 +1,19 @@
+#!/bin/bash
+
+. ~/.bash_function
+
+script="$0"_$1
+subcommand=$1
+shift
+
+if [ -x $script ];then
+
+	$script $@
+
+else
+
+	echo "$0 $subcommand : cannot find executable $script file"
+
+fi
+
+

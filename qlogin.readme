@@ -1,0 +1,2 @@
+qlogin -l hostname=cp05-15 -pe orte 64
+
