@@ -1,0 +1,22 @@
+ rpm -q centos-release
+
+# centos-release-6-2.el6.centos.7.x86_64
+
+
+rpm -qa | grep python-pycurl
+
+#python-pycurl-7.19.0-8.el6.x86_64 
+
+
+rpm -qa | grep rstudio
+
+# remove package
+rpm -e rstudio-0.99.903-1.x86_64
+
+wget http://download1.rstudio.org/rstudio-0.98.1103-x86_64.rpm
+yum install --nogpgcheck rstudio-0.98.1103-x86_64.rpm
+
+
+
+sudo yum install --nogpgcheck https://rpmfind.net/linux/centos/6.10/os/x86_64/Packages/vim-enhanced-7.4.629-5.el6_8.1.x86_64.rpm
+

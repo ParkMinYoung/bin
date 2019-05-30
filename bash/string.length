@@ -1,0 +1,8 @@
+
+echo ${#VAR}
+echo -n $VAR | wc -m
+echo -n $VAR | wc -c
+printf $VAR | wc -m
+expr length $VAR
+expr $VAR : '.*'
+

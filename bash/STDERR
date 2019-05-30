@@ -1,0 +1,42 @@
+# echo to stderr
+echo $STR >&2
+#echo $STR >> /dev/stderr
+
+
+
+config_error() { filename="$1"; shift; echo "Config error in $filename: $*" 2>&1; }
+
+output_xml_error() { echo "<error>$*</error>" 2>&1; }
+
+debug_output() { [ "$DEBUG"=="1" ] && echo "DEBUG: $*"; }
+
+log_error() { logger -s "$*"; }
+
+fatal() { which logger >/dev/null && logger -s "FATAL: $*" || echo "FATAL: $*"; exit 100; }
+
+notify_admin() { echo "$*" | mail -s "Error from script" "$ADMIN_EMAIL"; }
+
+logger -s $msg
+function STDERR () {
+
+cat - 1>&2
+
+}
+
+# remove the directory /bubu
+if rm /bubu 2>/dev/null; then
+    echo "Bubu is gone."
+else
+    echo "Has anyone seen Bubu?" | STDERR
+fi
+
+
+
+echoerr() { cat <<< "$@" 1>&2; }
+
+
+
+(>&2 echo "error")
+
+http://stackoverflow.com/questions/2990414/echo-that-outputs-to-stderr
+

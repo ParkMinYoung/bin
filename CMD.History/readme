@@ -1,0 +1,21 @@
+# execute time : 2018-12-11 14:04:08 : make raw data
+./cmdlog.parser.sh $A > try
+
+
+# execute time : 2018-12-11 14:06:07 : step 1 : make db
+sqlite3.createTable.sh $PWD/history.db command.sql 
+
+
+# execute time : 2018-12-11 14:08:39 : step2 : insert
+
+sqlite3.insert.sh try command.sql CMD_HISTORY | sqlite3 /home/adminrig/src/short_read_assembly/bin/CMD.History/history.db 
+
+
+# execute time : 2018-12-11 14:18:08 : 
+sqlite3.show.sh DATE 2018 /home/adminrig/src/short_read_assembly/bin/CMD.History/history.db CMD_HISTORY > table
+
+
+# execute time : 2018-12-11 14:19:30 : 
+perl -F'\t' -anle'if(@ARGV){$h{$F[0]}++}elsif(!$h{$F[0]} ){print}' table try | lesss 
+
+

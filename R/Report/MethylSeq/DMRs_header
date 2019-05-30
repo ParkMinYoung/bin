@@ -1,0 +1,25 @@
+Sheet	DMRs
+Chromo	chromosome of the predicted DMR
+Start	start position of the predicted DMR
+End	end position of the predicted DMR
+NumOfMethSites	number of methylation sites in the predicted DMR
+Width	length of DMR
+median.meth.Col	median methylation percent of Control Group
+median.meth.fio	median methylation percent of Control Case
+median.meth.diff	difference between Control and Case methylation percent
+Region	annotated region of the predicted DMR
+DetailRegion / Interval Betwen Genes / Codon change / distance to transcript	DetailRegion / Interval Betwen Genes / Codon change / distance to transcript
+transcript ID	Gene's transcript id
+Gene	Gene symbols and exon number
+	
+Sheet	Methylations
+DMR_chr	chromosome of the predicted DMR
+DMR_start	start position of the predicted DMR
+DMR_end	end position of the predicted DMR
+M_chr	chromosome of methylation site
+M_start	start position of methylation site
+M_end	end position of methylation site
+Col-0-9d-S1	methylation percent
+Col-0-15d-S3	methylation percent
+fio1-2-9d-S2	methylation percent
+fio1-2-15d-S4	methylation percent

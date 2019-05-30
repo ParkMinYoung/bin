@@ -1,0 +1,36 @@
+* /home/adminrig/R/x86_64-unknown-linux-gnu-library/3.1
+* /usr/local/lib64/R/library
+
+
+# https://support.rstudio.com/hc/en-us/articles/218004217-Building-R-from-source
+wget https://cran.r-project.org/src/base/R-3/R-3.2.3.tar.gz
+
+./configure --prefix=/opt/R/3.2.3 --enable-R-shlib --with-blas --with-lapack
+make 
+make install
+
+
+#export RSTUDIO_WHICH_R=/opt/R/3.2.3/bin/R
+
+
+#https://www.rstudio.com/products/rstudio/#Server
+#https://support.rstudio.com/hc/en-us/articles/217891128-How-to-run-multiple-versions-of-R-in-RStudio-Server-Pro-and-in-batch-mode
+#https://support.rstudio.com/hc/en-us/articles/200486138-Using-Different-Versions-of-R
+
+
+# in r terminal as root
+# http://www.hardballtimes.com/a-short-ish-introduction-to-using-r-for-baseball-research/
+install.packages("pacman")
+library(pacman)
+
+
+
+# https://support.rstudio.com/hc/en-us/articles/201057987-Quick-list-of-useful-R-packages
+p_load(RODBC, RMySQL, RPostgresSQL, RSQLite, XLConnect, xlsx, foreign, dplyr, tidyr, stringr, lubridate, ggplot2, ggvis, rgl, htmlwidgets, googleVis, car, mgcv, shiny, xtable, sp, maptools, maps, ggmap, zoo, xts, quantmod, Rcpp, data.table, parallel, XML, jsonlite, httr, devtools, testthat, roxygen2)
+
+
+source("https://bioconductor.org/biocLite.R")
+biocLite()
+biocLite("BiocUpgrade")
+
+

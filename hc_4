@@ -1,0 +1,29 @@
+#!/bin/sh
+
+. ~/.bash_function
+
+if [ $# -eq 2 ] & [ -f "$1" ] ;then
+
+perl -F'\t' -asnle'
+if( $. <= $line ){
+map { $l[$.-1][$_] = $F[$_] } 0..$#F;
+$max = @F+0 if $max < @F+0;
+
+}else{
+last;
+}
+}{
+
+for $i ( 0 .. $max ){
+@line=();
+for $j ( 0 .. $#l ){
+push @line, $l[$j][$i];
+}
+print join "\t", @line;
+}
+' -- -line=$2 $1 
+
+else
+		usage "XXX line[3]"
+fi
+

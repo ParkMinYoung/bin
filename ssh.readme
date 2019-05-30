@@ -1,0 +1,17 @@
+
+ssh-keygen -t rsa
+tail -n 1 /home/ionadmin/.ssh/id_rsa.pub >> target_server/.ssh/authorized_keys
+
+
+
+https://unix.stackexchange.com/questions/122497/ssh-passwordless-login-not-working-on-rhel/122507
+
+
+
+cat >> ~/.ssh/config
+Host *
+	XAuthLocation /usr/bin/xauth
+	ForwardX11 yes
+	ForwardX11Trusted yes
+
+

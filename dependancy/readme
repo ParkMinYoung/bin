@@ -1,0 +1,19 @@
+
+bedtools makewindows -g hg19.genome -w 1000000 > human.genome.1Mb.bed
+
+
+
+default_REF=/home/adminrig/workspace.min/MethylSeq/Reference/human_g1k_v37.fasta
+bedtools=/home/adminrig/workspace.min/Education/bedtools/bedtools2/bin/bedtools
+#default_BED=/home/adminrig/Genome/SureSelect/Methyl-Seq/SureSelect.MethylSeq.84M.bed
+
+GENOME=$(basename $REF).genome
+$bedtools makewindows -g $GENOME -w 1000000 > $GENOME.1Mbp.bed
+ 
+bedtools.Coverage.Target_BAM.meanDepth.sh
+ 
+
+# excute time : 2018-02-07 09:50:25 : chr
+sed 's/^/chr/' human.genome.1Mb.bed > human.genome.chr.1Mb.bed 
+
+

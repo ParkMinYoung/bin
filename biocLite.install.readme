@@ -1,0 +1,14 @@
+
+Troubleshoot BiocInstaller
+
+If you see a message like this:
+BiocInstaller version 3.2 is too old for R version 3.3
+…do the following:
+1. Quit your R session
+2. Start a new session with R --vanilla
+3. Run the command remove.packages("BiocInstaller", lib=.libPaths())
+4. Repeat that command until R says there is no such package.
+5. Run the command source("https://bioconductor.org/biocLite.R")
+6. Run biocValid() to ensure your installed packages are valid for the current version of Bioconductor, and follow the instructions it gives you.
+7. biocLite()                  ## R version 3.0 or later
+

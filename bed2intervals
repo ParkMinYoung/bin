@@ -1,0 +1,28 @@
+#!/bin/bash
+
+. ~/.bash_function
+
+if [ -f "$1" ];then
+
+		perl -F'\t' -anle' 
+
+		next if !/^\d+|X|Y|M|chr/;
+		$F[0]=~s/chr//;
+		$size+=$F[2]-$F[1];
+		$F[1]++ if $F[1]<$F[2];
+		print "$F[0]:$F[1]-$F[2]"
+
+		}{ print STDERR "size : $size"
+
+		' $1 2> $1.size > $1.NUM.intervals
+
+		sed 's/^/chr/' $1.NUM.intervals > $1.CHR.intervals
+
+
+		cat $1.size
+
+else
+		usage "XXX.bed"
+fi
+
+

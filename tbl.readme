@@ -1,0 +1,11 @@
+/home/adminrig/.local/bin/tblfilter -e '$L{call_rate} < 98 && $L{apt_probeset_genotype_gender} eq "female" ' Summary.txt
+
+
+$tbl/tblcsort -n Summary.txt  call_rate well | lesss
+
+
+https://www.thregr.org/~wavexx/software/tblutils/#usage
+
+
+head -4 /etc/passwd | tr : , |   sed -e 's/^/| /' -e 's/,/,| /g' -e 's/$/,|/' | column -t -s,
+

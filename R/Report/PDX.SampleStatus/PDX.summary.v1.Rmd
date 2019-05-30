@@ -1,0 +1,337 @@
+---
+params:
+    dynamictitle: "PDX Analysis<br>Sequences and Variants"
+    reportdate: !r Sys.Date()
+output: 
+        html_notebook:
+#         html_document:
+         toc: true
+         toc_float: true
+         depth: 3
+#         number_section: true
+#         theme: readable
+         theme: united
+         highlight: tango
+#         fig_caption: true
+#         df_print: paged
+#         df_print: tibble
+#         df_print: kable
+#         fig_caption: yes 
+#         fig_retina: 1 
+#         code_download: false
+         
+#kable
+title: "`r params$dynamictitle`"
+#date: "`r params$reportdate`"
+author: Park MinYoung(minmin@dnalink.com) in BI, DNA Link
+    
+---
+
+***
+
+```{r setting, echo=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, fig.width=7)
+options(DT.options = list(pageLength = 10, language = list(search = 'Filter:')))
+#setwd("/home/adminrig/workspace.min/DNALink.PDX/Summary")
+source("/home/adminrig/src/short_read_assembly/bin/R/Min.R")
+```
+
+```{r library, include=FALSE}
+library(pacman)
+p_load(ggplot2, tidyr, dplyr, DT, scales, tibble, mosaic, UpSetR, purrr)
+
+library(knitr)
+library(kableExtra)
+options(knitr.table.format = "html") 
+
+
+# data_status()
+# pkg_clean()
+# rm(list=ls())
+# http://rstudio.github.io/DT/extensions.html
+```
+
+
+```{r, include=FALSE}
+raw <- read.table("samples.dedup_metrics.data", header=T, sep="\t")
+seq <- read.table("samples.reheader_metrics.data", header=T, sep="\t")
+
+raw_reads<-
+select(raw, Sample, Total.Reads) %>% 
+  rename(Raw.Reads = Total.Reads)
+
+seq<-
+  left_join(seq, raw_reads, by=("Sample"))
+colnames(seq)[11]<-"Duplicates.Rate"
+#names(seq)
+```
+
+
+```{r var}
+eval.table <- list.files(pattern="vareval.report.table$")
+var <- read.table(eval.table, header = T, sep="\t")
+
+Variants<-
+var %>% 
+  mutate(nVariants = nHets + nHomVar) %>% 
+  select(Sample, nSNPs, nInsertions, nDeletions, nHets, nHomVar, hetHomRatio, nVariants)
+```
+
+```{r align}
+align <- read.table("samples.aligned.data", header = T, sep="\t") 
+```
+
+
+```{r seq, warning=FALSE}
+seq<-
+  seq %>% 
+  mutate( 
+    ID =  gsub("-", "_", Sample), 
+    GT = gsub("_.+", "", ID)
+   )  %>% 
+
+  separate(ID, c("A", "B", "C"), "_", extra="merge", remove=FALSE) %>% 
+  mutate( 
+    Group = derivedFactor(
+      "SNP" = ( substr(A, 1,3) == "SNP" ),
+      "DP" = ( substr(A, 1,2) == "DP" ),
+      "SP" = ( substr(A, 1,2) == "SP" ),
+      "JP" = ( substr(A, 1,2) == "JP" ),
+      "EP" = ( substr(A, 1,2) == "EP" ),
+      .method = "first",
+      .default = NA
+    ), 
+    Type = derivedFactor(
+      "BL" = ( grepl("BL", A) ),
+      "NT" = ( grepl("NT", A) ), 
+      "TT" = ( grepl("TT", A) ), 
+      "X0" = ( grepl("X0", A) ), 
+      "X1" = ( grepl("X1", A) ), 
+      "X2" = ( grepl("X2", A) ),
+      "X3" = ( grepl("X3", A) ), 
+      "X" = ( grepl("X", A) ), 
+      .method = "first",
+      .default = NA
+    ),
+    IID = ifelse(nchar(B)<3, sprintf("%03d", as.numeric(B)), as.character(B) ), 
+    IID = ifelse( is.na(IID), A, IID ),
+    version = ifelse( is.na(C), 1, C ),
+    NewID= paste( Group, IID, sep="_"), 
+    Human = Total.Reads / Raw.Reads * 100
+  ) %>% 
+  select(-(A:C))
+
+seq<-
+  left_join(seq, Variants, by=("Sample"))
+
+#names(seq)
+
+
+```
+
+```{r EP_handle}
+
+seq[seq$IID=="EPN11272155","Type"] = "NT"
+seq[seq$IID=="EPT11272155","Type"] = "TT"
+
+seq[seq$IID=="EPN11272155","IID"] = "11272155"
+seq[seq$IID=="EPT11272155","IID"] = "11272155"
+
+seq[seq$IID=="11272155","NewID"] = "EP_11272155"
+
+```
+
+
+```{r, include=FALSE}
+seq %>% 
+  mutate_if( is.factor, funs(as.character) ) -> seq
+```
+
+
+
+```{r, child="01.Specimens_Status.Rmd"}
+```
+
+
+```{r, child="02.Sequencing_Summary.Rmd"}
+```
+
+
+```{r, child="03.Variants_Summary.Rmd"}
+```
+
+
+<br> 
+
+# QC filter   
+
+<br>
+
+Pass   
+
+ * human mapping >= 80%
+ * 40K <= variants < 60K
+
+Hold   
+
+ * 50% <= human mapping < 80%
+ * 30K <= variants < 40K
+ 
+Fail   
+
+ * human mapping < 50%
+ * variants < 30K or variants > 60K
+ 
+
+
+```{r}
+seq<-
+seq %>% 
+  mutate( Remark = ifelse( Human > 80 & nVariants > 40000 & nVariants < 60000, "Pass", 
+                           ifelse(Human > 50 | (nVariants > 30000 & nVariants < 60000) , "Hold", "Fail" ) )) 
+# %>% 
+#   filter( Remark == "Hold") %>% 
+#   mutate(Human = round(Human, 2)) %>% 
+#   select(Sample, Group, Type, Human, nVariants) %>% 
+#   arrange(Human, nVariants)
+
+write.table(seq, file="seq.step2", quote=FALSE, sep="\t", row.names = FALSE)
+
+table(seq$Remark) %>% 
+  as.data.frame() %>% 
+  rename(Remark=Var1, Number=Freq) %>% 
+  kable() %>% 
+  kable_styling("striped", full_width = F, position="left") 
+
+```
+
+<br>
+
+
+
+
+```{r}
+Candidates<-
+filter(seq, Remark != "Pass") %>% 
+  mutate(Human = round(Human, 2), Total.Reads = comma(Total.Reads), Raw.Reads=comma(Raw.Reads) ) %>% 
+  select(Sample, Total.Reads, Raw.Reads, Duplicates.Rate, Group, Type, Human, nVariants, Remark) %>% 
+  arrange(Remark, nVariants, Human)
+
+
+filename_dt="Candidates"
+datatable(Candidates, filter = "bottom",
+          extensions = c('Scroller', 'Buttons'),
+          options = list(pageLength = 10,
+                         deferRender = TRUE,
+                         scrollX = TRUE,
+                         scrollY = 200,
+                         scroller = TRUE,
+                         dom = 'Bfrtip',
+                         buttons = list('copy',
+                                        list(extend='excel',filename=filename_dt),
+                                        list(extend='csv',filename=filename_dt)),
+                         columnDefs = list(list(width = '1000px', targets = "_all", className = 'dt-center')
+                         )
+          )
+)
+```
+
+<br>
+
+Total.Reads : aligned only Human reads  
+Raw.Reads : raw reads(sequencing reads)  
+
+
+
+<br> 
+
+# Data Summary File  
+
+<br>
+
+```{r}
+filename_dt="All"
+datatable(seq, filter = "bottom",
+          extensions = c('Scroller', 'Buttons'),
+          options = list(pageLength = 10,
+                         deferRender = TRUE,
+                         scrollX = TRUE,
+                         scrollY = 200,
+                         scroller = TRUE,
+                         dom = 'Bfrtip',
+                         buttons = list('copy',
+                                        list(extend='excel',filename=filename_dt),
+                                        list(extend='csv',filename=filename_dt)),
+                         columnDefs = list(list(width = '1000px', targets = "_all", className = 'dt-center')
+                         )
+          )
+)
+```
+
+
+
+<br> 
+
+# Model Summary  
+
+<br>
+
+```{r, include=FALSE}
+#seq<-read.table("seq.step2", header=T, sep="\t")
+# str(seq)
+names(seq)
+```
+
+```{r }
+model <-
+seq %>% 
+  select(Group, NewID, normal, primary) %>% 
+  mutate( Is_N_T = ifelse( !is.na(normal) & !is.na(primary), "Y", "N") ) %>% 
+  unique
+
+
+table(model$Group,model$Is_N_T )  %>% 
+  addmargins() %>% 
+  # addmargins(., 2) %>% # col
+  # addmargins(., 1) %>% # row
+  as.data.frame.matrix() %>% 
+  kable() %>% 
+  kable_styling("striped", full_width = F, position="left") %>% 
+  column_spec(4, bold = T, color = "dargrey" ) %>%
+  row_spec(6, bold = T, color = "dargrey")
+```
+
+<br>
+
+```{r}
+filename_dt="PossibleModel"
+datatable(model, filter = "bottom",
+          extensions = c('Scroller', 'Buttons'),
+          options = list(pageLength = 10,
+                         deferRender = TRUE,
+                         scrollX = TRUE,
+                         scrollY = 200,
+                         scroller = TRUE,
+                         dom = 'Bfrtip',
+                         buttons = list('copy',
+                                        list(extend='excel',filename=filename_dt),
+                                        list(extend='csv',filename=filename_dt)),
+                         columnDefs = list(list(width = '1000px', targets = "_all", className = 'dt-center')
+                         )
+          )
+)
+```
+
+
+
+
+```{r}
+
+seq2<-
+  left_join(seq, align, by=("Sample"))
+#names(seq)
+#names(align)
+write.table(seq2, file="seq.step3", quote=FALSE, sep="\t", row.names = FALSE)
+```
+
+

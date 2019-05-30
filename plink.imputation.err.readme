@@ -1,0 +1,41 @@
+ed : 1517299683
+  * Parallelisation: 8 threads
+  * Ref allele is NOT aligned on the reference genome
+
+Reading site list in [/home/adminrig/Genome/1000Genomes/20130502/APMRA.KOREA.KimSoriEul/AxiomGT1.calls.txt.extract.plink_fwd.gender.SNPolisherPassSNV.chr7.bim]
+
+ERROR: Duplicate site pos=6043348 ref=T alt=TC
+
+
+
+indel issue
+문제 확인
+imputation 시 특정 chr 시 중복 확인으로 인해 shapeit fail
+
+확인해 본 결과 아래 두 마커가 동일한 위치 genotype 을 가짐.
+grep -e AX-169025468 -e AX-179135418 *allele
+
+AX-169025468    Affx-161164418  rs587781716     1       7       6043349 6043349 +       0       p22.1   GTATCACCTCAGTGCACAAAGTGAGCTCAGAGCTT[-/C]CCCCCGAAAGCCAAAAGTTTCAACCTGAGTTAGGT     -       C       C   -
+        ENST00000265849 // frameshift // 0 // Hs.632637 // PMS2 // 5395 // PMS2 postmeiotic segregation increased 2 (S. cerevisiae) /// ENST00000380416 // exon // 0 // Hs.632637 // PMS2 // 5395 // PMS2 postmeiotic segregation increased 2 (S. cerevisiae) /// ENST00000382321 // frameshift // 0 // Hs.632637 // PMS2 // 5395 // PMS2 postmeiotic segregation increased 2 (S. cerevisiae) /// ENST00000406569 // frameshift // 0 // Hs.632637 // PMS2 // 5395 // PMS2 postmeiotic segregation increased 2 (S. cerevisiae) /// ENST00000415839 // exon // 0 // Hs.632637 // PMS2 // 5395 // PMS2 postmeiotic segregation increased 2 (S. cerevisiae) /// ENST00000441476 // intron // 0 // Hs.632637 // PMS2 // 5395 // PMS2 postmeiotic segregation increased 2 (S. cerevisiae) /// ENST00000469652 // intron // 0 // Hs.632637 // PMS2 // 5395 // PMS2 postmeiotic segregation increased 2 (S. cerevisiae) /// NM_000535 // frameshift // 0 // Hs.632637 // PMS2 // 5395 // PMS2 postmeiotic segregation increased 2 (S. cerevisiae) /// NR_003085 // exon // 0 // Hs.632637 // PMS2 // 5395 // PMS2 postmeiotic segregation increased 2 (S. cerevisiae)    12.2597 // D7S2201 // D7S1527 // --- // --- // deCODE /// 10.4733 // D7S2424 // D7S481 // AFMA136ZH1 // AFM049XE3 // Marshfield /// 7.1871 // D7S517 // D7S481 // --- // --- // SLM1 D7S2083E // downstream // 32744 /// D7S2761 // upstream // 20052        ---     ---     ---     ---     reverse 2       0       --- ---      600259 // Mismatch repair cancer syndrome // 276300 // exon /// 600259 // Colorectal cancer, hereditary nonpolyposis, type 4 // 614337 // exon /// 600259 // Mismatch repair cancer syndrome // 276300 // frameshift /// 600259 // Colorectal cancer, hereditary nonpolyposis, type 4 // 614337 // frameshift /// 600259 // Mismatch repair cancer syndrome // 276300 // intron /// 600259 // Colorectal cancer, hereditary nonpolyposis, type 4 // 614337 // intron      ---     ---     - // C  2       1       ClinVar PMS2    PATHOGENIC      Colorectal cancer, hereditary nonpolyposis, type 4      LYNCH SYNDROME  --- rs587781716
+AX-179135418    Affx-89017021   rs762485848     3       7       6043348 6043349 +       0       p22.1   GTATCACCTCAGTGCACAAAGTGAGCTCAGAGCTT[-/C]CCCCCCGAAAGCCAAAAGTTTCAACCTGAGTTAGG     -       C       -   C
+        ENST00000265849 // frameshift // 0 // Hs.632637 // PMS2 // 5395 // PMS2 postmeiotic segregation increased 2 (S. cerevisiae) /// ENST00000380416 // exon // 0 // Hs.632637 // PMS2 // 5395 // PMS2 postmeiotic segregation increased 2 (S. cerevisiae) /// ENST00000382321 // frameshift // 0 // Hs.632637 // PMS2 // 5395 // PMS2 postmeiotic segregation increased 2 (S. cerevisiae) /// ENST00000406569 // frameshift // 0 // Hs.632637 // PMS2 // 5395 // PMS2 postmeiotic segregation increased 2 (S. cerevisiae) /// ENST00000415839 // exon // 0 // Hs.632637 // PMS2 // 5395 // PMS2 postmeiotic segregation increased 2 (S. cerevisiae) /// ENST00000441476 // intron // 0 // Hs.632637 // PMS2 // 5395 // PMS2 postmeiotic segregation increased 2 (S. cerevisiae) /// ENST00000469652 // intron // 0 // Hs.632637 // PMS2 // 5395 // PMS2 postmeiotic segregation increased 2 (S. cerevisiae) /// NM_000535 // frameshift // 0 // Hs.632637 // PMS2 // 5395 // PMS2 postmeiotic segregation increased 2 (S. cerevisiae) /// NR_003085 // exon // 0 // Hs.632637 // PMS2 // 5395 // PMS2 postmeiotic segregation increased 2 (S. cerevisiae)    12.2597 // D7S2201 // D7S1527 // --- // --- // deCODE /// 10.4733 // D7S2424 // D7S481 // AFMA136ZH1 // AFM049XE3 // Marshfield /// 7.1871 // D7S517 // D7S481 // --- // --- // SLM1 D7S2083E // downstream // 32743 /// D7S2761 // upstream // 20053        ---     ---     ---     ---     same    2       0       --- ---      600259 // Mismatch repair cancer syndrome // 276300 // exon /// 600259 // Colorectal cancer, hereditary nonpolyposis, type 4 // 614337 // exon /// 600259 // Mismatch repair cancer syndrome // 276300 // frameshift /// 600259 // Colorectal cancer, hereditary nonpolyposis, type 4 // 614337 // frameshift /// 600259 // Mismatch repair cancer syndrome // 276300 // intron /// 600259 // Colorectal cancer, hereditary nonpolyposis, type 4 // 614337 // intron      ---     ---     - // C  2       1       ClinVar PMS2    PATHOGENIC      Colorectal cancer, hereditary nonpolyposis, type 4      HEREDITARY CANCER-PREDISPOSING SYNDROME      ---     rs762485848
+
+분명 중복 확인 후 제거를 진행했지만, 이런 문제가 발생
+그래서 code 문제인지 확인함.
+
+하지만 문제는 ins, del 을 genotype 하는 다른 id 의 변이였지만, 이는 사실 같은 내용을 확인하기 위해서 디자인 된 마커임.
+id,           type, start, end, REF, ALT, REF, ALT
+AX-169025468, del 6043349, 6043349, C, -, TC T
+AX-179135418, ins 6043348, 6043349, -, C, T, TC
+
+AX-169025468 는 6043349 위치의 C delete 를 확인
+이는 VCF 작성 룰에 따라서 전 6043349 의 T 를 가져오고 해서 위치는 6043348 TC/T 임
+AX-179135418 는 6043348~9 위치의 C insert 를 확인
+이는 VCF 작성 룰에 따라서 전 6043348~9 의 사이 변이기 때문에 6043348 의 T 를 가져오고 해서 위치는 6043348 T/TC 임
+
+VCF 상에서는 문제가 없지만, plink 상에서는 동일 위치이고, TC/T, T/TC 처럼 어떤 allelel 이 먼저 오는 지의 순서 상관이 없기 때문에 
+결국 동일 변이로 확인이 되고, 중복되어서 shapeit 상 에러로 처림
+
+그렇기 때문에 이런 다시 한 번 이런 문제 해결을 위해서 중복 제거 해야 함.
+
+

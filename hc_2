@@ -1,0 +1,1 @@
+perl -F'\t' -anle'map { push @{$list[$_]}, $F[$_] } 0..$#F; if($. == 2){ map { print join "\t",$_,@{$list[$_]} } 0 .. $#F;last;}' $1

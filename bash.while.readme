@@ -1,0 +1,2 @@
+while read A B C D; do echo $(($C-$B)); done < Gene.bed
+

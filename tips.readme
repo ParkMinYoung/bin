@@ -1,0 +1,34 @@
+zcat 1_1.fastq.gz | sed -n 4~4p | head -100 | perl -MMin -nle' map { $h{$_}++ } split "", $_; }{ h1n(%h)'
+zcat 1_1.fastq.gz | sed -n 4~4p | head -100 |  fold -w1 | sort | uniq -c 
+zcat 1_1.fastq.gz | sed -n 4~4p | head -100 |  grep -o . | sort | uniq -c
+
+zcat 1_1.fastq.gz | sed -n 4~4p | head -100 |  tr [:space:] '\n'
+
+cat /etc/redhat-release # centos version
+
+
+
+# search rpm tools
+rpm -qa |grep openssl
+
+# view bind infor
+yum list installed bind
+# or 
+yum info bind
+
+
+# There's a much easier way of issuing this query: 
+rpm -qa | grep bind 
+# or 
+rpm -q bind
+
+
+## message of today
+less /etc/motd
+# http://luckyyowu.tistory.com/319
+
+# get centos version
+cat /etc/centos-release
+cat /etc/issue
+
+

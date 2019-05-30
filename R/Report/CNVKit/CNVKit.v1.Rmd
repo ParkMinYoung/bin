@@ -1,0 +1,281 @@
+---
+params:
+    dynamictitle: "CNVKit Test v1"
+    reportdate: !r Sys.Date()
+output: 
+        html_notebook:
+#        html_document:
+         toc: true
+         toc_float: true
+         depth: 3
+#         number_section: true
+#         theme: readable
+         theme: united
+         highlight: tango
+#         fig_caption: true
+#         df_print: paged
+#         df_print: tibble
+#         df_print: kable
+#         fig_caption: yes 
+#         fig_retina: 1 
+#         code_download: false
+         
+#kable
+title: "`r params$dynamictitle`"
+#date: "`r params$reportdate`"
+author: Park MinYoung(minmin@dnalink.com) in BI, DNA Link
+    
+---
+
+***
+
+CNVKit 결과를 생성하는 스크립트  
+
+<br>
+
+```{r setting, echo=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, fig.width=7)
+options(DT.options = list(pageLength = 10, language = list(search = 'Filter:')))
+setwd("/home/adminrig/workspace.min/DNALink.PDX/CNVKit/Output")
+source("/home/adminrig/src/short_read_assembly/bin/R/Min.R")
+
+
+```
+
+```{r library, include=FALSE}
+library(pacman)
+p_load(ggplot2, tidyr, dplyr, DT, scales, tibble, mosaic, UpSetR, readr, purrr, sunburstR)
+
+library(knitr)
+library(kableExtra)
+options(knitr.table.format = "html") 
+
+# data_status()
+# pkg_clean()
+# rm(list=ls())
+# http://rstudio.github.io/DT/extensions.html
+```
+
+
+```{r, include=FALSE}
+df<-read_tsv("CNVKit")
+```
+
+```{r, include=FALSE}
+str(df)
+```
+
+```{r}
+
+chrOrder = c(1:22, "X", "Y")
+df$chromosome <- factor(df$chromosome, levels = chrOrder, ordered = TRUE)
+
+log2ratio_plot <- function(df, sample){
+  
+df %>% 
+  filter( Group == sample ) -> df1
+
+
+df1$log2[df1$log2 < -3]=-3
+ggplot(df1, aes(xmin = start , xmax = end, ymin = 0, ymax = log2)) +
+  geom_rect(aes(fill = log2), colour = "grey50") + 
+  facet_grid(chromosome~., scales="free") + 
+  #scale_fill_gradient2( breaks=c(3,0,-3), low = "blue", high="red", mid="green", midpoint = 0)
+  scale_fill_gradient2( breaks=c(3,0,-3), labels=c(3, 0,-3), low = "blue", high="red", mid = "green", midpoint = 0) + 
+  ylim(c(-3,3))
+
+}
+
+# FunctionDump("log2ratio_plot")
+
+```
+
+
+```{r, fig.height=10}
+log2ratio_plot(df, "SP_100")
+```
+
+
+```{r, fig.height=10}
+# 
+# head( unique(df$Group)) %>% 
+#   as.list %>% 
+#   purrr::map( ~ log2ratio_plot(df, .x) )
+
+```
+
+```{r}
+
+log2ratio_plot2 <- function(df, sample){
+  
+df %>% 
+  filter( Group == sample ) -> df1
+
+
+df1$log2[df1$log2 < -3]=-3
+df1$log2[df1$log2 > 3] = 3
+range <- c(-3, 0, 3)
+
+ggplot(df1, aes(xmin = start , xmax = end, ymin = 0, ymax = log2)) +
+  theme_bw() + 
+  geom_rect(aes(fill = log2), colour = "grey50") +
+  geom_hline(yintercept = 1, col="purple") + 
+  geom_hline(yintercept = -1, col="purple") + 
+  facet_grid(.~chromosome, scales="free", space = "free" ,switch = "x") + 
+  ylim(c(range[1], range[3])) + 
+  scale_fill_gradientn(
+    name = "log2ratio", 
+    limits = c(range[1],range[3]),
+    #colours=c("navyblue", "darkmagenta", "darkorange1"),
+    colours=c("blue", "green", "red"),
+    breaks=range, 
+    labels=format(range)) + 
+  labs(subtitle=sample ,
+       x="Chromosome", 
+       y="Log2Ratio") + 
+  theme(
+    axis.text.x = element_blank(), 
+    axis.title = element_text(face = "bold"),
+    axis.title.x = element_blank(), 
+    plot.title = element_text(face = "bold", size = 10, colour = "black"),
+    plot.subtitle = element_text(face = "bold", size = 10, colour = "black"), 
+    strip.placement = "outside",  
+    strip.background = element_blank(), 
+    strip.text = element_text( size = 10 , colour = "blue"),
+    legend.position = "bottom"
+    ) 
+# gg_format = "png"
+# filename <- paste( sample, gg_format, sep =".")
+# ggsave(filename, device=gg_format,  width = 26, height = 11, units = "cm")
+
+# https://stackoverflow.com/questions/13888222/ggplot-scale-color-gradient-to-range-outside-of-data-range
+}
+
+# FunctionDump("log2ratio_plot2")
+
+```
+
+```{r, fig.width=10, fig.height=4}
+log2ratio_plot2(df, "SP_100")
+```
+
+```{r, fig.width=10, fig.height=4}
+log2ratio_plot2(df, "SP_331")
+```
+
+```{r, fig.width=10, fig.height=4}
+log2ratio_plot2(df, "SP_218")
+```
+
+```{r, fig.width=10, fig.height=4, include=FALSE}
+unique(df$Group) %>% 
+  as.list %>% 
+  purrr::map( ~ log2ratio_plot2(df, .x) )
+
+```
+
+
+
+<br>
+
+# 2018.05.23
+
+<br>
+
+
+DP_034와 SP_100 에 대한 chromosome 별 image 작성   
+
+```{r, fig.width=10, fig.height=4}
+log2ratio_plot2(df, "DP_034")
+```
+
+
+```{r, fig.width=10, fig.height=4}
+log2ratio_plot2(df, "SP_100")
+```
+
+
+```{r}
+
+
+log2ratio_plot3 <- function(df, sample){
+  
+df %>% 
+  filter( Group == sample ) -> df1
+
+
+df1$log2[df1$log2 < -3]=-3
+df1$log2[df1$log2 > 3] = 3
+range <- c(-3, 0, 3)
+
+
+unique(df$chromosome) %>% 
+  as.list %>% 
+  purrr::map( ~ log2ratio_plot3_by_chr(df1, .x, sample) )
+
+#log2ratio_plot3_by_chr(df1, "1", sample)
+
+  
+}
+
+log2ratio_plot3_by_chr <- function(df1, chr, sample)
+{
+  range <- c(-3, 0, 3)
+  df1 %>% 
+    filter( chromosome == chr ) %>% 
+    ggplot( aes(xmin = start , xmax = end, ymin = 0, ymax = log2)) +
+    theme_bw() + 
+    geom_rect(aes(fill = log2), colour = "grey50") +
+    geom_hline(yintercept = 1, col="purple") + 
+    geom_hline(yintercept = -1, col="purple") + 
+    #facet_grid(chromosome~., scales="free", space = "free" ,switch = "x") + 
+    scale_x_continuous( label = unit_format(unit = " Mbp", scale = 1e-6, digitis = 2), limits = c(0,250000000) ) +
+    ylim(c(range[1], range[3])) + 
+    scale_fill_gradientn(
+      name = "log2ratio", 
+      limits = c(range[1],range[3]),
+      #colours=c("navyblue", "darkmagenta", "darkorange1"),
+      colours=c("blue", "green", "red"),
+      breaks=range, 
+      labels=format(range)) + 
+    labs(subtitle=paste0("chromosome ", chr),
+         x="Chromosome", 
+         y="Log2Ratio") + 
+    theme(
+      #axis.text.x = element_blank(), 
+      axis.title = element_text(face = "bold"),
+      axis.title.x = element_blank(), 
+      plot.title = element_text(face = "bold", size = 10, colour = "black"),
+      plot.subtitle = element_text(face = "bold", size = 10, colour = "black"), 
+      strip.placement = "outside",  
+      strip.background = element_blank(), 
+      strip.text = element_text( size = 10 , colour = "blue")#,
+      #legend.position = "bottom"
+      )
+  
+  dir.create(file.path("./", sample), showWarnings = FALSE)
+  
+  sample_f <- paste( sample, sample, sep = "/")
+  gg_format = "png"
+  filename <- paste( sample_f, chr, gg_format, sep =".")
+  ggsave(filename, device=gg_format,  width = 26, height = 6, units = "cm")
+
+  # https://stackoverflow.com/questions/13888222/ggplot-scale-color-gradient-to-range-outside-of-data-range
+}
+
+
+
+
+
+```
+
+```{r}
+log2ratio_plot3(df, "SP_100")
+```
+
+```{r}
+log2ratio_plot3(df, "DP_034")
+```
+
+
+

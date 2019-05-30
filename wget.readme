@@ -1,0 +1,36 @@
+## directory structure without host name
+wget -b -i downlist --no-host-directories  --force-directories
+
+
+## download specific filepattern recursively
+wget -r -np -A "*.htm*" ftp://site/dir
+wget -m -np -A "*.htm*" ftp://user:pass@host/dir
+# http://www.gnu.org/software/wget/manual/html_node/Types-of-Files.html
+wget -r -np --ftp-user=username --ftp-password=password "ftp://example.com/path/to/dir/*.htm"
+
+## --mirror
+# Use -m rather than -r, because of the recursion depth.
+wget -m ftp://username:password@ip.of.old.host
+
+
+
+ ##Check below wget command to download data from FTP recursively.
+ ##
+ ##wget --user="" --password="" -r -np -nH --cut-dirs=1 --reject "index.html*" ""
+ ##
+ ##-r : is for recursively download.
+ ##
+ ##-np : is for no parent ascending.
+ ##
+ ##-nH : is for disabling creation of directory having name same as URL i.e. abc.xyz.com
+ ##
+ ##--cut-dirs : is for ignoring no. of parent directories. Value of this option will differ for your command.
+ ##
+ ##You can check by executing above command.
+
+
+
+ wget -m -np -A "*.vcf.bz2" ftp://ftp-trace.ncbi.nlm.nih.gov/giab/ftp/data/ChineseTrio/
+
+wget -r -np -A "*.vcf.bz2" -A "*.vcf" ftp://ftp-trace.ncbi.nlm.nih.gov/giab/ftp/data/
+

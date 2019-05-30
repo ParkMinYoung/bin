@@ -1,0 +1,8 @@
+/home/adminrig/src/RealTimeGenomics/rtg-tools-3.6.2/rtg vcfstats try.vcf > rtg.out
+
+
+# /home/adminrig/workspace.min/ChosunUniv.ReferencePanel/try.v1
+
+
+rtg vcfstats 150116.T2DM.GQ20.95.vcf > stat
+

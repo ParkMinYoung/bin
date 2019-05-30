@@ -1,0 +1,71 @@
+
+# execute time : 2019-02-25 21:08:57 : link
+ln -s /dlst/wes/PDX/904.selectsample.snpeff.dbNSFP.vartype.gwas.vcf ./
+
+
+# execute time : 2019-02-25 21:14:10 : create vcf per gene in the GOI file
+snpeff_extract_genelist.sh  904.selectsample.snpeff.dbNSFP.vartype.gwas.vcf GOI 
+
+
+# execute time : 2019-02-25 21:27:26 : extract SNVs using specific IMPACT class string pattern
+cat APC.vcf | $snpsift filter "(ANN[*].IMPACT has 'HIGH') || (ANN[*].IMPACT has 'MODERATE') " > APC.vcf.filter.vcf
+
+
+# execute time : 2019-02-25 22:01:57 : create vcf per sample (using GATK3.selectvariants.sh APC.vcf.filter.vcf SPX0_276)
+VCF2EachSamplesVCF.sh APC.vcf.filter.vcf 
+
+
+# execute time : 2019-02-25 22:22:12 : convert vcf to tab
+parallel --bar -k VCF2TAB.sh ::: $(find -type f | grep vcf$) 
+
+
+# execute time : 2019-02-25 22:33:49 : reheader (remove #(GEN.+|ANN.+))
+parallel snpeff_reheader.sh ::: *.tab 
+
+
+# execute time : 2019-02-25 22:35:44 : create Genotype file using *vcf.tab files
+AddRow.w.sh Genotype '(.+).vcf.tab' ID $(ls *.tab.header)  | grep Add | sh  
+
+
+# execute time : 2019-02-25 22:41:31 : alternative count >= 1 
+tblmutate -e '$AC > 0' -l APC Genotype > Genotype.APC_mut
+
+
+# execute time : 2019-02-26 15:36:05 : include unique one SNV on each line and add id list and number of samples # step1
+creat only unSNVs information line by line
+_addKeyCol.sh Genotype.APC_mut "1,2,3,4,5,9,10,11,12,13,14,15,16,17,18" key "|"  | datamash --sort -H  -g 24 collapse 22 count 22  |hsort - -k3,3 -nr | tr "|" "\t" > Genotype.APC_mut.count
+
+
+# execute time : 2019-02-26 15:38:38 : include unique one SNV on each line and add id list and number of samples # step2
+AddHeader.sh Genotype.APC_mut.count Genotype.Count $(head -1 Genotype.APC_mut | cut  -f1,2,3,4,5,9,10,11,12,13,14,15,16,17,18) Samples NumOfSamples 
+
+
+# execute time : 2019-02-26 15:49:27 : cleanup
+rm -rf Genotype.APC_mut.count 
+
+
+# execute time : 2019-02-26 15:48:59 : rename BySample
+ln -s Genotype.APC_mut BySample 
+
+
+# execute time : 2019-02-26 15:49:39 : rename BySNV
+ln -s Genotype.Count BySNV
+
+
+# execute time : 2019-02-26 15:51:50 : make xlsx
+TABList2XLSX.v2.sh 1..23 BySNV BySample 
+
+
+# execute time : 2019-02-26 15:52:07 : rename
+mv TABList2.xlsx APC.xlsx
+
+
+# execute time : 2019-02-26 15:53:32 : 
+mkdir /home/adminrig/workspace.min/DNALink/Project/DNALink.PDX/_APC
+
+
+# execute time : 2019-02-26 15:53:38 : link
+RmdLink.sh APC.xlsx /home/adminrig/workspace.min/DNALink/Project/DNALink.PDX/_APC
+
+
+

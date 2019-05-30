@@ -1,0 +1,4 @@
+# excute time : 2017-09-25 11:02:40 : perl
+perl -e'map { mkdir($_); $f=$_+1; $n=$_+2; `echo $n > $_/$f` } 1..100; ' 
+
+

@@ -1,0 +1,223 @@
+---
+output: html_notebook
+---
+
+
+<br><br>
+
+# Variants 현황
+
+<br>
+
+## Type 별 변이 수
+
+<br>
+
+
+```{r}
+seq %>% 
+  filter( Group != "NA") %>%
+  ggplot( aes(Type, nVariants)) + geom_boxplot()
+```
+
+
+<br>
+
+## 변이 수 이상 샘플 
+
+<br>
+
+```{r}
+abnormal_var<-
+seq %>% 
+  filter( nVariants>60000 | nVariants <40000) %>% 
+  select( Sample, Group, Type, nHets, nHomVar, hetHomRatio, nVariants) %>% 
+  arrange( desc( nVariants))
+
+filename_dt="abnormal_variants"
+datatable(abnormal_var, filter = "bottom",
+          extensions = c('Scroller', 'Buttons'),
+          options = list(pageLength = 10,
+                         deferRender = TRUE,
+                         scrollX = TRUE,
+                         scrollY = 200,
+                         scroller = TRUE,
+                         dom = 'Bfrtip',
+                         buttons = list('copy',
+                                        list(extend='excel',filename=filename_dt),
+                                        list(extend='csv',filename=filename_dt)),
+                         columnDefs = list(list(width = '1000px', targets = "_all", className = 'dt-center')
+                         )
+          )
+)
+
+
+```
+
+
+<br>
+
+## HetHomRatio
+
+<br>
+
+### Type 별 HetHomRatio 분포 
+
+<br>
+
+
+```{r}
+
+seq %>% 
+  filter( Group != "NA") %>%
+  ggplot( aes(Type, hetHomRatio)) + geom_boxplot()
+
+```
+
+<br>
+
+### Type 별 HetHomRatio 분포 
+
+<br>
+
+
+```{r}
+breaks=c(-1,0, 0.5, 1.0, 1.2, 1.4, 1.5, 1.6, 2.0, 10)
+
+HetHom<-
+table( seq$Type, cut(seq$hetHomRatio, breaks=breaks, label=breaks[-1])) %>% 
+  as.data.frame.matrix()
+
+
+kable(HetHom, "html") %>%
+  kable_styling("striped", full_width = T) %>%
+  add_header_above(c( "bad" = 5, "good" = 5)) %>% 
+  column_spec(1:6, bold = T) %>%
+  row_spec(3, bold = T, color = "white", background = "lightblue") %>% 
+  row_spec(4:8, bold = T) %>% 
+  group_rows("Xenograft", 4, 8, label_row_css = "background-color: #666; color: #fff;")
+  
+
+```
+
+
+<br>
+
+### hetHomRatio <= 1.5 인 TT 시료
+
+<br>
+
+```{r, fig.height=6, fig.width=6}
+
+abnormal_TT<-
+seq %>% 
+  filter( Type == "TT", hetHomRatio <= 1.5 ) %>% 
+  select( Sample, IID, NewID, Type, hetHomRatio) %>% 
+  arrange( desc(hetHomRatio) ) %>% 
+  distinct(NewID) %>% 
+  pull
+  
+
+seq %>% 
+  filter( Type %in% c("X0", "X1", "X2", "X3", "TT" ), NewID %in% abnormal_TT ) %>% 
+  select( Sample, IID, NewID, Type, hetHomRatio) %>% 
+  arrange( desc(hetHomRatio) ) %>% 
+  mutate(NewID = factor(NewID, levels=abnormal_TT, ordered=T)) %>% 
+  ggplot( aes(Type, NewID, fill=hetHomRatio)) + 
+  geom_tile() + 
+  scale_fill_gradient2(low=muted("red"), mid="white", high=muted("blue"), midpoint=0.9, breaks=c(0, 0.3, 0.6, 0.9, 1.2, 1.5)) + 
+  geom_text(aes(label=hetHomRatio))
+  
+```
+
+
+
+
+<br>
+
+### hetHomRatio > 1.5 인 TT 시료
+
+<br>
+
+```{r, fig.height=15, fig.width=6}
+
+normal_TT<-
+seq %>% 
+  filter( Type == "TT", hetHomRatio > 1.5 ) %>% 
+  select( Sample, IID, NewID, Type, hetHomRatio) %>% 
+  arrange( desc(hetHomRatio) ) %>% 
+  distinct(NewID) %>% 
+  pull
+  
+
+
+seq %>% 
+  filter( Type %in% c("X0", "X1", "X2", "X3", "TT" ), NewID %in% normal_TT ) %>% 
+  select( Sample, IID, NewID, Type, hetHomRatio) %>% 
+  arrange( desc(hetHomRatio) ) %>% 
+  mutate(NewID = factor(NewID, levels=normal_TT, ordered=T)) %>% 
+  ggplot( aes(Type, NewID, fill=hetHomRatio)) + 
+  geom_tile() + 
+  scale_fill_gradient2(low=muted("red"), mid="white", high=muted("blue"), midpoint=0.9) + #breaks=c(0, 0.3, 0.6, 0.9, 1.2, 1.5)) + 
+  geom_text(aes(label=hetHomRatio))
+  
+
+  
+```
+
+
+
+<br>
+
+### QC 후 hetHomRatio > 1.5 인 TT 시료
+
+<br>
+
+ * Human Mapped Rate >= 80%
+ * nVariants > 40K & nVariants < 60K
+ 
+<br>
+
+```{r, fig.height=15, fig.width=6}
+
+normal_TT<-
+seq %>% 
+  filter( Human > 80, nVariants > 40000 & nVariants < 60000 ) %>% 
+  filter( Type == "TT", hetHomRatio > 1.5 ) %>% 
+  select( Sample, IID, NewID, Type, hetHomRatio) %>% 
+  arrange( desc(hetHomRatio) ) %>% 
+  distinct(NewID) %>% 
+  pull
+  
+
+
+seq %>% 
+  filter( Human > 80, nVariants > 40000 & nVariants < 60000 ) %>% 
+  filter( Type %in% c("X0", "X1", "X2", "X3", "TT" ), NewID %in% normal_TT ) %>% 
+  select( Sample, IID, NewID, Type, hetHomRatio) %>% 
+  arrange( desc(hetHomRatio) ) %>% 
+  mutate(NewID = factor(NewID, levels=normal_TT, ordered=T)) %>% 
+  ggplot( aes(Type, NewID, fill=hetHomRatio)) + 
+  geom_tile() + 
+  scale_fill_gradient2(low=muted("red"), mid="white", high=muted("blue"), midpoint=1.2,  breaks=c(0, 0.6, 1.2, 1.7)) + 
+  geom_text(aes(label=hetHomRatio))
+  
+
+  
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

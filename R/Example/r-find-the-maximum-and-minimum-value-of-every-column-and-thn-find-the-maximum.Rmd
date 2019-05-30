@@ -1,0 +1,41 @@
+---
+title: "r-find-the-maximum-and-minimum-value-of-every-column-and-thn-find-the-maximum"
+output: html_notebook
+---
+
+***
+***r-find-the-maximum-and-minimum-value-of-every-column-and-thn-find-the-maximum***   
+
+http://stackoverflow.com/questions/26893178/r-find-the-maximum-and-minimum-value-of-every-column-and-thn-find-the-maximum   
+
+```{r}
+knitr::opts_chunk$set(echo=TRUE)
+```
+
+```{r}
+a= matrix( rnorm(1000*18,mean=100,sd=sqrt(10)), 1000, 18)
+head(a)
+```
+
+```{r, collapse=TRUE}
+# Minimum and maximum of every column:
+
+apply(a,2,min)
+apply(a,2,max)
+
+# Minimum and maximum of every row:
+apply(a,1,min) %>% 
+  head()
+apply(a,1,max) %>% 
+  head()
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+

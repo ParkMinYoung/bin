@@ -1,0 +1,27 @@
+#!/bin/sh
+
+#$ -v path
+#$ -cwd
+#$ -S /bin/sh
+#$ -pe make 1
+
+source /home/adminrig/.bashrc
+
+echo $@
+
+if [ $# -eq 3 ];then
+
+	CMD=$1
+	AFILE=$2
+	REF=$3
+
+	fchk `which $CMD`
+	fchk $AFILE 
+	fchk $REF
+
+	$CMD -a $AFILE -b $REF -wa > $AFILE.In
+	exit 0
+else
+	usage "1.BEDTool command 2.bed 3.refence"
+	exit 0
+fi

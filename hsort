@@ -1,0 +1,22 @@
+
+   if [ "$1" == "-h" ]; then
+       echo "Sort a file or standard input, treating the first line as a header.";
+       echo "The first argument is the file or '-' for standard input. Additional";
+       echo "arguments to sort follow the first argument, including other files.";
+       echo "File syntax : $ hsort file [sort-options] [file...]";
+       echo "STDIN syntax: $ hsort - [sort-options] [file...]";
+       return 0;
+   elif [ -f "$1" ]; then
+       local file=$1;
+       shift;
+       (head -n 1 $file && tail -n +2 $file | sort $*);
+   elif [ "$1" == "-" ]; then
+       shift;
+       (read -r; printf "%s\n" "$REPLY"; sort $*);
+   else
+       >&2 echo "Error. File not found: $1";
+       >&2 echo "Use either 'hsort <file> [sort-options]' or 'hsort - [sort-options]'";
+       return 1 ;
+   fi
+
+

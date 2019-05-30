@@ -1,0 +1,60 @@
+#!/bin/sh
+
+
+perl -F'\t' -MMin -asne'
+BEGIN{ 
+		@header = qw/Location
+			Allele
+			Gene
+			Feature
+			Feature_type
+			Consequence
+			cDNA_position
+			CDS_position
+			Protein_position  				
+			Amino_acids       	
+			Codons/;
+		$header = join "\t", @header;
+}
+next if /^#/;
+
+chomp@F;
+#$key= join "\t",@F[1..11];
+$idx=sprintf "%06s",++$c;
+$key="$idx.$F[0]";
+
+$h{$key}{$header} = join "\t", @F[1..11];
+$F[13]=~s/\(p.=\)//;
+map {($A,$B)=split "=",$_; $h{$key}{$A}=$B } split ";", $F[13];
+
+}{ mmfss($f,%h)' -- -f=$1 $1
+
+
+perl -F'\t' -anle'print join "\t", @F[0,10..20,2,3,5..9,24,25,4]' $1.txt > $1.output
+
+
+## 21_36206719_T/C	21:36206719	C	ENSG00000159216	ENST00000358356	Transcript	NON_SYNONYMOUS_CODING	2290	712	238	S/G	Agt/Ggt	-	ENSP=ENSP00000351123;PolyPhen=benign(0);HGVSc=ENST00000358356.5:c.712A>G;HGVSp=ENSP00000351123.5:p.Ser238Gly;Condel=neutral(0.349);SIFT=deleterious(0.04);HGNC=RUNX1;CCDS=CCDS46646.1
+## 21_36206719_T/C	21:36206719	C	ENSG00000159216	ENST00000325074	Transcript	NON_SYNONYMOUS_CODING	757	757	253	S/G	Agt/Ggt	-	ENSP=ENSP00000319459;PolyPhen=benign(0);HGVSc=ENST00000325074.5:c.757A>G;HGVSp=ENSP00000319459.5:p.Ser253Gly;Condel=neutral(0.272);SIFT=tolerated(0.11);HGNC=RUNX1
+## 21_36206719_T/C	21:36206719	C	ENSG00000159216	ENST00000399240	Transcript	INTRONIC	-	-	-	-	-	-	ENSP=ENSP00000382184;HGVSc=ENST00000399240.1:c.532+25052A>G;HGNC=RUNX1
+## 21_36206719_T/C	21:36206719	C	ENSG00000159216	ENST00000344691	Transcript	NON_SYNONYMOUS_CODING	2290	712	238	S/G	Agt/Ggt	-	ENSP=ENSP00000340690;PolyPhen=benign(0);HGVSc=ENST00000344691.4:c.712A>G;HGVSp=ENSP00000340690.4:p.Ser238Gly;Condel=neutral(0.253);SIFT=tolerated(0.13);HGNC=RUNX1;CCDS=CCDS42922.1
+## 21_36206719_T/C	21:36206719	C	ENSG00000159216	ENST00000479325	Transcript	UPSTREAM	-	-	-	-	-	-	HGNC=RUNX1
+## 21_36206719_T/C	21:36206719	C	ENSG00000159216	ENST00000437180	Transcript	NON_SYNONYMOUS_CODING	983	793	265	S/G	Agt/Ggt	-	ENSP=ENSP00000409227;PolyPhen=benign(0);HGVSc=ENST00000437180.1:c.793A>G;HGVSp=ENSP00000409227.1:p.Ser265Gly;Condel=neutral(0.272);SIFT=tolerated(0.11);HGNC=RUNX1;CCDS=CCDS13639.1
+## 21_36206719_T/C	21:36206719	C	ENSG00000159216	ENST00000300305	Transcript	NON_SYNONYMOUS_CODING	1238	793	265	S/G	Agt/Ggt	-	ENSP=ENSP00000300305;PolyPhen=benign(0);HGVSc=ENST00000300305.3:c.793A>G;HGVSp=ENSP00000300305.3:p.Ser265Gly;Condel=neutral(0.272);SIFT=tolerated(0.11);CANONICAL=YES;HGNC=RUNX1;CCDS=CCDS13639.1
+## 21_36206719_T/C	21:36206719	C	ENSG00000159216	ENST00000482318	Transcript	WITHIN_NON_CODING_GENE	680	-	-	-	-	-	HGVSc=ENST00000482318.1:680A>G;HGNC=RUNX1
+## 21_36206719_T/C	21:36206719	C	ENSG00000159216	ENST00000469087	Transcript	WITHIN_NON_CODING_GENE	329	-	-	-	-	-	HGVSc=ENST00000469087.1:329A>G;HGNC=RUNX1
+## 22_16350245_C/A	22:16350245	A	ENSG00000224435	ENST00000426025	Transcript	WITHIN_NON_CODING_GENE,ESSENTIAL_SPLICE_SITE	-	-	-	-	-	-	HGVSc=ENST00000426025.1:602-2C>A;CANONICAL=YES;HGNC=NF1P6
+
+##	   1	Uploaded_variation
+##     2	Location
+##     3	Allele
+##     4	Gene
+##     5	Feature
+##     6	Feature_type
+##     7	Consequence
+##     8	cDNA_position
+##     9	CDS_position
+##    10	Protein_position
+##    11	Amino_acids
+##    12	Codons
+##    13	Existing_variation
+##    14	Extra

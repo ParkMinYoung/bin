@@ -1,0 +1,5 @@
+#!/bin/bash
+
+. ~/.bash_function
+
+less -NS readme

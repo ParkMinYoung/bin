@@ -1,0 +1,20 @@
+. ~/.bash_function
+
+
+cat <<EOF
+
+# ARGV  
+
+============================================================
+
+$(_red "1. CEL Analysis default DIR${NORM}") : /home/adminrig/workspace.min/AFFX/Axiom_KORV1.1
+$(_blue "1. AxiomDB.db${NORM}") : /home/adminrig/workspace.min/AFFX/AxiomDB.db
+
+============================================================
+
+$(_cyan "This script footer script that will be ran end of pipeline")
+
+EOF
+
+(_green A; _red B ) | paste - -
+

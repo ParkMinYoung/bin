@@ -1,0 +1,180 @@
+---
+params:
+    dynamictitle: "Methylation Sequencing Report"
+    reportdate: !r Sys.Date()
+output: 
+       pdf_document:
+         fig_caption: yes
+         keep_tex: yes
+         latex_engine: lualatex
+#         toc: yes
+         toc_depth: 3
+#         toc_float: true
+         number_section: true
+#         theme: readable
+#         theme: united
+#         highlight: tango
+#         df_print: paged
+#         df_print: tibble
+#         df_print: kable
+#         fig_retina: 1 
+#         code_download: false
+#         allow_html: yes
+#         includes:
+#           in_header: header.tex
+            
+#title: "`r params$dynamictitle`"
+#date: "`r params$reportdate`"
+#author: Park MinYoung(minmin@dnalink.com) in BI, DNA Link
+#bibliography: library.bib
+#csl: methods-in-ecology-and-evolution.csl
+#urlcolor: black
+#linkcolor: black
+documentclass: article
+classoption: a4paper
+fontsize: 12pt
+geometry: margin = 0.5in
+#geometry: margin = "left=1cm,right=1cm,top=1cm,bottom=1cm"
+
+header-includes:
+- \usepackage{graphicx}
+- \usepackage{placeins}
+- \usepackage{fancyhdr}
+- \usepackage{setspace}
+- \usepackage{chngcntr}
+- \usepackage{microtype}
+- \usepackage{float}
+#- \usepackage{anysize}
+#- \usepackage[export]{adjustbox}
+- \onehalfspacing
+- \counterwithin{figure}{section}
+- \counterwithin{table}{section}
+- \usepackage{lscape}
+# - \usepackage{fixltx2e}
+
+- \usepackage{booktabs}
+- \usepackage{longtable}
+- \usepackage{array}
+- \usepackage{multirow}
+- \usepackage[table]{xcolor}
+- \usepackage{wrapfig}
+#- \usepackage{float}
+- \usepackage{colortbl}
+- \usepackage{pdflscape}
+- \usepackage{tabu}
+- \usepackage{threeparttable}
+- \usepackage[normalem]{ulem}
+---
+
+\newcommand{\blandscape}{\begin{landscape}}
+\newcommand{\elandscape}{\end{landscape}}
+
+
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.path = 'figures/',
+                      fig.align='center',
+                      fig.pos='H',
+                      echo = FALSE, 
+                      warning = FALSE, 
+                      message = FALSE)
+
+options(knitr.table.format = "latex")
+options(kableExtra.latex.load_package = FALSE)
+
+# source("/home/adminrig/src/short_read_assembly/bin/R/Min.R")
+# data_status()
+# pkg_clean()
+# rm(list=ls())
+
+```
+
+```{r library, include=FALSE}
+library(pacman)
+p_load(ggplot2, tidyr, dplyr, DT, readr, scales, tibble, data.table, fastqcr, GGally, knitr, kableExtra, RColorBrewer, ggrepel)
+
+# library(scales) # for comma
+# library(d3heatmap)
+# library(tibble) # for data_table
+# library(data.table) # for setnames
+
+# http://rstudio.github.io/DT/extensions.html
+```
+
+
+```{r title, child = 'MethylSeq_01_00.titlepage.Rmd'}
+``` 
+
+\clearpage
+
+
+\pagestyle{fancy}
+
+\fancyhf{}
+
+<!-- \setlength\headheight{50pt} -->
+
+<!-- \fancyhead[LE,RO]{\includegraphics[scale=0.1]{image/2.jpg}} -->
+<!-- \fancyhead[RE,LO]{\includegraphics[scale=0.5]{image/slogun.jpg}} -->
+
+<!-- \fancyhead[LE,RO]{Page \thepage} -->
+<!-- \fancyhead[LE,RO]{\textsf{\textbf{DNALink.inc}}} -->
+\fancyfoot[CE,CO]{Methylation Sequencing Analysis Report}
+\fancyfoot[LE,RO]{Page \thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{1pt}
+
+
+\tableofcontents
+
+\clearpage
+
+
+```{r service, child = 'MethylSeq_02_00.service.Rmd'}
+```
+
+\clearpage
+
+
+```{r analysis, child = 'MethylSeq_03_00.analysis_resource.Rmd'}
+```
+
+\clearpage
+
+
+```{r analysis_workflow, child = 'MethylSeq_04_00.analysis_workflow.Rmd'}
+```
+
+\clearpage
+
+
+```{r sequencing_summary, child = 'MethylSeq_05_00.sequencing_summary.Rmd'}
+```
+
+\clearpage
+
+
+```{r sequencing_fastqc, child = 'MethylSeq_06_00.fastqc_summary.Rmd'}
+```
+
+\clearpage
+
+
+```{r sequencing_fastqc, child = 'MethylSeq_07_00.alignment_summary.Rmd'}
+```
+
+\clearpage
+
+
+```{r sequencing_fastqc, child = 'MethylSeq_08_00.MethylCall.Rmd'}
+```
+
+\clearpage
+
+
+```{r sequencing_fastqc, child = 'MethylSeq_09_00.MethylKit.Rmd'}
+```
+
+\clearpage
+
+

@@ -1,0 +1,34 @@
+
+# excute time : 2017-09-25 10:57:19 : test
+for i in {1..100}; do mkdir $i; echo $(($i +2 )) > $i/$(($i+1)); done 
+
+
+# excute time : 2017-09-25 10:57:58 : mk test
+mkdir test 
+
+
+# excute time : 2017-09-25 10:59:35 : 
+for i in {1..100}; do [ $( expr $i % 2 ) -eq 0 ] && mv $i test ; done 
+
+
+# excute time : 2017-09-25 11:02:40 : perl
+perl -e'map { mkdir($_); $f=$_+1; $n=$_+2; `echo $n > $_/$f` } 1..100; ' 
+
+
+
+
+## redhat or centos
+# STR=`echo {A..Z}`
+## ubuntu
+## bash
+## STR=(0 {A..Z})
+ 
+ for i in {1..100};
+    do
+idx=$(expr $i % 26);
+    [ $idx -eq 0 ] && idx=26;  
+    echo "$i ${STR[$idx]}";
+    echo ${STR[$idx]} >> $i/$(($i+1));
+done
+find {1..100} -type f | xargs grep X
+

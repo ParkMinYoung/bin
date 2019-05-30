@@ -1,0 +1,122 @@
+who am i | sed "s/ \+/ /g"
+sed 's/ \+/\t/g'
+
+head -4 /etc/passwd | tr : , |   sed -e 's/^/| /' -e 's/,/,| /g' -e 's/$/,|/' | column -t -s,
+
+sed 's/[|]/\t/g' TargetGene.bed.tab
+
+
+# newline to space
+echo -e "a\nb" | sed  ':a;N;$!ba;s/\n/ /g'
+
+# https://unix.stackexchange.com/questions/114943/can-sed-replace-new-line-characters
+
+
+
+
+cat << 'EOF' > testfile.txt
+1+2+3=6
+12 is 50% of 24
+The pipe character '|' looks like a vertical line.
+EOF
+
+sed -i -r 's/%/\\textpercent /g;s/[+]/\\textplus /g;s/[|]/\\textbar /g' testfile.txt
+
+cat testfile.txt
+
+
+sed -i  '1s/LABEL/batch/' Summary.txt
+
+
+
+ ID=AX-106712713
+ mkdir $ID
+ sed -n "1,/^$ID/p" AxiomGT1.calls.txt
+ 
+
+
+SampleAxiomOutput.sh
+
+
+
+http://sed.sourceforge.net/sed1line.txt
+
+
+## substitution header line 
+command | sed '1s/^/chr\tstart\tend\tdepth\n/'
+head SPX_041.mergelanes.dedup.bam.depth.bin | sed '1s/^/chr\tstart\tend\tdepth\n/'
+
+## insert header line
+sed '1 i\chr\tstart\tend\tcount' CG-plus.bed.count
+
+
+
+
+http://www.thegeekstuff.com/2009/11/unix-sed-tutorial-append-insert-replace-and-count-file-lines/
+https://www.thegeekstuff.com/tag/linux-sed-command/
+
+
+## delete line
+# http://ccm.net/faq/1451-delete-lines-from-a-file-using-sed
+
+sed '3d' fileName.txt
+
+#Remove the interval between lines 7 and 9: 
+sed '7,9d' filename.txt 
+
+#The same operation as above but replacing the address with parameters: 
+sed '/-Start/,/-End/d' filename.txt
+
+sed -i".bak" '3d' filename.txt
+
+
+
+
+#Write 1st line of the file
+sed -n '1w output.txt' thegeekstuff.txt
+
+
+#Write first & last line of the file
+sed -n -e '1w output.txt' -e '$w output.txt' thegeekstuff.txt
+
+
+#Write the lines matches with the pattern Storage or Sysadmin
+sed -n -e '/Storage/w output.txt' -e '/Sysadmin/w output.txt' thegeekstuff.txt
+
+
+#Write the lines from which the pattern matches to till end of the file
+sed -n '/Storage/,$w output.txt' thegeekstuff.txt
+
+
+#Write the lines which matches pattern and next two lines 
+sed -n '/Storage/,+2w output.txt' thegeekstuff.txt
+
+# get lines : 2, 6, 10...
+sed -n '2~4p'
+
+# get lines : 2..$
+sed -n '2,$'p
+
+
+# remove ^L
+sed -i 's/\f//' file
+
+
+# if(/^CHR/){s/TW.//g;print}else{print}
+sed -i.bak '/^#CHR/s/TW.//g' TW.vcf
+
+
+# single quote replacement
+sed s/"'"/""/g
+
+N=( $(awk '{print NF}' $IN | sort -nu | sed -n '1p;$p') )
+
+
+sed -i -n -e '1s/^# //'p -e '2,$'p DMRs
+
+# get line 1, $ 
+sed -n '1p;$p' Summary.TargetGenes > Trueset
+
+# get line 1, /pattern/ 
+sed -n '1p;/^NA12878\t/p' Summary.TargetGenes
+

@@ -1,0 +1,13 @@
+
+#!/bin/sh
+
+#$ -v path
+#$ -cwd
+#$ -S /bin/sh
+#$ -pe make 1
+#$# -S /bin/bash
+
+source /home/adminrig/.bashrc
+
+samtools pileup -Q 20 -d 2000 -cf ~/Genome/hg19.bwa/hg19.fasta $1 > $1.qsub.pileup
+

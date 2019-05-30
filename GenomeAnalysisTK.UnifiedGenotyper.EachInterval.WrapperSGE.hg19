@@ -1,0 +1,35 @@
+#!/bin/sh
+
+# GenomeAnalysisTK.sh 
+# $6 must be [XXX.bam]
+# output      
+#             
+#             
+
+source ~/.GATKrc
+source ~/.bash_function
+GATK_param
+
+if [ $# -eq 0 ];then
+        echo "usage : `basename $0` intervals_path XXXX.bam yyyy.bam zzz.bam ..."
+        echo "usage : `basename $0` /home/adminrig/Genome/SureSelect/Interval2EachChr.Size.10000 *.bam"
+        exit 1
+else
+        
+        declare -a INTERVAL
+        INTERVAL=$(find $1 | grep intervals | sort )
+        shift
+        
+		#SUB=~/src/short_read_assembly/bin/sub.8
+		SUB=~/src/short_read_assembly/bin/sub
+
+        for i in $INTERVAL; 
+                do 
+				
+				NAME=$(basename $i)
+                echo qsub -N S$NAME $SUB GenomeAnalysisTK.UnifiedGenotyper.EachInterval.hg19 $i $@
+				echo "sleep 20"
+        done
+
+fi
+

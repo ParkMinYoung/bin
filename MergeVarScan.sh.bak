@@ -1,0 +1,12 @@
+perl -F'\t' -anle'
+if( /Somatic/ ){
+	$k = join "\t", @F[0,1,1],"$F[2]/$F[3]","+";
+	$ARGV =~ /(^\w+)\//;
+	push @{$h{$k}}, $1;
+}
+}{
+	map { 
+			print join "\t", $_, @{$h{$_}}+0, (join ",", @{$h{$_}}) 
+			} sort keys %h;
+
+' $@ > MergeVarScanForVEP.input 

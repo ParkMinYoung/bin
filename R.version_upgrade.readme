@@ -1,0 +1,35 @@
+
+#r version upgrade
+
+# in R
+#http://www.dnalinklabs.com/wiki/display/DNBI/R+sandbox?src=search
+package<-installed.packages()[, "Package"]
+save(file="package", package)
+q()
+
+
+# installation new R verion using yum
+yum install R-base R-devel curllib-devel openssl-devel
+
+
+
+# in R
+#https://shiny.rstudio.com/articles/upgrade-R.html
+update.packages(ask = FALSE, checkBuilt = TRUE, repos='http://cran.nexr.com/')
+
+# The first way is to use the base R function update.packages(), with checkBuilt=TRUE. Normally, the update.package() function will only reinstall packages for which a newer version available, but the checkBuilt=TRUE option tells it to also reinstall packages if they were built with an older version of R, even if the version of the package will remain the same.
+
+
+# The pkgsnap package provides a way to reinstall packages without changing their version. pkgsnap is not yet on CRAN, but you can currently install it from GitHub.
+# Install the pkgsnap package from GitHub
+source("https://install-github.me/MangoTheCat/pkgsnap")
+
+library(pkgsnap)
+snap()
+restore()
+file.remove("packages.csv") # Remove the package list created by save()
+
+
+# libPath
+ .libPaths()
+ 

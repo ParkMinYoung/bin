@@ -1,0 +1,20 @@
+# execute time : 2018-07-09 16:35:38 : temp sql
+head -2 /home/adminrig/workspace.pyg/GWAS/array/APMRA/180705_For.db/Axiom_DB | vv | grep  "^\\$" | cut -f2 | sed 's/ \+//g' | sed -e 's/^/"/g' -e 's/$/"/g' > tmp.sql
+
+
+# execute time : 2018-07-09 16:45:01 : 
+sqlite3.createTable.sh AxiomAnalysis.db Analysis.sql # /home/adminrig/workspace.pyg/GWAS/array/APMRA/180705_For.db/Axiom_DB 
+
+
+# execute time : 2018-07-09 16:48:10 : make
+perl -F'\t' -anle' if($.==1){print join "\t", @F, "timestamp"}else{print}' /home/adminrig/workspace.pyg/GWAS/array/APMRA/180705_For.db/Axiom_DB > Axiom_rawdata.txt
+
+
+# execute time : 2018-07-09 16:49:43 : 
+sqlite3.insert.sh Axiom_rawdata.txt Analysis.sql Analysis | sqlite3 AxiomAnalysis.db 
+
+
+# execute time : 2018-07-09 16:55:18 : 
+sqlite3.show.sh key 180705_For.db AxiomAnalysis.db Analysis | lesss 
+
+

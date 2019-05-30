@@ -1,0 +1,27 @@
+---
+output: pdf_document
+---
+
+<!-- \marginsize{1cm}{1cm}{1cm}{1cm} -->
+
+\begin{titlepage}
+\begin{centering}
+
+\vspace{6 cm}
+
+\includegraphics[width=22cm,height=26cm,keepaspectratio]{/home/adminrig/workspace.min/Report/MethylSeq/Cover.JPG}
+
+
+\end{centering}
+\end{titlepage}
+
+
+<!-- \hfill\includegraphics{Cover.jpg}\hspace*{\fill} -->
+
+<!-- \raggedright -->
+<!-- \clearpage -->
+
+
+<!-- \includegraphics[width=\linewidth, ]{Cover.jpg} -->
+
+<!-- \includegraphics[width=18cm,height=25cm,keepaspectratio]{Cover.jpg} -->

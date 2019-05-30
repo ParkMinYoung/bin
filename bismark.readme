@@ -1,0 +1,21 @@
+
+
+        BAM=${INPUT%.fastq.gz}"_bismark_bt2_pe.bam"
+
+#       ~/src/bismark/bismark_v0.16.3/bismark --pbat --bowtie2 $REF_DIR -1 $R1 -2 $R2 -N 1 -L 20 -p 20 --output_dir $OUTPUT_DIR --path_to_bowtie $BOWTIE2_DIR --non_directional &> $BAM.log
+        ~/src/bismark/bismark_v0.16.3/bismark --non_directional --bowtie2 $REF_DIR -1 $R1 -2 $R2 -N 1 -L 20 -p 20 --output_dir $OUTPUT_DIR --path_to_bowtie $BOWTIE2_DIR &> $BAM.log
+#       ~/src/bismark/bismark_v0.16.3/bismark --bowtie2 $REF_DIR -1 $R1 -2 $R2 -N 1 -L 20 -p 20 --output_dir $OUTPUT_DIR --path_to_bowtie $BOWTIE2_DIR &> $BAM.log
+
+
+		        ~/src/bismark/bismark_v0.16.3/deduplicate_bismark --paired --bam --samtools_path $SAMTOOLS_DIR $BAM &> $BAM.dedup.log 
+
+				        INPUT=$BAM
+						        BAM=${INPUT%.bam}.deduplicated.bam
+								        COV=${BAM%.bam}.bismark.cov.gz
+
+#       ~/src/bismark/bismark_v0.16.3/bismark_methylation_extractor --no_overlap --comprehensive --output $OUTPUT_DIR --paired-end --bedGraph --counts --buffer_size 10G --cytosine_report --genome_folder $REF_DIR $BAM &> $BAM.methylextract.log
+
+        ~/src/bismark/bismark_v0.16.3/bismark_methylation_extractor --no_overlap --comprehensive --output ./ --paired-end --merge_non_CpG --CX_context --bedGraph --counts --buffer_size 10G --cytosine_report --genome_folder  $REF_DIR $BAM --multicore 5 &> $BAM.methylextract.log 
+
+
+

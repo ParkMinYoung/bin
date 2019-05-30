@@ -1,0 +1,21 @@
+
+mapping file 
+
+old     new
+00000001        NIH18G9384044
+00000002        NIH18G9993429
+00000003        NIH18G9253219
+00000004        NIH18G9693263
+00000005        NIH18G9719708
+
+
+
+1. rename in /microarray_CEL/KORV1.1.v2/rename.today folder
+Axiom_Rename.sh $KNIH1 mapping
+
+2. rename in $KNIH1/rename.today folder
+Axiom_Rename.sh $KNIH1 mapping
+tail -n +2 $List.Target.new | cut -f1 | sort | uniq | xargs -i rm -rf $KNIH1/Analysis/{}
+
+
+

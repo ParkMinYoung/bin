@@ -1,0 +1,2 @@
+tblmutate -e '$SNP=~ tr/ACGT/TGCA/ if $RefStrand eq "-"; $SNP =~ /\[(.+)\/(.+)\]/; ($A,$B) = ($1,$2); join ":", $Chr, $MapInfo ,sort($A,$B); ' -l chr_pos_gene BovineSNP50_v3_A2.csv.tab > BovineSNP50_v3_A2.csv.tab.key
+

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+. ~/.bash_function
+
+if [ $# -ge 1 ]; then
+	
+	README=readme
+	file=${2:-$README}
+
+	sed -n $1p $file | sh
+
+else
+	(head ~/.bash_function; perl -nle's/(\$)/\\\1/g;if(/^\s*\w+/){ print "echo \${RED}\"$_\"\${NORM}" }else{print "echo \${GREEN}\"$_\"\${NORM}" }' readme)  |  bash | cat -n
+	usage "line_number[14] [readme]"
+fi

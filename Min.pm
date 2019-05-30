@@ -1,0 +1,1 @@
+/home/adminrig/perl/lib/perl5/Min.pm

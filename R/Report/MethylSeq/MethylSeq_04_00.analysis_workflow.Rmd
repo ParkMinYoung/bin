@@ -1,0 +1,101 @@
+---
+output: pdf_document
+---
+
+# **Analysis Workflow**
+
+
+<!-- https://www.pmgenomics.ca/pmgenomics/services/pdf/sureselect-xt-human-methyl-seq-datasheet.pdf -->
+
+The goal of SureSelectXT Human Methyl-Seq is to combine DNA bisulfite treatment with targeted high-throughput sequencing results to obtain a cell's complete epigenomic state by identifying methylation states of individual cytosines at single base resolution.   
+
+Following capture by solution hybrid selection, there is a preprocessing stage prior to data analysis. This preprocessing stage encompasses DNA bisulfite treatment, high throughput sequencing of bisulfite treated (BST) DNA, and demultiplexing when multiple samples are being analyzed.   
+
+The SureSelectXT Methyl-Seq analysis pipeline consists a series of steps: alignment, duplicate removal, normalization, detection, % methylation computation, and methylation identification.
+
+
+
+```{r, out.width = "150px", fig.align='center', fig.cap= "Workflow" }
+knitr::include_graphics("/home/adminrig/workspace.min/Report/MethylSeq/workflow.JPG")
+```
+
+
+
+## Alignment
+
+Bisulfite treatment of DNA leaves methylated cytosines unaffected, while non-methylated cytosines are converted into uracils. This specific characteristic of BST DNA allows one to identify methylated cytosines, but at the same time it adds complexities that make it more challenging to identify the true position of sequencing reads within the reference genome.  
+
+In general, the methylation state ofa BST DNA read must be inferred by comparison to an unmodified genomic reference sequence. This comparison is possible by aligning the BST read to the genomic sequence.
+
+
+In order to do the alignment we use Bismark, a bisulfite sequence aligner and methylation caller. In the alignment process alternative versions of the read sequence are generated: C's are converted to T's and G's to A's (which is equivalent to a C-T conversion on the reverse strand). Similarly, converted versions of the reference genome are also generated and reads are aligned to each of these versions. By doing so, Bismark is able to predict the most likely bias-free alignment of the reads based on the least number of mismatches. In instances where the read aligns to more than one version of the genome with an equal number of mismatches, this read is discarded. Subsequently, each read is aligned to preconverted C-to-T and G-to-Aversions of the reference genome. Here Bismark is trying to find the true strand and genomic position of the read without having to worry about the bias introduced by the bisulfite treatment. At this stage, if a sequence is aligned to multiple places with the same number of lowest mismatches it is discarded. Otherwise, the correct alignment is chosen as the one with the minimum number of mismatches.
+
+
+```{r, out.width = "400px", fig.align='center', fig.cap="Application Of Bismarks Bisulfite Sequence Aligner and Methylation Caller"}
+knitr::include_graphics("/home/adminrig/workspace.min/Report/MethylSeq/ApplicationOfBismarksBisulfiteSequenceAlignerAndMehtylationCaller.JPG")
+```
+
+<!-- <br><br> -->
+<!-- <center> -->
+<!-- <img src="/home/adminrig/workspace.min/Report/MethylSeq/ApplicationOfBismarksBisulfiteSequenceAlignerAndMehtylationCaller.JPG" width="75%" height="75%"> -->
+<!-- </center> -->
+
+
+
+## Duplicate removal
+
+In order to remove PCR duplicates all read pairs with identical strand, chromosome, and genomic position are removed and only one read pair is considered. 
+
+
+```{r, out.width = "350px", fig.align='center', fig.cap="Deduplication Removal of PCR Duplcates"}
+knitr::include_graphics("/home/adminrig/workspace.min/Report/MethylSeq/DeduplicationRemovalOfPCRDuplcates.JPG")
+```
+<!-- <br><br> -->
+<!-- <center> -->
+<!-- <img src="/home/adminrig/workspace.min/Report/MethylSeq/DeduplicationRemovalOfPCRDuplcates.JPG" width="75%" height="75%"> -->
+<!-- </center> -->
+
+
+## Normalization
+
+When dealing with multiple samples, we randomly sample reads and assign the same number in order to make them comparable to each other. This is done in order to have a similar average read depth across the regions analyzed.
+
+
+## Detection
+
+
+After the genomic position of a read has been determined through alignment, the methylation state of cytosines is determined in Bismark by simple comparison between the read sequence and the genomic reference. Depending on the strand the read has been mapped to, this step marks methylated cytosines as those that did not have a C-to-T conversion (or a G-to-A conversion for the opposite strand) when comparing the reference genome sequence to the BST read sequence.
+
+
+```{r, out.width = "350px", fig.align='center', fig.cap="Methylation Detection"}
+knitr::include_graphics("/home/adminrig/workspace.min/Report/MethylSeq/MethylationDetection.JPG")
+```
+
+<!-- <br><br> -->
+<!-- <center> -->
+<!-- <img src="/home/adminrig/workspace.min/Report/MethylSeq/MethylationDetection.JPG" width="75%" height="75%"> -->
+<!-- </center> -->
+
+
+
+## Computation of % methylation 
+
+After methylation detection Bismark's raw output summarizes the methylation state for each cytosine in every sequencing read in a list. In order to compute % methylation (% m) for one specific cytosine, Bismark's primary output is sorted by genomic position and % methylation is computed as the ratio of the methylated cytosines(k) to the total number of detected cytosines(n) at this position
+
+
+```{r, out.width = "200px", fig.align='center', fig.cap="Computation of Methylation Levels"}
+knitr::include_graphics("/home/adminrig/workspace.min/Report/MethylSeq/ComputationOfMethylationLevels.JPG")
+```
+
+<!-- <br><br> -->
+<!-- <center> -->
+<!-- <img src="/home/adminrig/workspace.min/Report/MethylSeq/ComputationOfMethylationLevels.JPG" width="25%" height="25%"> -->
+<!-- </center> -->
+
+
+
+## Methylation identification
+
+
+The methylation state of a specific cytosine may be further determined based on the hypothetical distribution of methylation levels and statistical significance.
+

@@ -1,0 +1,333 @@
+---
+output: pdf_document
+---
+
+
+
+# **Alignment**
+
+<br>
+
+The general purpose of alignment QA/QC is to understand the overall alignment quality of the data it is highly recommended to evaluate of the alignment summary before proceeding downstream.  
+
+Mapping is the process of comparing each one of the reads with the reference genome. Bowtie2 package was used to align the reads to the reference genome.   
+
+
+<br><br>
+
+## Mapped Reads Summary
+
+<br>
+
+
+Here, the summary table below gives an overview of alignment performance. This allows for a quick check for the similarity of the alignment quality across all samples within the project and detection of any outlying samples. The information the summary table includes is described below.
+
+
+```{r, include=FALSE}
+
+align<-read_tsv("HTML/Overall_Summary.txt")
+
+align_df<-
+align %>% 
+  mutate(ID=gsub(".\\/(.+)\\/.+", "\\1", File, perl=TRUE)) %>%
+#  mutate_if(is.numeric, funs(comma)) %>% 
+  select(ID, 2:8) 
+
+#align_df
+
+align_df_comma<-
+align %>% 
+  mutate(ID=gsub(".\\/(.+)\\/.+", "\\1", File, perl=TRUE)) %>%
+  mutate_if(is.numeric, funs(comma)) %>% 
+  select(ID, 2:8) 
+
+names(align_df_comma)<- c("ID", "Total R.", "Aligned R.", "UnAligned R.", "Amb. Aligned R.", "NoGenomic R.", "Dup. R.", "Uniq. R.")
+```
+
+
+<!-- \clearpage -->
+
+<!-- \blandscape -->
+
+```{r, results='asis', eval=(knitr::opts_knit$get('rmarkdown.pandoc.to') == 'latex')}
+
+
+
+#kable(align_df_comma, format = "latex", longtable = T, booktabs = T, caption = "Alignment Summary") %>%
+kable(align_df_comma, format = "latex", booktabs = T, caption = "Alignment Summary") %>%
+  kable_styling(latex_options = c("striped", "scale_down", "hold_position")) %>% 
+  footnote(
+           #general = "Column Description of table",
+           alphabet = paste( names(align_df_comma), names(align_df), sep=" : ")[-1]
+)
+
+
+
+cat('\\pagebreak')
+
+```
+
+```{r, results='asis', eval=(knitr::opts_knit$get('rmarkdown.pandoc.to') != 'latex')}
+
+filename_dt="align"
+datatable(align_df_comma, filter = "bottom",
+          extensions = c('Scroller', 'Buttons'),
+          options = list(pageLength = 10,
+                         deferRender = TRUE,
+                         scrollX = TRUE,
+                         scrollY = 200,
+                         scroller = TRUE,
+                         dom = 'Bfrtip',
+                         buttons = list('copy',
+                                        list(extend='excel',filename=filename_dt),
+                                        list(extend='csv',filename=filename_dt)),
+                         columnDefs = list(list(width = '1000px', targets = "_all", className = 'dt-center')
+                         )
+          )
+)
+
+
+```
+
+<!-- \elandscape -->
+<!-- \newpage -->
+
+
+<br>
+
+## Alignment Barplot
+
+<br>
+<br>
+
+
+
+```{r}
+align_df_gather<-
+align_df %>% 
+  select(ID, 4:8) %>% 
+  gather("Type", "Count", 2:6) 
+
+align_type_order <-c("Unaligned Reads",
+                     "Ambiguously Aligned Reads", 
+                     "No Genomic Sequence", 
+                     "Duplicate Reads (removed)", 
+                     "Unique Reads (remaining)"
+                     )
+align_df_gather$Type <- factor(align_df_gather$Type, levels = align_type_order, ordered=TRUE)
+
+```
+
+
+
+```{r}
+par(mfrow=c(2,1))
+```
+
+
+```{r, fig.cap="Absolute value plot"}
+
+align_df_gather %>% 
+  ggplot( aes(ID, Count, fill=Type)) + 
+  geom_bar( stat="identity" ) + 
+  scale_y_continuous( label=unit_format(unit="Mbp", scale=1e-6, digits=1 )) + 
+  labs(x = "Sample ID", y="Number of Reads") + 
+  theme(axis.text.x = element_text(angle=90), legend.position = "top") + 
+  scale_fill_brewer(palette="GnBu") + 
+  guides( fill = guide_legend(ncol=3))
+  
+
+
+```
+
+
+```{r, fig.cap="Relative value plot"}
+
+align_df_gather %>% 
+  ggplot( aes(ID, Count, fill=Type)) + 
+  geom_bar( stat="identity", position = "fill"  ) + 
+  scale_y_continuous( labels= percent_format()) + 
+  labs(x = "Sample ID", y="Number of Reads") + 
+  theme(axis.text.x = element_text(angle=90), legend.position = "top") + 
+  scale_fill_brewer(palette="PuBu") + 
+  guides( fill = guide_legend(ncol=3))
+
+
+```
+
+```{r, results='asis', eval=(knitr::opts_knit$get('rmarkdown.pandoc.to') == 'latex')}
+cat('\\pagebreak')
+```
+
+<br>
+
+## Mean Depth Summary
+
+<br>
+
+```{r, include=FALSE}
+cov_summary<-read_tsv("DepthCoverage/CoverageSummary")
+
+str(cov_summary)
+cov_summary_table<-
+cov_summary %>% 
+  dplyr::select(ID, depth, ontarget_rate, bases) %>% 
+  mutate(depth=round(depth,1), 
+         ontarget_rate=round(ontarget_rate,2), 
+         bases = as.numeric( sprintf("%.2f", bases/1000000000) ) ) %>%
+#  mutate(depth=round(depth,1), ontarget_rate=round(ontarget_rate,2), bases = sprintf("%.2f Gbp", bases/1000000000)) %>% 
+  dplyr::rename(Depth=depth, Coverage=ontarget_rate, "OnTarget_Bases(Gb)"=bases)
+
+
+```
+
+
+```{r, results='asis', eval=(knitr::opts_knit$get('rmarkdown.pandoc.to') == 'latex')}
+
+kable(cov_summary_table, format = "latex", longtable = T, booktabs = T, caption = "Target Coverage Summary") %>%
+  kable_styling(latex_options = c("striped", "scale_down"))
+
+cat('\\pagebreak')
+```
+
+
+```{r, results='asis', eval=(knitr::opts_knit$get('rmarkdown.pandoc.to') != 'latex')}
+filename_dt="mean_depth"
+datatable(cov_summary_table, filter = "bottom",
+          extensions = c('Scroller', 'Buttons'),
+          options = list(pageLength = 10,
+                         deferRender = TRUE,
+                         scrollX = TRUE,
+                         scrollY = 200,
+                         scroller = TRUE,
+                         dom = 'Bfrtip',
+                         buttons = list('copy',
+                                        list(extend='excel',filename=filename_dt),
+                                        list(extend='csv',filename=filename_dt)),
+                         columnDefs = list(list(width = '1000px', targets = "_all", className = 'dt-center')
+                         )
+          )
+)
+
+
+
+```
+
+
+<br>
+
+## Mean Depth Barplot
+
+<br>
+
+```{r, fig.cap="Mean Depth per Sample"}
+#cov_summary
+ggplot(cov_summary, aes(reorder(ID, depth), depth, fill=ID)) + 
+  geom_bar(stat="identity") + 
+  #geom_point( shape=21, stroke=2) +
+  theme(axis.text.x = element_text(angle=90), legend.position = "none") + 
+  labs(y="Depth (X)") + 
+  #geom_text_repel(aes(label=round(depth,1)))
+  geom_text(aes(label=round(depth,0)), vjust=1.5, col="white", size=3) + 
+  labs( x="Sample ID")
+#  coord_flip()
+
+```
+
+
+```{r, results='asis', eval=(knitr::opts_knit$get('rmarkdown.pandoc.to') == 'latex')}
+cat('\\pagebreak')
+```
+
+
+
+<br>
+
+## Target Coverage by Depth
+
+<br>
+<br>
+
+### Coverage plot
+
+<br>
+
+Target Coverage Rate by mean depth. Each point locate on 50 depth.  
+
+
+
+```{r read_CoverageByDepth, include=FALSE}
+cov <- read_tsv("DepthCoverage/CoverageByDepth")
+```
+
+```{r}
+
+cov %>% 
+  dplyr::filter (depth < 300) %>% 
+  ggplot( aes(depth, total_cover_rate, col=ID)) +  
+  #geom_point(alpha=.5) + 
+  geom_line(alpha=.5) +
+  geom_point(data=(cov %>% filter(depth == 50)), aes(y=total_cover_rate), shape=18) + 
+  geom_text(data=(cov %>% filter(depth == 50)), aes(y=total_cover_rate, label=total_cover_rate), vjust=2.5, size=3) + 
+  labs(x="Depth (X) ", y="Target Coverage (%)") + 
+  facet_wrap(~ID, ncol=4 ) + 
+  theme(legend.position = "none") 
+  
+```
+
+
+```{r, results='asis', eval=(knitr::opts_knit$get('rmarkdown.pandoc.to') == 'latex')}
+cat('\\pagebreak')
+```
+
+\blandscape
+
+<br>
+
+### Taraget Coverage
+
+<br>
+
+
+```{r}
+breaks=c(1,5,seq(10,100,10), seq(100,500,100) )
+
+cov_table<-
+cov %>% 
+  dplyr::filter (depth %in% breaks) %>% 
+  dplyr::select(ID, depth, total_cover_rate) %>% 
+  spread(depth, total_cover_rate)
+
+```
+
+```{r, results='asis', eval=(knitr::opts_knit$get('rmarkdown.pandoc.to') == 'latex')}
+
+kable(cov_table, format = "latex", booktabs = T, caption = "Coverage of Depth") %>%
+  kable_styling(latex_options = c("striped", "scale_down", "hold_position")) # %>% landscape()
+
+cat('\\pagebreak')
+
+```
+
+
+```{r, results='asis', eval=(knitr::opts_knit$get('rmarkdown.pandoc.to') != 'latex')}
+
+filename_dt="DepthCov"
+datatable(cov_table, filter = "bottom",
+          extensions = c('Scroller', 'Buttons'),
+          options = list(pageLength = 10,
+                         deferRender = TRUE,
+                         scrollX = TRUE,
+                         scrollY = 200,
+                         scroller = TRUE,
+                         dom = 'Bfrtip',
+                         buttons = list('copy',
+                                        list(extend='excel',filename=filename_dt),
+                                        list(extend='csv',filename=filename_dt)),
+                         columnDefs = list(list(width = '1000px', targets = "_all", className = 'dt-center')
+                         )
+          )
+)
+```
+
+\elandscape

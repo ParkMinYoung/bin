@@ -1,0 +1,12 @@
+apt-format-result --export-call-format base_call --export-plink-file out --annotation-file /home/adminrig/workspace.min/AFFX/untested_library_files/Axiom_KORV1_0.na34.annot.csv --batch-folder /home/adminrig/workspace.pyg/works/2016/models/160523_3000_read_models/Analysis/Analysis.3719.20160523/batch 
+
+apt-format-result --calls-file AxiomGT1.calls.txt --annotation-file $LIB/Axiom_KORV1_0.na34.annot.db --export-vcf-file output.vcf --snp-list-file /home/adminrig/workspace.min/AFFX/untested_library_files/KORV1_0.HLA/HLA.probeset --snp-identifier-column Affy_SNP_ID
+
+
+
+
+
+apt-format-result --calls-file AxiomGT1.calls.txt --annotation-file /home/adminrig/workspace.min/AFFX/untested_library_files/Axiom_KORV1.1/Axiom_KORV1_1.na35.annot.db --export-vcf-file output.vcf --snp-list-file /home/adminrig/workspace.pyg/DNA_GPS/170710_GPS_168S_gene/Results/bymin/Map.AX --snp-identifier-column Affy_SNP_ID
+
+
+

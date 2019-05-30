@@ -1,0 +1,11 @@
+qsub_wrapper.sh fastqc high.q 1 dependent_job_id n /home/adminrig/src/ngs-analysis/pipelines/ngs.pipe.fastqc.ge.sh 2  
+
+job_id
+queue
+threads
+none
+sync
+script
+threds
+file list
+

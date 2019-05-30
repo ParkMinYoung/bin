@@ -1,0 +1,188 @@
+---
+params:
+    dynamictitle: "Concordant Rate & DP,GQ simulation"
+    reportdate: !r Sys.Date()
+output: 
+        html_notebook:
+#         html_document:
+         toc: true
+         toc_float: true
+         depth: 3
+#         number_section: true
+#         theme: readable
+         theme: united
+         highlight: tango
+#         fig_caption: true
+#         df_print: paged
+#         df_print: tibble
+#         df_print: kable
+         fig_caption: yes 
+         fig_retina: 1 
+#         code_download: false
+         
+#kable
+title: "`r params$dynamictitle`"
+#date: "`r params$reportdate`"
+author: Park MinYoung(minmin@dnalink.com) in BI, DNA Link
+    
+---
+
+***
+
+```{r setting, echo=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, fig.width=7)
+options(DT.options = list(pageLength = 10, language = list(search = 'Filter:')))
+#setwd("/home/adminrig/workspace.min/HiSeq_vs_NovaSeq")
+source("/home/adminrig/src/short_read_assembly/bin/R/Min.R")
+```
+
+```{r library, include=FALSE}
+library(pacman)
+p_load(ggplot2, tidyr, dplyr, DT, scales, readr)
+options(knitr.table.format = "html") 
+library(DataExplorer)
+
+library(knitr)
+library(kableExtra)
+options(knitr.table.format = "html") 
+
+
+theme_set( theme_grey())
+
+# data_status()
+# pkg_clean()
+# rm(list=ls())
+# http://rstudio.github.io/DT/extensions.html
+```
+
+
+<br>
+
+# DP & GQ simulation Analysis 
+
+<br>
+
+**simulation criteria**  
+
+ - DP : 14 [1,5,10,15,20,25,30,40,50,60,70,80,90,100] 
+ - GQ : 11 [1,10,20,30,40,50,60,70,80,90,99]
+ - Number of Analysis : nDP X nGQ : 14 X 11 = 154
+ 
+각 pair 별로 154 개의 분석 조건이 셋팅되고, 각 분석 별로 해당하는 concordant rate 을 계산   
+
+
+가령,  DP 30, GQ 50 인 경우는,  
+각 pair 의 시료의 variant call 이 해당 조건을 만족하는 지 여부를 테스트하고, 만족한다면 일치율(corcordant rate) 계산에 적용시킨다.   
+
+
+만약, 분석되는 시료의 seq. 양이 low level 이라면, call 된 variant 의 Depth 가 낮을 수 있고, 위와 같은 Depth 조건상 filter out 된다면, 비교 가능한 전체 수가 작아져서 정확한 분석이 어렵게 된다. 그러므로 분석 시료의 seq. 양에 의존적으로 DP, GQ 등이 고려되야 한다.   
+
+
+아래 plot 의 경우 각 pair 별로 154 개의 분석이 수행된 후,  
+다음과 같은 데이터가 얻어진다.  
+ 
+ - DP, GQ 조건을 만족하는 비교 가능한 variants(Nonmissing_calls)
+ - Concordant Rate(ConcordantRate)
+
+plot 의 X axis 는 DP(Depth), Y axis 는 GQ(Genotype Quality) 이다.  
+각 point 는 anlaysis 이며 color 와 size 는 다음과 같다.  
+
+ - color : concordant rate(ConcordantRate) 을 의미하며, low(blue) 에서 high(red) 를 나타낸다.  
+ - size : 비교 가능한 variants(Nonmissing_calls) 를 의미하며, 사이즈가 클수록 조건을 만족하는 variants 수가 많음을 의미한다.  
+
+green circle 은 각 analysis(point) 의 concordant rate 이 99.5% 이상인지를 여부를 알 수 있게 해주며, circle의 사이즈 또한 40K 로 고정되어 있어서 비교 가능한 variants(Nonmissing_calls)수도 가늠이 가능하다.  
+
+
+```{r, include=FALSE}
+df<-read_tsv("ConcordantRate")
+```
+
+
+```{r}
+df %>% 
+  mutate( DP = gsub(".+\\.(\\d+)\\.\\d+$", "\\1", A, perl=T) %>% as.numeric(),
+          GQ = gsub(".+\\.\\d+\\.(\\d+)$", "\\1", A, perl=T)%>% as.numeric(),
+          #Seq=as.numeric(gsub(".+_(\\d+)M_.+", "\\1", ID, perl=T)) * 200000000, 
+          #SeqGb=factor(Gbp(Seq), levels=c("3 ","5 ","10 ","15 ","20 "), ordered = TRUE)
+          #SeqGb=ID  
+
+          ) -> df_step1
+
+DPs <- as.numeric( unique(df_step1$DP) ) %>% sort
+GQs <- as.numeric( unique(df_step1$GQ) ) %>% sort
+
+df_step1 %>% 
+  mutate(DP = factor(DP, levels = DPs, ordered = T),
+         GQ = factor(GQ, levels = GQs, ordered = T)
+         ) ->df_step1
+```
+
+```{r, include=FALSE}
+names(df_step1)
+```
+
+<br>
+
+# Anlaysis Summary
+
+<br>
+
+
+```{r, fig.width=12, fig.height=15}
+cols = colorRampPalette( RColorBrewer::brewer.pal(9,"RdYlBu") )( 30 )
+
+df_step1 %>% 
+  ggplot( aes(DP, GQ )) + 
+  geom_point(aes(col=ConcordantRate, size=Nonmissing_calls)) +
+  geom_point(data=df_step1 %>% filter(ConcordantRate >= 99.5), shape=21, col="green", size=6, stroke=2 ) + 
+  #geom_text(aes(label = round(ConcordantRate,1)), size=3 ) + 
+  scale_color_gradientn(colours = rev(cols) ) + 
+  facet_wrap(~ID, ncol = 2) + 
+  min_theme_black
+```
+
+
+<br>
+
+# Anlaysis DP=5 & GQ=60
+
+<br>
+
+
+```{r, results="asis"}
+kable(df_step1 %>% filter(DP==5, GQ==60) %>% select(ID, everything())) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+```
+
+
+<br>
+
+# Anlaysis Summary Table
+
+<br>
+
+```{r}
+
+filename_dt="ConcSimSummary"
+datatable(df_step1 %>% select(ID, everything()),
+          extensions = c('Scroller', 'Buttons'),
+          options = list(
+          #autoWidth = TRUE,
+          deferRender = TRUE,
+          scrollX = TRUE,
+          scrollY = 200,
+          scroller = TRUE,
+          dom = 'Bfrtip',
+          buttons = list('copy',
+                     list(extend='excel',filename=filename_dt),
+                     list(extend='csv',filename=filename_dt)),
+          lengthMenu = c( 10, 15, 20, 100),
+          columnDefs = list(list(width = '1000px', targets = "_all", className = 'dt-center')
+            )
+
+          )
+)
+
+```
+
+

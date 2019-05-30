@@ -1,0 +1,22 @@
+args <- commandArgs(TRUE)
+res <- try(install.packages(args))
+if(inherits(res, "try-error")) q(status=1) else q()
+
+R -e 'install.packages(c("package1", "package2"))' # install to default location. 
+sudo R -e 'install.packages(c("package1", "package2"), lib="/usr/local/lib/R/site-library")' # install to location that requires root.
+
+R < scriptName.R --no-save  
+
+
+for (i in unique(df$Effect) ){
+  
+  df_i<-
+  df %>%
+    dplyr::filter( Effect == i )
+  
+  g1 <- ggplot(df_i, aes(MAF, fill=ConversionType)) + 
+          geom_histogram(binwidth=0.01, size=.2) + 
+          facet_wrap(~ConversionType, ncol=4)
+  ggsave(g1, filename=paste(i, "png", sep="."))
+}
+

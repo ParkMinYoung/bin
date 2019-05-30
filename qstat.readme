@@ -1,0 +1,152 @@
+# http://www.dnalinklabs.com/wiki/display/DNBI/Cluster_qstat?src=search
+# http://marc2-doc.hrz.uni-marburg.de/trac/wiki/Marc2_UserGuide/2_BatchSystem
+# https://sites.google.com/site/anshulkundaje/inotes/programming/clustersubmit/sun-grid-engine
+#
+# node E status 
+as root 
+qmod -c $(qstat -f | grep E$ | awk '{print $1}' | tr "\n" " ")
+qmod -c high.q@cp01-20
+qmod -c '*'
+
+qstat -g c ## main
+qstat -g t
+
+qstat -ext
+qstat -pri
+qstat -explain E
+qstat -ext
+qstat -r
+
+
+qhost -j
+qhost -q
+
+qconf -spl # show pe list
+
+qrsh -q mid.q@cp02-01.local -pe orte 24
+qrsh -q utl.q@cp04-15.local -pe orte 72
+qrsh -q utl.q -pe orte 72
+
+
+qsub -N test -l hostname=cp01-0*.local ./date.SGE.sh "test" "test" test
+#qsub -q *@machinegroup1-n*,*@machinegroup2-n*,*@machinegroup3-n*,*@machinegroup4-n*, ... myLowPrioArrayjob.q
+qsub -q high@cp01-1*.local myscript
+qstat -j 115 -explain E
+qstat -ext -u '*'
+qstat -F slots,h_vmem
+qacct -o adminrig -d 2
+qalter -q em.q@cp01-24.local 2848529
+qalter -q em.q@cp01-24.local 2848529 -pe orte 30
+qalter -pe make 2  2859534
+
+qstat -f -u adminrig | grep qw | awk '{print $1}' | xargs -i qalter -q all.q {}
+
+
+# qstat command
+
+        [-cb]                             view additional binding specific parameters
+        [-ext]                            view additional attributes
+        [-explain a|c|A|E]                show reason for c(onfiguration ambiguous), a(larm), suspend A(larm), E(rror) state
+        [-f]                              full output
+        [-F [resource_attributes]]        full output and show (selected) resources of queue(s)
+        [-g {c}]                          display cluster queue summary
+        [-g {d}]                          display all job-array tasks (do not group)
+        [-g {t}]                          display all parallel job tasks (do not group)
+        [-help]                           print this help
+        [-j job_identifier_list ]         show scheduler job information
+        [-l resource_list]                request the given resources
+        [-ne]                             hide empty queues
+        [-pe pe_list]                     select only queues with one of these parallel environments
+        [-q wc_queue_list]                print information on given queue
+        [-qs {a|c|d|o|s|u|A|C|D|E|S}]     selects queues, which are in the given state(s)
+        [-r]                              show requested resources of job(s)
+        [-s {p|r|s|z|hu|ho|hs|hd|hj|ha|h|a}] show pending, running, suspended, zombie jobs,
+                                          jobs with a user/operator/system/array-dependency hold, 
+                                          jobs with a start time in future or any combination only.
+                                          h is an abbreviation for huhohshdhjha
+                                          a is an abbreviation for prsh
+        [-t]                              show task information (implicitly -g t)
+        [-u user_list]                    view only jobs of this user
+        [-U user_list]                    select only queues where these users have access
+        [-urg]                            display job urgency information
+        [-pri]                            display job priority information
+        [-xml]                            display the information in XML-Format
+
+
+# qsub command
+
+In a shell script, you can set these options in lines that begin with #$ or pass them along with the qsub command
+
+-q <queue> --- set the queue
+-V --- will pass all environment variables to the job
+-v var[=value]  --- will specifically pass environment variable 'var' to the job
+-b y --- allow command to be a binary file instead of a script
+-w e --- verify options and abort if there is an error
+-N <jobname> : name of the job
+-l h_vmem=size --- specify the amount of memory required (e.g. 3G or 3500M) (NOTE: This is memory per processor slot. So if you ask for 2 processors total memory will be 2 X hvmem_value)
+-l h_rt=hh:mm:ss --- specify the maximum run time (hours, minutes and seconds)
+-l s_rt=hh:mm:ss --- specify the soft run time limit (hours, minutes and seconds) - Remember to set both s_rt and h_rt
+-pe shm <n_processors> --- run a parallel job using pthreads or other shared-memory API
+-cwd : Move to current working directory
+-wd <dir>  : Set working directory for this job
+-j [y/n] : whether you want to merge output and error log files
+-o <output_logfile>
+-e <error_logfile>
+-m ea :Will send email when job ends or aborts
+-P <projectName> --- set the job's project
+-M <emailaddress> :Email address to send email to
+-t <start>-<end>:<incr> : submit a job array with start index <start>, stop index <end> in increments using <incr>
+-hold_jid <comma separated list of job-ids, can also be a job id pattern such as 2722*> : will start the current job/job -array only after completion of all jobs in the comma separated list
+-hold_jid_ad <job array id, pattern or name>: will start the current job in a job array only after completion of corresponding job in the job array in <>
+
+The index numbers will be exported to the job tasks via the environment variable $SGE_TASK_ID. The option arguments n, m and s will be available through the environment variables
+$SGE_TASK_FIRST, $SGE_TASK_LAST and $SGE_TASK_STEPSIZE.
+
+Other Options
+  [-a date_time]                           request a start time
+  [-ac context_list]                       add context variable(s)
+  [-ar ar_id]                              bind job to advance reservation
+  [-A account_string]                      account string in accounting record
+  [-binding [env|pe|set] exp|lin|str]      binds job to processor cores
+  [-c n s m x]                             define type of checkpointing for job
+             n           no checkpoint is performed.
+             s           checkpoint when batch server is shut down.
+             m           checkpoint at minimum CPU interval.
+             x           checkpoint when job gets suspended.
+             <interval>  checkpoint in the specified time interval.
+  [-ckpt ckpt-name]                        request checkpoint method
+  [-clear]                                 skip previous definitions for job
+  [-C directive_prefix]                    define command prefix for job script
+  [-dc simple_context_list]                delete context variable(s)
+  [-dl date_time]                          request a deadline initiation time
+  [-h]                                     place user hold on job
+  [-hard]                                  consider following requests "hard"
+  [-help]                                  print this help
+  [-i file_list]                           specify standard input stream file(s)
+  [-js job_share]                          share tree or functional job share
+  [-jsv jsv_url]                           job submission verification script to be used
+  [-masterq wc_queue_list]                 bind master task to queue(s)
+  [-notify]                                notify job before killing/suspending it
+  [-now y[es]|n[o]]                        start job immediately or not at all
+  [-p priority]                            define job's relative priority
+  [-R y[es]|n[o]]                          reservation desired
+  [-r y[es]|n[o]]                          define job as (not) restartable
+  [-sc context_list]                       set job context (replaces old context)
+  [-shell y[es]|n[o]]                      start command with or without wrapping <loginshell> -c
+  [-soft]                                  consider following requests as soft
+  [-sync y[es]|n[o]]                       wait for job to end and return exit code
+  [-S path_list]                           command interpreter to be used
+  [-verify]                                do not submit just verify
+  [-w e|w|n|v|p]                           verify mode (error|warning|none|just verify|poke) for jobs
+  [-@ file]                                read commandline input from file
+
+
+# suspend
+qmod -sj jobs
+
+# un suspend
+qmod -usj jobs
+
+
+
+

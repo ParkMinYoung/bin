@@ -1,0 +1,1 @@
+/home/adminrig/Genome/1000Genomes/20130502/1000GP_Phase3.VCF/1000GP_Phase3.VCF2Plink/QCPlink/plinkMerge/byShin/plot/test/PCA.v2.R

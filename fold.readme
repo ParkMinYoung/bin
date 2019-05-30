@@ -1,0 +1,2 @@
+sed -n '4~4'p aln.end1.fq | head -10000  | fold -w1 | sort | uniq -c | sort -nr -k1,1 
+

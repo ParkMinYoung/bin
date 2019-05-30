@@ -1,0 +1,25 @@
+
+## 1 sample HC
+## /wes/2017/20170511_YWMC_KimSangha.WES.V5.1Sample/Alignment
+
+
+# excute time : 2017-06-12 16:08:38 : link other wes result using V5 kit
+ln -s /wes/2017/20170221_SKKU_ChoSungkwon.WES.V5.33Samples/Alignment/*HC.raw.variants.g.vcf* .
+
+
+# excute time : 2017-06-12 16:08:59 : 
+./Haplotype.gatk3.ONEproject.inMultiBatches.persample.sh 20170511_YWMC_KimSangha B3x V5 Y "20170511_YWMC_KimSangha|/hiseq_ds2/hiseq_2/170608_D00574_0261_ACALCGANXX/Data/Intensities/BaseCalls"
+
+
+# excute time : 2017-06-13 10:27:57 : 
+/home/wes/src/wes-analysis/modules/JS_report/preparation_WES.sh 20170511_YWMC_KimSangha $PWD /hiseq_ds2/hiseq_2/170608_D00574_0261_ACALCGANXX/Data/Intensities/BaseCalls
+
+
+# excute time : 2017-09-26 14:57:21 : 
+mv 20170511_YWMC_KimSangha.*vcf trash2
+./Haplotype.gatk3.ONEproject.inMultiBatches.persample.2.sh 20170511_YWMC_KimSangha_resend HG V5 N "20170511_YWMC_KimSangha_resend|/hiseq_ds2/hiseq_2/170608_D00574_0261_ACALCGANXX/Data/Intensities/BaseCalls"
+
+
+
+
+

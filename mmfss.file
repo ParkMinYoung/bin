@@ -1,0 +1,1 @@
+perl -F'\t' -MMin -ane'chomp@F;if(/^probeset/){@head=@F}else{ map { $h{$F[0]}{$head[$_]} = $F[$_] } 1..$#F } }{ mmfss("matrix.mmfss",%h)' $@

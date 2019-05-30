@@ -1,0 +1,8 @@
+# http://cancan.cshl.edu/labmembers/gordon/crosstab/commandline.html
+
+
+crosstab -r '$6' -c '$6' -d 'average($8)' /home/adminrig/workspace.min/AFFX/Axiom_KORV1.1/AnalysisResult/Summary.txt 
+
+crosstab -r '$3' -c '$7' -d 'average($8)' /home/adminrig/workspace.min/AFFX/Axiom_KORV1.1/AnalysisResult/Summary.txt 
+
+crosstab -r '$3' -c '$100'  -d 'average($8)' /home/adminrig/workspace.min/AFFX/Axiom_KORV1.1/AnalysisResult/Summary.txt

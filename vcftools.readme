@@ -1,0 +1,13 @@
+vcftools --vcf AMC_PMRA.vcf --hwe 0.001 --max-missing 0.95 --out AMC_PMRA_QC --recode
+
+## two sample extraction
+vcftools --vcf Novaseq.selectsample.vcf --indv NA12878_100M_L3 --indv NA12878_100M_L4 --minGQ 0 --minDP 0 --maxDP 10000 --out test2 --recode
+vcftools.extract.sample.sh XXX.vcf IDs("A,B,C") DP[10] GQ[90]
+
+## make plink
+vcftools --vcf $vcf --plink --out $NAME
+
+## concordant rate
+vcftools --vcf $1 --diff $2 --diff-site-discordance --diff-indv-discordance --diff-discordance-matrix --remove-indels --remove-filtered LowQual --minGQ 50 --minDP 10 --maxDP 10000
+
+

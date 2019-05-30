@@ -1,0 +1,2 @@
+curl https://github.com/RealTimeGenomics/rtg-tools/releases/download/3.6.2/rtg-tools-3.6.2-linux-x64.zip -o rtg-tools-3.6.2-linux-x64.zip
+

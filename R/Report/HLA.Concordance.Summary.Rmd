@@ -1,0 +1,307 @@
+---
+title: "HLA Concordance"
+output:
+  html_notebook: default
+---
+
+***
+아산 병원에서 제공해준 96 개 Trueset 과 HLA Analysis Suite 상에서 나온 결과를 비교 분석  
+```{r}
+#setwd("/home/adminrig/workspace.min/HLA.Analysis/PMRA.AMC/AMC_TrueSet")
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE )
+
+```
+
+```{r}
+library(pacman)
+p_load(ggplot2, dplyr, tidyr, scales, plotly)
+
+df<-read.table("HLA_4dig.AnalysisResult.Conc.4digit", header=T, sep="\t")
+
+#str(df)
+#summary(df)
+#View(df)
+```
+
+```{r}
+ # filter(df,MatchCount<2 ) %>% 
+ #   View()
+
+df1<-
+filter(df, X1_QScore>=0.7, X2_QScore>=0.7)
+
+summarise(df, ComparableCount=sum(Matchable), MatchCount=sum(MatchCount), Concordance=round( MatchCount/ComparableCount*100, 2))
+
+```
+
+제공된 trueset 상 A, B 두 개의 결과가 있는 것만 대상으로 해서 match, mismatch 일 경우의 유전자별 Quality Score 의 분포를 확인.  
+
+```{r, fig.height=4, fig.width=10}
+
+A<-
+filter(df, Matchable==2) %>% 
+select(ID, X1_QScore, A_match, LABEL) %>% 
+  rename(QScore=X1_QScore, match=A_match) 
+  
+B<-
+filter(df, Matchable==2) %>% 
+select(ID, X2_QScore, B_match, LABEL) %>% 
+  rename(QScore=X2_QScore, match=B_match) 
+  
+AB <- 
+  bind_rows(A,B)
+
+capitalize <- function(string) {
+  substr(string, 1, 1) <- toupper(substr(string, 1, 1))
+  string
+}
+
+#str(AB)
+AB<-
+  mutate(AB, match=ifelse(match==0, "mismatch", "match"))  
+
+#filter(AB, LABEL=="C", match=="mismatch")
+
+ggplotly(
+ggplot(AB, aes(LABEL, QScore, col=match)) + 
+  geom_point() +
+  facet_grid(. ~match, labeller = labeller(match = capitalize)  )
+)
+```
+
+
+샘플, 유전자별 match, mismatch 에 대한 결과  
+
+```{r, fig.height=12, fig.width=10}
+
+ggplotly(
+ggplot(AB, aes(ID, QScore, col=match)) + 
+  geom_point() +
+  facet_grid(LABEL ~. , scales="free" )
+)
+
+```
+
+
+
+<!-- 유전자별 Concordant Rate, 2개일 경우 -->
+
+<!-- ```{r} -->
+<!-- group_by(df, LABEL) %>%   -->
+<!--   filter(Matchable==2) %>%  -->
+<!--   summarise(ComparableCount=sum(Matchable), MatchCount=sum(MatchCount), MisCount=(ComparableCount-MatchCount), Concordance=round( MatchCount/ComparableCount*100, 2)) -->
+
+<!-- ``` -->
+
+
+유전자별 Concordant Rate, 전체
+
+```{r}
+group_by(df, LABEL) %>%  
+  summarise(ComparableCount=sum(Matchable), MatchCount=sum(MatchCount), MisCount=(ComparableCount-MatchCount), Concordance=round( MatchCount/ComparableCount*100, 2))
+
+```
+
+유전자별 Matchable Count 와 Match Conut  
+
+```{r}
+
+group_by(df, Matchable, MatchCount, LABEL ) %>% 
+  count() %>% 
+  spread( LABEL, n)
+
+```
+
+
+
+Match, MisMatch 일 경우 각각의 Quality Score 의 분포  
+
+```{r, fig.height=12, fig.width=10}
+
+ggplot(AB, aes(QScore, col=match)) + 
+  geom_histogram() +
+  facet_grid(LABEL ~match, labeller = labeller(match = capitalize))
+
+```
+
+제공된 trueset 상 A, B 두 개의 결과가 있는 것만 대상으로 한 것이며,
+match count 는 최대 2개 최소 0개까지 분포할 때, 이들의 Quality Score 의 scatter plot  
+
+```{r, fig.height=10, fig.width=10}
+
+#str(df)
+
+df$MatchCount<-as.factor(df$MatchCount)
+
+filter(df, Matchable==2) %>% 
+#ggplot(df, aes(X1_QScore,X2_QScore, col=MatchCount) ) +
+  ggplot( aes(X1_QScore,X2_QScore, col=MatchCount) ) + 
+  geom_point() + 
+  facet_grid(LABEL ~ MatchCount)
+```
+
+
+제공된 trueset 상 A, B 한 개 이상의 결과가 있는 것만 대상으로 한 것이며,
+match count 는 최대 2개 최소 0개까지 분포할 때, 이들의 Quality Score 의 scatter plot  
+
+```{r, fig.height=10, fig.width=10}
+
+ggplot(df, aes(X1_QScore,X2_QScore, col=MatchCount) ) +
+  geom_point() + 
+  facet_grid(LABEL ~ MatchCount)
+```
+
+
+### Qscore >= 0.7 
+
+
+```{r}
+ # filter(df,MatchCount<2 ) %>% 
+ #   View()
+
+df<-read.table("HLA_4dig.AnalysisResult.Conc.4digit", header=T, sep="\t")
+
+df<-filter(df, X1_QScore>=0.7, X2_QScore>=0.7)
+
+summarise(df, ComparableCount=sum(Matchable), MatchCount=sum(MatchCount), Concordance=round( MatchCount/ComparableCount*100, 2))
+
+```
+
+제공된 trueset 상 A, B 두 개의 결과가 있는 것만 대상으로 해서 match, mismatch 일 경우의 유전자별 Quality Score 의 분포를 확인.  
+
+```{r, fig.height=4, fig.width=10}
+
+A<-
+filter(df, Matchable==2) %>% 
+select(ID, X1_QScore, A_match, LABEL) %>% 
+  rename(QScore=X1_QScore, match=A_match) 
+  
+B<-
+filter(df, Matchable==2) %>% 
+select(ID, X2_QScore, B_match, LABEL) %>% 
+  rename(QScore=X2_QScore, match=B_match) 
+  
+AB <- 
+  bind_rows(A,B)
+
+capitalize <- function(string) {
+  substr(string, 1, 1) <- toupper(substr(string, 1, 1))
+  string
+}
+
+#str(AB)
+AB<-
+  mutate(AB, match=ifelse(match==0, "mismatch", "match"))  
+
+#filter(AB, LABEL=="C", match=="mismatch")
+
+ggplotly(
+ggplot(AB, aes(LABEL, QScore, col=match)) + 
+  geom_point() +
+  facet_grid(. ~match, labeller = labeller(match = capitalize)  )
+)
+```
+
+
+샘플, 유전자별 match, mismatch 에 대한 결과  
+
+```{r, fig.height=12, fig.width=10}
+
+ggplotly(
+ggplot(AB, aes(ID, QScore, col=match)) + 
+  geom_point() +
+  facet_grid(LABEL ~. , scales="free" )
+)
+
+```
+
+
+
+<!-- 유전자별 Concordant Rate, 2개일 경우 -->
+
+<!-- ```{r} -->
+<!-- group_by(df, LABEL) %>%   -->
+<!--   filter(Matchable==2) %>%  -->
+<!--   summarise(ComparableCount=sum(Matchable), MatchCount=sum(MatchCount), MisCount=(ComparableCount-MatchCount), Concordance=round( MatchCount/ComparableCount*100, 2)) -->
+
+<!-- ``` -->
+
+
+유전자별 Concordant Rate, 전체
+
+```{r}
+group_by(df, LABEL) %>%  
+  summarise(ComparableCount=sum(Matchable), MatchCount=sum(MatchCount), MisCount=(ComparableCount-MatchCount), Concordance=round( MatchCount/ComparableCount*100, 2))
+
+```
+
+유전자별 Matchable Count 와 Match Conut  
+
+```{r}
+
+group_by(df, Matchable, MatchCount, LABEL ) %>% 
+  count() %>% 
+  spread( LABEL, n)
+
+```
+
+
+
+Match, MisMatch 일 경우 각각의 Quality Score 의 분포  
+
+```{r, fig.height=12, fig.width=10}
+
+ggplot(AB, aes(QScore, col=match)) + 
+  geom_histogram() +
+  facet_grid(LABEL ~match, labeller = labeller(match = capitalize))
+
+```
+
+제공된 trueset 상 A, B 두 개의 결과가 있는 것만 대상으로 한 것이며,
+match count 는 최대 2개 최소 0개까지 분포할 때, 이들의 Quality Score 의 scatter plot  
+
+```{r, fig.height=10, fig.width=10}
+
+#str(df)
+
+df$MatchCount<-as.factor(df$MatchCount)
+
+filter(df, Matchable==2) %>% 
+#ggplot(df, aes(X1_QScore,X2_QScore, col=MatchCount) ) +
+  ggplot( aes(X1_QScore,X2_QScore, col=MatchCount) ) + 
+  geom_point() + 
+  facet_grid(LABEL ~ MatchCount)
+```
+
+
+제공된 trueset 상 A, B 한 개 이상의 결과가 있는 것만 대상으로 한 것이며,
+match count 는 최대 2개 최소 0개까지 분포할 때, 이들의 Quality Score 의 scatter plot  
+
+```{r, fig.height=10, fig.width=10}
+
+ggplot(df, aes(X1_QScore,X2_QScore, col=MatchCount) ) +
+  geom_point() + 
+  facet_grid(LABEL ~ MatchCount)
+```
+
+
+
+```{r}
+
+```
+
+<!-- ***   -->
+<!-- ### To Do -->
+
+<!-- QC : Marker CR >= 95 & HWE <= 0.001 -->
+<!-- SNPolisher : SNPolisher -->
+
+<!-- + PMRA 96 one batch (ok)  -->
+<!-- + PMRA 96 one batch + QC (-) -->
+<!-- + PMRA 96 one batch + QC + SNPolisher(-)  -->
+<!-- + PMRA 288 one batch (-) -->
+<!-- + PMRA 288 one batch + QC (-) -->
+<!-- + PMRA 288 one batch + QC + SNPolisher(-)  -->
+
+
+<!-- QC, SNPoliser, Cluster QC 를 진행 후 각 유전자 별 제외 마커 정리 -->

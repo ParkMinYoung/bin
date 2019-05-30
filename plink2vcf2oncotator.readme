@@ -1,0 +1,30 @@
+
+apt-format-result --calls-file AxiomGT1.calls.txt --annotation-file /home/adminrig/workspace.min/AFFX/untested_library_files/Axiom_KORV1.1/Axiom_KORV1_1.na35.annot.db --export-vcf-file output.vcf --snp-list-file /home/adminrig/workspace.pyg/DNA_GPS/170710_GPS_168S_gene/Results/bymin/Map.AX --snp-identifier-column Affy_SNP_ID
+
+
+
+
+perl -F'\t' -anle'
+if(@ARGV){ 
+        $h{$F[1]}=$F[0]
+}else{  
+        if(/^#/){
+               print join "\t", @F[0..9]
+        }else{
+               $F[2]=$h{$F[2]}; 
+
+               if( $F[2] eq "AX-83052912" ){
+                @F[3,4] = ("C","A");
+               }
+
+               print join "\t", @F[0..9] 
+        } 
+}' Axiom_KORV1_1.na35.annot.csv.tab output.vcf  > step1.vcf
+
+
+
+ oncotator -v --input_format=VCF --output_format=TCGAMAF --log_name step1.vcf.log --db-dir /home/adminrig/src/ONCOTATOR/oncotator_v1_ds_Jan262014/ step1.vcf step1.maf hg19 
+
+
+
+

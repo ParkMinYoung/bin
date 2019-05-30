@@ -1,0 +1,10 @@
+#!/bin/sh
+
+#
+#$ -cwd 
+#$ -pe make 1
+#$ -j y
+#$ -S /bin/sh
+#$
+#
+ $@ 

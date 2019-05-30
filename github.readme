@@ -1,0 +1,53 @@
+# https://josephkim75.wordpress.com/2012/06/11/git-setting-for-new-project/
+
+
+
+# clone
+git clone https://github.com/ParkMinYoung/KNIH_KORV1_Report.git
+
+
+# excute time : 2016-07-27 14:23:38 : github name register
+git config --global user.name "Park MinYoung" --replace-all 
+
+
+# excute time : 2016-07-27 14:24:23 : github email register
+git config --global user.email "p791227@gmail.com" 
+
+
+# excute time : 2016-07-27 14:24:54 : gibhub password setting
+git config --global credential.helper cache 
+
+
+
+
+# https://gist.github.com/onmoving/3154846
+
+# excute time : 2016-07-27 15:15:04 : multiple value unset
+git config --global --unset-all user.name 
+
+
+# excute time : 2016-07-27 15:15:33 : config list
+git config --global --list 
+
+
+# excute time : 2016-07-27 15:16:04 : register user.name
+git config --global user.name "Park MinYoung" 
+
+
+# excute time : 2016-07-27 15:17:09 : password caching : if below git 1.8 <= ~ < 2.0
+git config --global push.default simple 
+
+git config --global credential.helper 'cache --timeout=3600'
+# https://help.github.com/articles/caching-your-github-password-in-git/
+#git config --global credential.helper cache 
+ git pull
+
+
+#git checkout HEAD~1
+git reset --hard HEAD~1
+git push origin +master
+
+ 
+git checkout master
+http://opendive.blogspot.kr/2015/06/git.html
+

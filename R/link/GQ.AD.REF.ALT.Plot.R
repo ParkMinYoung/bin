@@ -1,0 +1,1 @@
+/home/adminrig/workspace.min/NCC.YoonKyoungA.ParkSangJea.CCP.Somatic.20151012/Germline/Summary/DP30.GQ99/GQ.AD.REF.ALT.Plot.R

@@ -1,0 +1,276 @@
+---
+title: "Axiom Qaulity Control v1"
+output:
+    html_notebook: default
+---
+
+
+***
+
+**삼성병원 홍경수 관련 fixed 3 groups genotype call 을 사용한 분석 결과**
+<br><br>
+
+
+```{r setup, echo=FALSE}
+
+#### envirment setting ####
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE )
+
+```
+
+```{r library, echo=FALSE}
+
+#### library loding ####
+setwd("/home/adminrig/workspace.min/APT_BatchCall_UsingSGE/Axiom_KORV1.0.SSH.HongKyungSu/Simulation/Three")
+
+library(pacman)
+p_load(ggplot2, dplyr, tidyr, plotly)
+
+
+#### data file loading ####
+#df<-read.table("Ps.performance.txt.clusterReview.QC.head", header=T, sep="\t")
+df<-read.table("Ps.performance.txt.clusterReview.QC.head.10k", header=T, sep="\t")
+
+batch_num <-
+unlist( strsplit( as.character( levels(df$Batch) ), ", ") ) %>% 
+  length
+
+#LETTERS[1:batch_num]
+
+
+```
+
+```{r function}
+
+####### function Definition #######
+
+##############################################!
+### GetValueFromCommaSepStr
+##############################################!
+
+GetValueFromCommaSepStr <- function(df, id, comma_values, batch_num, func=min){
+  
+  # https://www.r-bloggers.com/data-frame-columns-as-arguments-to-dplyr-functions/
+  require("dplyr")
+  
+  Value<-
+  df %>% 
+  #head(1000) %>% 
+  select_(id, comma_values  ) %>% 
+  separate_(comma_values, LETTERS[1:batch_num], sep=", ", convert=TRUE) %>% 
+  gather("batch", "value", 2:(batch_num+1)) %>% 
+  group_by_(id) %>% 
+  summarise( func(value, na.rm=TRUE) ) 
+  
+  colnames(Value)<-c("id", "func")
+  
+  Value$func[is.infinite(Value$func)]<-NA
+  return(Value)
+}
+
+##################################################################################################!
+
+
+
+##############################################!
+### GetHist
+##############################################!
+
+GetHist <- function(df, col_name, start=0, end=100, interval=0.5){
+  require("dplyr")
+  
+  HIST<-hist(df[[col_name]], plot=F, breaks=seq(start, end, interval) )
+  HIST_table <- as.data.frame ( cbind(breaks=HIST$breaks[-1], count=HIST$counts) )
+  
+  HIST_summary<-
+    mutate(HIST_table, cum_count=cumsum(count),  percent=round( count/sum(count)*100, 2), cum_percent= round( cumsum(count)/sum(count)*100, 2))
+}
+
+  #hist((df[[col_name]]) )
+  #hist( as.numeric( df[col_name] ) )
+  #HIST<-hist( df[col_name], plot=F )
+  
+  
+  # min(NA, NA, NA, na.rm=T) # == Inf
+  # range( FLD$func[is.finite(FLD$func)] )
+  # round( max( FLD$func[is.finite(FLD$func)] ) )
+
+  #start <- 
+    #df$col_name[is.finite(df[col_name])] %>% 
+    #min() %>% 
+    #round()
+
+  #end <- 
+    #df$col_name[is.finite(df[col_name])] %>% 
+    #max() %>% 
+    #round()
+  
+  #summary(na.omit(df[col_name]) )
+
+#################################################################################################!
+
+
+
+  
+GetSummary <- function(df, col_name){
+  summary(df[col_name])
+}
+
+
+
+
+# max(  unlist( strsplit( as.character( A_Freq ), ",") ) )
+
+# head(df) %>% 
+#   select(probeset_id, A_Freq  ) %>% 
+#   separate(A_Freq, c("A", "B", "C"), sep=", ", convert=TRUE) %>% 
+#   gather("batch", "value", 2:4) %>% 
+#   group_by(probeset_id) %>% 
+#   summarise( max(value))
+#   
+#   #transmute(probeset_id, max(A,B,C))
+
+# summarise_each(ozone, funs(max(., na.rm=TRUE)))
+
+# table( cut(FLD$func, breaks=seq(0,20,0.5) ) ) %>%  as.data.frame()
+
+# df$FP<- substring(df$QC, 1, 4)
+
+
+# floor(num) 
+# ceiling(num) 
+
+```
+
+***mininum FLD Summary***
+```{r FLD}
+FLD<-GetValueFromCommaSepStr(df, "probeset_id", "FLD", batch_num, func=min)
+
+FLD_range <- range(na.omit(FLD$func))
+FLD_summary <- GetHist(FLD, 'func', start=floor(FLD_range[1]), end=ceiling(FLD_range[2]), interval=0.5)
+
+FLD_summary
+
+```
+
+***mininum FLD Histogram***
+```{r FLD_Histogram}
+
+ggplotly( 
+
+ggplot(FLD_summary, aes( breaks, percent )) +
+  geom_bar( stat="identity", col="blue") 
+
+)
+```
+
+***Masking Pass/Fail Summary***
+```{r MaskingSummary}
+
+#str(df)
+df$FP<- substring(df$QC, 1, 4)
+
+df %>% 
+  select(FP) %>% 
+  group_by(FP) %>%
+  count() %>% 
+  rename(MaskingQC=FP, Count=n) %>% 
+  mutate(Percent=round( Count/sum(Count)*100, 2 ) )
+
+```
+
+
+***Visual Inpection Result***
+```{r VisualInspectionSummary}
+#str(df)
+
+df %>% 
+  select(ManualQC) %>% 
+  group_by(ManualQC) %>% 
+  count() %>% 
+  rename(VisualInpection=ManualQC, Count=n) 
+
+```
+
+
+***QC Summary***
+```{r QCSummary}
+
+group_by(df, ManualQC, FP) %>% 
+  count() %>% 
+  rename(VisualInpection=ManualQC, MaskingQC=FP, Count=n)
+
+```
+
+
+***Masking Pass FLD Summary***
+```{r Passed_FLD_Summary}
+
+df1<-
+  filter(df, FP=="Pass") 
+
+FLD<-GetValueFromCommaSepStr(df1, "probeset_id", "FLD", batch_num, func=min)
+
+FLD_range <- range(na.omit(FLD$func))
+FLD_summary <- GetHist(FLD, 'func', start=floor(FLD_range[1]), end=ceiling(FLD_range[2]), interval=0.5)
+
+FLD_summary
+
+```
+
+***Masking Pass FLD Histogram***
+```{r Passed_FLD_Histogram}
+
+ggplotly( 
+
+ggplot(FLD_summary, aes( breaks, percent )) +
+  geom_bar( stat="identity", col="blue") 
+
+)
+
+```
+
+
+***Masking Fail FLD Summary***
+
+* SNPolisher Fail : 725193
+
+```{r Failed_FLD_Summary}
+df2<-
+  filter(df, FP=="Fail") 
+
+FLD<-GetValueFromCommaSepStr(df2, "probeset_id", "FLD", batch_num, func=min)
+
+FLD_range <- range(na.omit(FLD$func))
+floor(FLD_range[1])
+
+FLD_summary <- GetHist(FLD, 'func', start=floor(FLD_range[1]), end=ceiling(FLD_range[2]), interval=0.5)
+
+
+FLD_summary
+
+
+```
+
+```{r Failed_FLD_Histogram}
+
+ggplotly( 
+
+ggplot(FLD_summary, aes( breaks, percent )) +
+  geom_bar( stat="identity", col="blue") 
+
+)
+
+```
+
+```{r test}
+
+custom<-function(vector, func=max){
+  func(vector)
+}
+custom(1:5)
+custom(1:5, func=mean)
+custom(1:5, func=min)
+
+```
+  

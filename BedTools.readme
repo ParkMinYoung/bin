@@ -1,0 +1,194 @@
+-a : big size file : line by line reading
+-b : small size file : in memory 
+
+
+samtools view -s 0.1 -b -o aln.bam 2-1.mergelanes.dedup.realign.bam
+samtools sort -n aln.bam aln.qsort
+
+bedtools bamtofastq -i aln.qsort.bam \
+                      -fq aln.end1.fq \
+                      -fq2 aln.end2.fq
+
+head -8 *fq
+
+
+
+
+bedtools closest -a A.bed -b B.bed
+
+bedtools closest -a C.bed -b D1.bed D2.bed
+
+bedtools closest -a C.bed -b D1.bed D2.bed -names D1 D2
+bedtools closest -a C.bed -b D1.bed D2.bed -filenames
+
+bedtools closest -a a.bed -b b1.bed b2.bed 
+
+# distance
+bedtools closest -a a.bed -b b1.bed b2.bed -d
+
+# default
+bedtools closest -a a.bed -b b1.bed b2.bed -mdb each -d
+bedtools closest -a a.bed -b b1.bed b2.bed -mdb all -d
+
+# ignore overlap
+bedtools closest -a a.bed -b b.bed
+bedtools closest -a a.bed -b b.bed -io
+
+# controlling how ties 
+
+bedtools closest -a a.bed -b E.bed 
+# default
+bedtools closest -a a.bed -b E.bed -t all
+bedtools closest -a a.bed -b E.bed -t first
+bedtools closest -a a.bed -b E.bed -t last 
+
+
+
+
+
+
+# perl -nle'if(/^bedtools/){print "$_";print `$_`}' readme
+
+bedtools cluster -i A.bed 
+
+bedtools cluster -i B.bed 
+bedtools cluster -i B.bed -d 400
+
+perl -nle'if(/^bedtools/){print "$_";print `$_`}' readme
+
+bedtools complement -i A.bed -g my.genome
+perl -nle'if(/bedtools\s+/){print "$_";print `$_`}' readme  > output
+
+/home/adminrig/src/bedtools/bedtools2/bin/bedtools coverage -a A.bed -b B.bed
+
+
+/home/adminrig/src/bedtools/bedtools2/bin/bedtools coverage -a A.bed -b B.bed -hist
+
+#perl -nle'if(/^bedtools/){print "$_";print `$_`}' readme
+
+
+bedtools flank -i A.bed -g my.genome -b 5
+
+bedtools flank -i A.bed -g my.genome -l 2 -r 3
+
+bedtools flank -i A.bed -g my.genome -b 800
+
+bedtools flank -i A.bed -g my.genome -b 0.1 -pct
+
+# perl -nle'if(/^bedtools/){print "$_";print `$_`}' readme
+
+bedtools genomecov -i A.bed -g my.genome
+
+# -d Reporting “per-base” genome coverage
+bedtools genomecov -i A.bed -g my.genome -d  | head -15 |  tail -n 10
+
+# perl -nle'if(/^bedtools/){print "$_";print `$_`}' readme 
+
+bedtools getfasta -fi test.fa -bed test.bed -fo stdout
+
+bedtools getfasta -fi test.fa -bed strand.bed -fo stdout
+
+bedtools getfasta -fi test.fa -bed strand.bed -fo stdout -name
+
+bedtools getfasta -fi test.fa -bed strand.bed -fo stdout -name -tab
+# perl -nle'if(/^bedtools/){print "$_";print `$_`}' readme 
+
+
+bedtools intersect -a A.bed -b B.bed
+
+bedtools intersect -a A.bed -b B.bed -wa
+bedtools intersect -a A.bed -b B.bed -wb
+
+
+bedtools intersect -a A.bed -b B.bed -wa -wb
+bedtools intersect -a A.bed -b B.bed -loj
+bedtools intersect -a A.bed -b B.bed -wo
+bedtools intersect -a A.bed -b B.bed -wao
+
+# unique A
+bedtools intersect -a C.bed -b D.bed
+bedtools intersect -a C.bed -b D.bed -u
+
+# Reporting the number of overlapping features
+bedtools intersect -a A.bed -b E.bed -c
+
+# reverse
+bedtools intersect -a A.bed -b B.bed -v
+
+# fraction
+bedtools intersect -a F.bed -b G.bed -wa -wb -f 0.5
+
+
+
+# multiple -b files
+bedtools intersect -a query.bed -b d1.bed d2.bed d3.bed
+
+# wa, wb = write the original entry in A and B fro each overlap 
+bedtools intersect -wa -wb -a query.bed -b d1.bed d2.bed d3.bed -sorted
+bedtools intersect -wa -wb -a query.bed -b d1.bed d2.bed d3.bed -names d1 d2 d3 -sorted
+bedtools intersect -wa -wb -a query.bed -b d1.bed d2.bed d3.bed -filenames -sorted
+
+# reverse
+bedtools intersect -wa -wb -a query.bed -b d1.bed d2.bed d3.bed -sorted -v
+
+# fraction
+bedtools intersect -wa -wb -a query.bed -b d1.bed d2.bed d3.bed -names d1 d2 d3 -sorted -f 1
+
+
+
+
+
+bedtools jaccard -a A.bed -b B.bed
+
+bedtools jaccard -a A.bed -b B.bed -f 0.6
+
+# default : sum
+bedtools map -a A.bed -b B.bed
+
+bedtools map -a A.bed -b B.bed -c 5 -o mean
+
+bedtools map -a A.bed -b B.bed -c 5 -o collapse
+
+bedtools map -a A.bed -b B.bed -c 5 -o distinct
+
+bedtools map -a A.bed -b B.bed -c 5,5,5,5 -o min,max,median,collapse
+
+bedtools map -a A.bed -b B.bed -c 3,4,5,6 -o mean
+bedtools merge -i A.bed
+
+bedtools merge -i A.bed -d 1000
+
+bedtools merge -i A.bed -c 1 -o count
+bedtools merge -i A.bed -c 5 -o mean
+
+bedtools merge -i A.bed -c 5 -o mean,min,max
+bedtools merge -i A.bed -c 5,5,5,6 -o mean,min,max,collapse
+
+
+bedtools merge -i B.bed -c 4 -o collapse
+
+bedtools merge -i B.bed -c 4 -o collapse -delim "|"
+
+tar cvzf bedtools.tutorial.zip bamtofastq closest cluster complement coverage flank genomecov getfasta intersect jaccard map merge slop subtract
+
+bedtools slop -i A.bed -g my.genome -b 5
+
+bedtools slop -i A.bed -g my.genome -l 2 -r 3
+bedtools slop -i A.bed -g my.genome -b 5000
+
+
+bedtools slop -i B.bed -g my.genome -b 0.5 -pct
+bedtools slop -i B.bed -l 0.5 -r 0.0 -pct -g my.genome
+
+bedtools subtract -a A.bed -b B.bed
+bedtools subtract -a A.bed -b B.bed -f 0.10
+bedtools subtract -a A.bed -b B.bed -f 0.80
+
+bedtools subtract -a C.bed -b D.bed
+bedtools subtract -a C.bed -b D.bed -A
+
+
+
+bedtools.Coverage.Target_BAM.meanDepth.sh
+
+

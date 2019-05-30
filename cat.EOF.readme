@@ -1,0 +1,22 @@
+
+cat << EOF
+
+============================================================
+
+${RED}Marker_info format, marker information${NORM}
+1. marker : rs_id 
+2. chromosome
+3. position
+
+
+${RED}Sample_info format, sample information${NORM}
+1. sample id
+2. male(1)/female(2)
+3. control(1)/case(2)
+
+============================================================
+EOF
+
+                usage "GenotypeMatrix Marker_info Sample_info"
+
+

@@ -1,0 +1,11 @@
+
+
+# excute time : 2018-04-27 16:31:07 : 
+perl -F'\t' -MMin -anle'$k=join "\t",@F[1,3..9,11..13,16]; if($.==1){$head=$k}else{ $h{$k}{$F[40]} ++ } }{ show_hash( convert_hash2_to_hash1_by_delim(\%h,";") )' SomaticMutation.ID.Group > step1
+
+
+# excute time : 2018-04-27 16:35:50 : 
+AddHeader.noheader.sh step1 step2 $(head -1 SomaticMutation.ID.Group | cut -f2,4-10,12-14,17) Models NumOfModels 
+
+
+

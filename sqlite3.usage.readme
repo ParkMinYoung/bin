@@ -1,0 +1,206 @@
+
+내부명령어와 관련된 도움말은 '''.help'''를 입력하는 정도로 간단히 참조할 수 있다.
+
+.databases : 현재 작업중인 DB파일과 관련된 다른 파일들 목록 출력
+
+.echo ON|OFF : 명령어를 반향 할건지 여부
+
+.exit : 프로그램 종료
+
+.help : 도움말
+
+.schema ?TABLE? : 테이블 구조
+
+.show : 현재 프로그램 설정값을 보여준다.
+
+.read FILENAME : FILENAME으로 부터 SQL을 실행한다.
+
+.output FILENAME : 출력을 FILENAME으로 보냄
+
+.output stdout : 출려을 화면으로 보냄(기본 값)
+
+.output stdout : 출려을 화면으로 보냄(기본 값)
+
+# top 5 
+select * from KORV1_1 limit 5
+
+
+출처: http://hermeslog.tistory.com/180?category=302345 [헤르메스 LIFE]
+
+
+$1      probeset_id                             Axiom_KORV1_1_000001_A01_P0002.CEL
+$2      id                                      P0002
+$3      set                                     DL000001
+$4      well                                    A01
+$5      axiom_dishqc_DQC                        0.97886
+$6      apt_geno_qc_gender                      male
+$7      apt_probeset_genotype_gender            male
+$8      call_rate                               99.55857
+$9      het_rate                                14.62305
+$10     cn-probe-chrXY-ratio_gender_meanX       885.22467
+$11     cn-probe-chrXY-ratio_gender_meanY       995.20264
+$12     cn-probe-chrXY-ratio_gender_ratio       1.12424
+
+
+
+create table KORV1_1(
+"probeset_id" VARCHAR(255) NOT NULL,
+"create_date" VARCHAR(255),
+"grid_status" VARCHAR(255),
+"serial_num" VARCHAR(10),
+"barcode" VARCHAR(50),
+"well" NCHAR(3) NOT NULL,
+"scanner" NCHAR(3) NOT NULL,
+"hyb_start_time" VARCHAR(255),
+"hyb_stop_time" VARCHAR(255),
+"hyb_fluidics_time" VARCHAR(255),
+"access_time" VARCHAR(255),
+"md5sum" VARCHAR(255) not null,
+"celname" VARCHAR(255) NOT NULL,
+"id" VARCHAR(255) NOT NULL,
+"set" NCHAR(8) NOT NULL,
+"well2" NCHAR(3) NOT NULL,
+"axiom_dishqc_DQC" REAL,
+"apt_geno_qc_gender" VARCHAR(20) NOT NULL,
+"apt_probeset_genotype_gender" VARCHAR(20) NOT NULL, 
+"call_rate" REAL,
+"het_rate" REAL,
+"cn-probe-chrXY-ratio_gender_meanX" REAL,
+"cn-probe-chrXY-ratio_gender_meanY" REAL,
+"cn-probe-chrXY-ratio_gender_ratio" REAL,
+"key" VARCHAR(255) not null unique, 
+"timestamp" TIMESTAMP NOT NULL DEFAULT current_timestamp);
+
+선택 1. 
+"key" VARCHAR(255) primary, 
+
+insert ignore or
+
+
+
+CREATE TABLE summary(
+"probeset_id" VARCHAR(255) NOT NULL,
+"id" VARCHAR(255) NOT NULL,
+"set" NCHAR(8) NOT NULL,
+"well" NCHAR(3) NOT NULL,
+"axiom_dishqc_DQC" REAL,
+"apt_geno_qc_gender" VARCHAR(20) NOT NULL,
+"apt_probeset_genotype_gender" VARCHAR(20) NOT NULL, 
+"call_rate" REAL,
+"het_rate" REAL,
+"cn-probe-chrXY-ratio_gender_meanX" REAL,
+"cn-probe-chrXY-ratio_gender_meanY" REAL,
+"cn-probe-chrXY-ratio_gender_ratio" REAL,
+
+);
+
+"_id" integer primary key autoincrement,
+"Timestamp" TIMESTAMP NOT NULL DEFAULT current_timestamp
+
+
+not null unique (중복을 허용하지 않는 컬럼)
+
+
+INSERT IGNORE INTO temp (temp_id, create_date) VALUES ('1','2017-05-17'), ('2','2017-05-17')
+
+
+
+# 결과를 표시할 때, 헤더 정보를 표시할지 말지를 설정한다.
+.headers on
+ 
+#결과를 표시할 때, 어떤 방식으로 표시할 것인지를 설정한다.
+.mode MODE ?TABLE?
+
+
+# table record delete
+DELETE FROM summary;
+
+# table delete
+drop table IF EXISTS summary;
+
+# execute sql using file summary.table.sql
+.read summary.table.sql
+
+# tab limited file set
+#sqlite> .separator "\t" # or .mode tabs
+.mode tabs
+
+
+# import Summary.txt to summary table 
+.import Summary.txt summary
+
+## 중복이 있을 시 stop 그래서 따로 중복 체크 후 insert 
+
+
+
+sqlite3 KORV1_1.db 'select * from KORV1_1'
+
+# bash using multiple sql statement
+
+cat > step1.sql
+.separator "\t"
+.headers on 
+select * from KORV1_1;
+
+
+## 동일한 역할
+sqlite3 KORV1_1.db '.read step1.sql'
+sqlite3 KORV1_1.db < step1.sql
+
+
+#select * from KORV1_1 where probeset_id="Axiom_KORV1_1_100000_A01_NIH16I3458157.CEL" and md5sum="1963bbdd82e8f2c39fa80a99093dfe48"
+
+#Axiom_KORV1_1_100000_A01_NIH16I3458157.CEL 
+#1963bbdd82e8f2c39fa80a99093dfe48
+
+#delete from KORV1_1 where probeset_id="Axiom_KORV1_1_100000_A01_NIH16I3458157.CEL" and md5sum="1963bbdd82e8f2c39fa80a99093dfe48"
+
+
+
+
+방향 1.
+기존 table 상에 CEL, MD5 가 존재시 테이블의 레코드 제거 후,  bulk import
+
+## 조건을 만족하면 sql 실행, 아니면 no 실행
+perl -F'\t' -anle' if($F[0]=~/CEL/){print "delete from KORV1_1 where probeset_id=\"$F[0]\" and md5sum=\"$F[11]\";"}' try3 > step2.sql
+sqlite3 KORV1_1.db < step2.sql
+
+
+cat > step3.sql
+.mode tabs
+.import try3 KORV1_1
+
+sqlite3 KORV1_1.db < step3.sql
+
+
+
+
+방향 2.
+insert or ignore 사용
+key 에 대한 primary key 만 설정하면, 해당하는 중복 라인이 들어오면 자동으로 ignore 한다.
+
+
+최종 방향 2 선택
+
+
+
+
+
+insert 를 사용해야 timestamp 가 기록이 되며, import 시에는 null 로 비워짐.
+
+
+.mode column
+
+## cleanup : delete 후에도 관련 파일 사이즈가 유지 될때 사용
+
+vacuum
+https://stackoverflow.com/questions/2143800/change-sqlite-file-size-after-delete-from-table
+
+
+
+# Table to TSV or CSV
+
+sqlite3 -header -separator $'\t' /home/adminrig/workspace.min/AFFX/AxiomDB.db "select * from KORV1_1;" > KORV1_1.tab
+sqlite3 -header -csv /home/adminrig/workspace.min/AFFX/AxiomDB.db "select * from KORV1_1;" > KORV1_1.csv
+sqlite3 -header -csv c:/sqlite/chinook.db < query.sql > data.csv
+

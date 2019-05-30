@@ -1,0 +1,19 @@
+# http://gmod.org/wiki/GFF3#GFF3_Sequence_Section
+
+mkdir -p /home/adminrig/src/SNPEFF/snpEff_4_3/data/Gracilariopsis_chorda.v2
+
+
+## make genes.gff.gz file in data/DBName dir
+(echo "##gff-version 3"; cat /home/adminrig/workspace.min/SKKU_YoonHwansoo.GP_Gracilariopsis_chorda/GFF/Gracilariopsis_genemodel_v2.1.gff; echo "##FASTA"; cat /home/adminrig/workspace.min/SKKU_YoonHwansoo.GP_Gracilariopsis_chorda/Reference/GRC_unfiltered_contigs_v2.fasta) | gzip -c > /home/adminrig/src/SNPEFF/snpEff_4_3/data/Gracilariopsis_chorda.v2/genes.gff.gz
+
+ 
+## add DBName in config file
+echo "#" `date +%Y%m%d` "by minyoung" >> snpEff.config
+echo "#Gracilariopsis_chorda.v2 by min" >> snpEff.config
+echo "Gracilariopsis_chorda.v2.genome     : Gracilariopsis_chorda.v2" >> snpEff.config
+
+
+# excute time : 2017-05-18 11:27:18 : make custom DB
+java -jar snpEff.jar build -gff3 -v Gracilariopsis_chorda.v2
+
+

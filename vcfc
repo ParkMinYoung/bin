@@ -1,0 +1,1 @@
+for i in *vcf; do echo -ne $i:; grep ^# -v -c $i;done

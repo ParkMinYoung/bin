@@ -1,0 +1,154 @@
+#!/bin/sh
+
+# GenomeAnalysisTK.sh 
+# $6 must be [XXX.bam]
+# output      
+#             
+#             
+
+source ~/.bash_function
+source ~/.GATKrc
+GATK_param
+
+EGATK=/home/adminrig/src/GATK/GenomeAnalysisTK-1.2-60-g585a45b/GenomeAnalysisTK.jar
+
+if [ $# -eq 0 ];then
+	echo "usage : `basename $0` XXXX.vcf"
+	java $JMEM -jar $EGATK -T SelectVariants --help	
+	exit 1
+fi
+
+# T=$(date '+%Y%m%d%H%M')
+# READGROUP=$2
+# RG=${READGROUP:=$T}
+
+
+TMPDIR=$PWD
+
+# MAX_INSERT_SIZE=1000[default:100000]
+java $JMEMMAX -Djava.io.tmpdir=$TMPDIR -jar $EGATK   \
+-T SelectVariants 	\
+-l INFO 			\
+-R $REF 			\
+--variant $1		\
+-o $1.SelectVariants.SNP.vcf	\
+-selectType SNP		\
+>& $1.SelectVariants.SNP.log
+
+# MAX_INSERT_SIZE=1000[default:100000]
+java $JMEMMAX -Djava.io.tmpdir=$TMPDIR -jar $EGATK   \
+-T SelectVariants 	\
+-l INFO 			\
+-R $REF 			\
+--variant $1		\
+-o $1.SelectVariants.INDEL.vcf	\
+-selectType INDEL		\
+>& $1.SelectVariants.INDEL.log
+
+
+#  Select two samples out of a VCF with many samples:
+#  java -Xmx2g -jar GenomeAnalysisTK.jar \
+#    -R ref.fasta \
+#    -T SelectVariants \
+#    --variant input.vcf \
+#    -o output.vcf \
+#    -sn SAMPLE_A_PARC \
+#    -sn SAMPLE_B_ACTG
+# 
+#  Select two samples and any sample that matches a regular expression:
+#  java -Xmx2g -jar GenomeAnalysisTK.jar \
+#    -R ref.fasta \
+#    -T SelectVariants \
+#    --variant input.vcf \
+#    -o output.vcf \
+#    -sn SAMPLE_1_PARC \
+#    -sn SAMPLE_1_ACTG \
+#    -se 'SAMPLE.+PARC'
+# 
+#  Select any sample that matches a regular expression and sites where the QD annotation is more than 10:
+#  java -Xmx2g -jar GenomeAnalysisTK.jar \
+#    -R ref.fasta \
+#    -T SelectVariants \
+#    --variant input.vcf \
+#    -o output.vcf \
+#    -se 'SAMPLE.+PARC'
+#    -select "QD > 10.0"
+# 
+#  Select a sample and exclude non-variant loci and filtered loci:
+#  java -Xmx2g -jar GenomeAnalysisTK.jar \
+#    -R ref.fasta \
+#    -T SelectVariants \
+#    --variant input.vcf \
+#    -o output.vcf \
+#    -sn SAMPLE_1_ACTG \
+#    -env \
+#    -ef
+# 
+#  Select a sample and restrict the output vcf to a set of intervals:
+#  java -Xmx2g -jar GenomeAnalysisTK.jar \
+#    -R ref.fasta \
+#    -T SelectVariants \
+#    --variant input.vcf \
+#    -o output.vcf \
+#    -L /path/to/my.interval_list \
+#    -sn SAMPLE_1_ACTG
+# 
+#  Select all calls missed in my vcf, but present in HapMap (useful to take a look at why these variants weren't called by this dataset):
+#  java -Xmx2g -jar GenomeAnalysisTK.jar \
+#    -R ref.fasta \
+#    -T SelectVariants \
+#    --variant hapmap.vcf \
+#    --discordance myCalls.vcf
+#    -o output.vcf \
+#    -sn mySample
+# 
+#  Select all calls made by both myCalls and hisCalls (useful to take a look at what is consistent between the two callers):
+#  java -Xmx2g -jar GenomeAnalysisTK.jar \
+#    -R ref.fasta \
+#    -T SelectVariants \
+#    --variant myCalls.vcf \
+#    --concordance hisCalls.vcf
+#    -o output.vcf \
+#    -sn mySample
+# 
+#  Generating a VCF of all the variants that are mendelian violations:
+#  java -Xmx2g -jar GenomeAnalysisTK.jar \
+#    -R ref.fasta \
+#    -T SelectVariants \
+#    --variant input.vcf \
+#    -family NA12891+NA12892=NA12878 \
+#    -mvq 50 \
+#    -o violations.vcf
+# 
+#  Creating a sample of exactly 1000 variants randomly chosen with equal probability from the variant VCF:
+#  java -Xmx2g -jar GenomeAnalysisTK.jar \
+#    -R ref.fasta \
+#    -T SelectVariants \
+#    --variant input.vcf \
+#    -o output.vcf \
+#    -number 1000
+# 
+#  Creating a set with 50% of the total number of variants in the variant VCF:
+#  java -Xmx2g -jar GenomeAnalysisTK.jar \
+#    -R ref.fasta \
+#    -T SelectVariants \
+#    --variant input.vcf \
+#    -o output.vcf \
+#    -fraction 0.5
+# 
+#  Select only indels from a VCF:
+#  java -Xmx2g -jar GenomeAnalysisTK.jar \
+#    -R ref.fasta \
+#    -T SelectVariants \
+#    --variant input.vcf \
+#    -o output.vcf \
+#    -selectType INDEL
+# 
+#  Select only multi-allelic SNPs and MNPs from a VCF (i.e. SNPs with more than one allele listed in the ALT column):
+#  java -Xmx2g -jar GenomeAnalysisTK.jar \
+#    -R ref.fasta \
+#    -T SelectVariants \
+#    --variant input.vcf \
+#    -o output.vcf \
+#    -selectType SNP -selectType MNP \
+#    -restrictAllelesTo MULTIALLELIC

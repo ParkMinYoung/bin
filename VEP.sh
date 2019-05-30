@@ -1,0 +1,3 @@
+variant_effect_predictor.pl -config ~/.vep/ENSEMBL.config -i $1 --regulatory --hgvs --gene --protein --hgnc --ccds --canonical --cache --write_cache --dir /home/adminrig/.vep/ --buffer 500000 -o $1.vep --force_overwrite
+# variant_effect_predictor.pl -config ~/.vep/ENSEMBL.config -i $1 --regulatory --hgvs --gene --protein --hgnc --ccds --canonical --cache --write_cache --dir /home/adminrig/.vep/ --buffer 500000 -o $1.most_severe.vep --most_severe
+# variant_effect_predictor.pl -config ~/.vep/ENSEMBL.config -i $1 --regulatory --hgvs --gene --protein --hgnc --ccds --canonical --cache --write_cache --dir /home/adminrig/.vep/ --buffer 500000 -o $1.summary.vep --summary

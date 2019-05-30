@@ -1,0 +1,31 @@
+#!/bin/sh
+
+# GenomeAnalysisTK.sh 
+# $6 must be [XXX.bam]
+# output      
+#             
+#             
+
+source ~/.bash_function
+source ~/.GATKrc
+GATK_param
+
+EGATK=/home/adminrig/src/GATK/GenomeAnalysisTK-1.2-60-g585a45b/GenomeAnalysisTK.jar
+
+if [ $# -eq 0 ];then
+	echo "usage : `basename $0`  XXXX.vcf"
+	java $JMEM -jar $ESNPEFF --help	
+	exit 1
+fi
+
+# T=$(date '+%Y%m%d%H%M')
+# READGROUP=$2
+# RG=${READGROUP:=$T}
+
+
+TMPDIR=$PWD
+
+# MAX_INSERT_SIZE=1000[default:100000]
+java $JMEMMAX188 -Djava.io.tmpdir=$TMPDIR -jar $ESNPSIFT annotate $VCF135 $1 > $1.dbSNP135.vcf 2> $1.dbSNP135.vcf.log
+# java -jar SnpSift.jar annotate dbSnp132.vcf variants.vcf > variants_annotated.vcf 
+

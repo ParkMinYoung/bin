@@ -1,0 +1,20 @@
+# execute time : 2018-12-17 14:48:02 : zip using pv
+pv C_mtseq.fasta | gzip > C_mtseq.fasta.zip 
+
+
+# execute time : 2018-12-17 14:52:51 : typing
+echo "You can simulate on-screen typing just like in the movies" | pv -qL 10
+
+
+# execute time : 2018-12-17 14:55:12 : grep
+pv C_mtseq.fasta | grep -o TTCCTTCTCTCCTTAA 
+
+
+# execute time : 2018-12-17 15:00:37 : grep 2
+pv $b37 | grep ^">" > AAA 
+
+
+# execute time : 2018-12-17 15:29:02 : 
+tar cfh - -T input_files | pv -s $(cat input_files | xargs du -cbL | tail -n 1 | awk '{print $1}') | gzip > all.bed.tgz 
+
+

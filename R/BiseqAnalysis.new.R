@@ -1,0 +1,306 @@
+#!/usr/bin/env Rscript
+##
+## DESCRIPTION:   Run BiSeq tools for bismark CpG bedgraph coverage count files, for small sample set
+## AUTHOR:        Jin Kim jjinking(at)gmail(dot)com
+## CREATED:       2014.02.10
+## LAST MODIFIED: 
+## MODIFIED BY:   
+## 
+## USAGE:         modules/methyl/biseq.bismark.bedgraph.cov.small.R
+##                                                            outprefix            # Prefix to be used for all output files
+##                                                            samples_group        # Tab-delimited file containing 3 columns: (sample, CPG.bedgraph.bismark.cov, 0/1(case:1 vs control:0))
+##                                                            cluster.min.sites    # Minimum number of methylated sites per cluster
+##                                                            cluster.max.dist     # Maximum distance between DMRs in same cluster
+##                                                            theads               # Max number of threads
+## 
+## OUTPUT:        
+##
+
+## 211.174.205.72 server setting
+## openstack name
+
+args <- commandArgs(TRUE)
+
+args[1]
+
+cmd.help <- function(){
+cat("prefix_file_name group_file\n")
+cat("prefix_file_name : Analysis2.biseq\n")
+cat("group file : 2.early.vs.HM.HS.HR.US.cov\n")
+cat("early   /isilon_home/adminrig/workspace.jin/KNIH.Methylation.12Samples/run3/Sample_CHA_hES15_early_p27/CHA_hES15_early_p27_GATCAG_L002_R1_001.fastq.gz.bedgraph.bismark.cov     0\n")
+cat("early1  /isilon_home/adminrig/workspace.jin/KNIH.Methylation.12Samples/run3/Sample_CHA_hES15_early_p27/CHA_hES15_early_p27_GATCAG_L002_R1_001.fastq.gz.bedgraph.bismark.cov     0\n")
+cat("HM4     /isilon_home/adminrig/workspace.jin/KNIH.Methylation.12Samples/Sample_Hm4/Hm4_ACTTGA_L005_R1_001.fastq.gz.bedgraph.bismark.cov  1\n")
+cat("HM5     /isilon_home/adminrig/workspace.jin/KNIH.Methylation.12Samples/Sample_Hm5/Hm5_GATCAG_L005_R1_001.fastq.gz.bedgraph.bismark.cov  1\n")
+cat("HR3     /isilon_home/adminrig/workspace.jin/KNIH.Methylation.12Samples/run2/bismark/Sample_HR3/HR3_CGATGT_L001_R1_010.fastq.gz.bedgraph.bismark.cov     1\n")
+cat("HR4     /isilon_home/adminrig/workspace.jin/KNIH.Methylation.12Samples/Sample_HR4/HR4_AAAGCA_L005_R1_001.fastq.gz.bedgraph.bismark.cov  1\n")
+cat("HS3   /isilon_home/adminrig/workspace.jin/KNIH.Methylation.12Samples/Sample_HS3/HS3_GCCAAT_L006_R1_001.fastq.gz.bedgraph.bismark.cov  1\n")
+cat("HS5   /isilon_home/adminrig/workspace.jin/KNIH.Methylation.12Samples/Sample_HS5/HS5_CTTGTA_L006_R1_001.fastq.gz.bedgraph.bismark.cov  1\n")
+cat("US3   /isilon_home/adminrig/workspace.jin/KNIH.Methylation.12Samples/Sample_US3/US3_ATCACG_L005_R1_001.fastq.gz.bedgraph.bismark.cov  1\n")
+cat("US4   /isilon_home/adminrig/workspace.jin/KNIH.Methylation.12Samples/Sample_US4/US4_TTAGGC_L005_R1_001.fastq.gz.bedgraph.bismark.cov  1\n")
+cat("R CMD BATCH --no-save --no-restore '--args Analysis2.biseq 2.early.vs.HM.HS.HR.US.cov' BiseqAnalysis.R\n")
+}
+
+if( !  length(args) == 2 ){ 
+    cmd.help()
+    stop('Error in args in commandline arguments. Stop.\n') 
+}
+
+library(BiSeq)
+
+# Process command line arguments
+#outpre <- "Analysis3.biseq"
+#samples.grouping <- "30C.vs.42C.cov"
+
+outpre <- args[1]
+samples.grouping <- args[2]
+
+
+cluster.min.sites <- 10
+cluster.max.dist <- 200
+threads <- 60 
+
+# Set up parameters
+batch_args <- read.table(samples.grouping, sep="\t")
+sn.list = as.character(batch_args[,1])
+file.list = as.character(batch_args[,2])
+grouping.list = as.character(batch_args[,3])
+
+# Read in raw data containing raw read counts and raw methylated counts
+print("Reading in bismark output files")
+coldata <- DataFrame(group=grouping.list, row.names=sn.list)
+bsdata <- readBismark(file.list, colData=coldata)
+
+# Convert to BSrel object containing relative methylation levels between 0 and 1
+print("Generating relative methylation levels between 0 and 1")
+bsdata.rel <- rawToRel(bsdata)
+
+
+
+
+
+
+
+
+
+# Output methylation data
+print("Writing bsdata and bsdata.rel to file")
+write.table(as.data.frame(rowData(bsdata)),
+            file=paste(outpre, 'bsdata.pos.txt', sep="."),
+	    sep='\t',
+	    quote=F,
+	    row.names=F)
+write.table(as.data.frame(methReads(bsdata)),
+            file=paste(outpre, 'bsdata.txt', sep="."),
+	    sep='\t',
+	    quote=F,
+	    row.names=F)
+write.table(as.data.frame(methLevel(bsdata.rel)),
+            file=paste(outpre, 'bsdata.rel.txt', sep="."),
+	    sep='\t',
+	    quote=F,
+	    row.names=F)
+
+
+
+# Create bed files for viewing in IGV
+print("Creating bed files for viewing in IGV")
+track.names <- paste('g', colData(bsdata)$group, "_", colnames(bsdata), sep="")
+writeBED(object = bsdata, name = track.names, file = paste(outpre, colnames(bsdata), "raw", "bed", sep="."))
+writeBED(object = bsdata.rel, name = track.names, file = paste(outpre, colnames(bsdata.rel), "rel", "bed", sep="."))
+
+
+
+
+# QC coverages of each sample
+print("Computing and generate coverage stats and plots")
+cov.stats <- covStatistics(bsdata)
+write.table(cov.stats$Covered_CpG_sites, file=paste(outpre, 'coverages.stats.CpG_sites.txt', sep="."), sep = "\t", col.names=F, row.names=T, quote=F)
+write.table(cov.stats$Median_coverage, file=paste(outpre, 'coverages.stats.median_cov.txt', sep="."), sep = "\t", col.names=F, row.names=T, quote=F)
+jpeg(paste(outpre, 'coverages.jpg', sep="."))
+covBoxplots(bsdata, col="cornflowerblue", las=2)
+dev.off()
+
+
+
+
+
+
+
+
+# Create CpG clusters
+print("Creating CpG clusters")
+bsdata.clust.unlim <- clusterSites(object=bsdata, groups=as.factor(colData(bsdata)$group), perc.samples=0.80, min.sites=cluster.min.sites, max.dist=cluster.max.dist, mc.cores=threads)
+#bsdata.clust.unlim <- clusterSites(object=bsdata, perc.samples=0.80, min.sites=cluster.min.sites, max.dist=cluster.max.dist, mc.cores=threads)
+# Leave out "groups" parameter if there are only 2 samples
+
+# Convert CpG clusters to GRanges object with start and end positions
+bsdata.clust.unlim.clustranges <- clusterSitesToGR(bsdata.clust.unlim)
+write.table(as.data.frame(bsdata.clust.unlim.clustranges), file=paste(outpre, 'clust.unlim.clustranges.txt', sep="."), sep="\t", quote=F, row.names=F)
+
+
+
+
+
+
+
+
+
+
+# Smooth methylation data
+print("Creating smooth methylation data into predictedMeth")
+ind.cov <- totalReads(bsdata.clust.unlim) > 0
+quant <- quantile(totalReads(bsdata.clust.unlim)[ind.cov], 0.9)
+bsdata.clust.lim <- limitCov(bsdata.clust.unlim, maxCov=quant)
+predictedMeth <- predictMeth(object=bsdata.clust.lim, mc.cores=threads)
+write.table(as.data.frame(rowRanges(predictedMeth)),
+            file=paste(outpre, 'predictedMeth.pos.txt', sep="."),
+	    sep='\t',
+	    quote=F,
+	    row.names=F)
+write.table(as.data.frame(methLevel(predictedMeth)),
+            file=paste(outpre, 'predictedMeth.txt', sep="."),
+	    sep='\t',
+	    quote=F,
+	    row.names=F)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+writeBED(object = predictedMeth, name = track.names, file = paste(outpre, colnames(predictedMeth), "smooth", "bed", sep="."))
+
+# Plot coverages of each sample after coverage limitation
+print("Plotting coverage of each sample after coverage limit")
+jpeg(paste(outpre, 'coverages.limit.jpg', sep="."))
+covBoxplots(bsdata.clust.lim, col="cornflowerblue", las=2)
+dev.off()
+
+# Plot the effect of the smoothing step
+#print("Plotting the effect of the smoothing step")
+#region <- GRanges(seqnames="chr1",
+#                  ranges=IRanges(start = 875200,
+#	                         end = 875500))
+#jpeg(paste(outpre, 'meth.smooth.effect.jpg', sep="."))
+#plotMeth(object.raw = bsdata[,1],
+#         object.rel = predictedMeth[,1],
+#	 region = region,
+#	 lwd.lines = 2,
+#	 col.points = "blue",
+#	 cex = 1.5)
+#dev.off()
+
+# Case vs control
+print("Group methylation testing")
+cases <- predictedMeth[, colData(predictedMeth)$group == "0"]
+control <- predictedMeth[, colData(predictedMeth)$group == "1"]
+mean.cases <- rowMeans(methLevel(cases))
+mean.control <- rowMeans(methLevel(control))
+
+# Plot methylation in cases vs controls
+print("Plotting methylation levels in cases vs controls")
+set.seed(5)
+random.subsample.idx <- sample(1:length(mean.cases), 1000)
+jpeg(paste(outpre, "meth.smooth.casecontrol.jpg", sep="."))
+plot(mean.control[random.subsample.idx], mean.cases[random.subsample.idx], col="blue", xlab = "Methylation in group 1", ylab = "Methylation in group 2")
+dev.off()
+
+# Test group DMR
+#### print("Running betaRegression")
+#### betaResults <- betaRegression(formula=~group, link = "probit", object = predictedMeth, type = "BR", mc.cores=threads)
+
+#### # Save workspace
+#### print("Saving workspace")
+#### save.image(file = paste(outpre, "betaRegression", "RData", sep="."))
+
+#### # Test clusters for DMR
+#### print("Testing clusters against null")
+#### predictedMethNull <- predictedMeth
+#### colData(predictedMethNull)$group.null <- rep(c(1,2), length(sn.list) / 2)
+#### betaResultsNull <- betaRegression(formula = ~group.null, link = "probit", object = predictedMethNull, type="BR", mc.cores=threads)
+#### vario <- makeVariogram(betaResultsNull)
+
+#### # Save workspace
+#### print("Saving workspace")
+#### save.image(file = paste(outpre, "betaRegression2", "RData", sep="."))
+
+#### print("Plotting variogram")
+#### jpeg(paste(outpre, "variogram", 'jpg', sep="."))
+#### plot(vario$variogram)
+#### vario.sm <- smoothVariogram(vario, sill = 0.9)
+#### lines(vario.sm$variogram[,c("h", "v.sm")], col = "red", lwd = 1.5)
+#### grid()
+#### dev.off()
+
+#### vario.aux <- makeVariogram(betaResults, make.variogram=FALSE)
+#### vario.sm$pValsList <- vario.aux$pValsList
+#### locCor <- estLocCor(vario.sm)
+
+#### # Get rejected clusters
+#### clusters.rej <- testClusters(locCor, FDR.cluster = 0.1)
+
+#### # Remove rejected clusters - result is a list of all DMR CpG sites
+#### print("Removing rejected clusters")
+#### clusters.trimmed <- trimClusters(clusters.rej, FDR.loc=0.05)
+
+#### # Split up dmr regions based on max distance and direction - result is a GRanges object
+#### print("Running findDMRs")
+#### DMRs <- findDMRs(clusters.trimmed, max.dist = cluster.max.dist, diff.dir = TRUE)
+
+#print("Saving workspace")
+#save.image(file = paste(outpre, "RData", sep="."))
+# Average the smooth values within each group
+#min.diff <- 0.3
+min.diff <- 0.2
+coldata.groups <- DataFrame(group=c('0','1'), row.names=c('g0','g1'))
+smooth.methlevels <- methLevel(predictedMeth)
+
+methLevl<-
+as.matrix(data.frame(
+    g0=rowMeans(smooth.methlevels[,c(1,length(sn.list)/2)]),
+    g1=rowMeans(smooth.methlevels[,c(length(sn.list)/2+1,length(sn.list))])))
+    
+#head ( rowRanges(predictedMeth) )
+    
+predictedMeth.grouped <- BSrel(
+  rowRanges = rowRanges(predictedMeth),
+  colData = coldata.groups,
+  methLevel = methLevl
+)
+
+DMRs.2 <- compareTwoSamples(object=predictedMeth.grouped, sample1="g0", sample2="g1", minDiff = min.diff, max.dist = cluster.max.dist)
+
+
+print("Annotating DMRs with promoters")
+data(promoters)
+DMRs.2.anno <- annotateGRanges(object = DMRs.2, regions = promoters, name = 'Promoter', regionInfo = 'acc_no')
+write.table(as.data.frame(DMRs.2.anno), file=paste(outpre, 'DMRs.annot.txt', sep="."), sep="\t", quote=F, row.names=F)
+
+# Plot methylation around promoter regions
+print("Plotting methylation around promoter regions")
+jpeg(paste(outpre, "methylation.promoter", 'jpg', sep="."))
+plotBindingSites(object = bsdata, regions = promoters, width = 4000, groups = colData(bsdata)$group, col = c("magenta", "blue"), lwd = 1.5, quantiles = c(0.25, 0.75))
+legend("top", legend=levels(factor(colData(bsdata)$group)), col = c("magenta", "blue"), lty = 1, lwd = 1.5)
+dev.off()
+
+# Save workspace
+print("Saving workspace")
+save.image(file = paste(outpre, "RData", sep="."))
+
+print("Run finished")
+
+
+
+
+

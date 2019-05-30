@@ -1,0 +1,16 @@
+filename_dt="LowMapped"
+datatable(LowMappedList, filter = "bottom",
+          extensions = c('Scroller', 'Buttons'),
+          options = list(pageLength = 10,
+                         deferRender = TRUE,
+                         scrollX = TRUE,
+                         scrollY = 200,
+                         scroller = TRUE,
+                         dom = 'Bfrtip',
+                         buttons = list('copy',
+                                        list(extend='excel',filename=filename_dt),
+                                        list(extend='csv',filename=filename_dt)),
+                         columnDefs = list(list(width = '1000px', targets = "_all", className = 'dt-center')
+                         )
+          )
+)

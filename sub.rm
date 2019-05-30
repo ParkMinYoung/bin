@@ -1,0 +1,16 @@
+#!/bin/sh
+
+#$ -v path
+#$ -cwd
+#$ -S /bin/sh
+#$ -pe make 1
+#$# -S /bin/bash
+
+source /home/adminrig/.bashrc
+
+# format
+# tar cvjf filename.bz2 filename
+# $4 is filename
+
+$@
+rm -rf $4

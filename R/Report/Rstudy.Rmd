@@ -1,0 +1,34 @@
+---
+title: "R Study"
+output: html_notebook
+---
+
+** R 기본기를 위해서 정리하는 노트  
+***
+
+* Learning R Interactively with swirl
+
+mosaicplot 
+* http://www.exegetic.biz/blog/2013/05/introducing-r-plottin-categorical-variables/
+* http://www.uni-kiel.de/psychologie/rexrepos/posts/diagCategorical.html
+
+
+```{r}
+N      <- 100
+age    <- sample(18:45, N, replace=TRUE)
+drinks <- c("beer", "red wine", "white wine")
+pref   <- factor(sample(drinks, N, replace=TRUE))
+xRange <- round(range(age), -1) + c(-10, 10)
+lims   <- c(18, 25, 35, 45)
+spineplot(x=age, y=pref, xlab="Age class", ylab="drink", breaks=lims,
+          main="Preferred drink by age class")
+
+```
+
+```{r}
+ageCls <- cut(age, breaks=lims, labels=LETTERS[1:(length(lims)-1)])
+group  <- factor(sample(letters[1:2], N, replace=TRUE))
+cTab   <- table(ageCls, pref, group)
+mosaicplot(cTab, cex.axis=1)
+
+```

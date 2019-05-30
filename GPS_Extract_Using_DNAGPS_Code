@@ -1,0 +1,16 @@
+#!/bin/bash
+
+. ~/.bash_function
+
+
+if [ -f "$1" ] & [ -f "$2" ];then
+
+	# excute time : 2017-06-14 15:04:54 : make SampleMarker from DNAGPS code
+	perl -F'\t' -anle'if(@ARGV){ $h{$F[0]}{$F[1]}++ }else{ map { print join "\t", $F[0], $_, $F[1]  } sort keys %{$h{$F[1]}}  }' $1 $2  > $2.SampleMarker
+	
+	GPS_Extract $3 $2.SampleMarker 
+
+else
+	usage "DNAGPS_Code_file Requested_Sample_DNAGPS_Code Exp_output_file"
+fi
+

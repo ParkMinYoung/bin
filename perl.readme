@@ -1,0 +1,22 @@
+http://gypark.pe.kr/wiki/Perl/%EC%A0%95%EA%B7%9C%ED%91%9C%ED%98%84%EC%8B%9D
+
+
+http://www.thegeekstuff.com/2010/05/perl-eval-function
+
+## splice 
+## insert second column - 1 after first column 
+perl -F'\t' -anle'splice @F,1, 0, $F[1]-1;
+
+
+    use feature qw(say switch);
+    given ($foo) {
+        when (1)          { say "\$foo == 1" }
+        when ([2,3])      { say "\$foo == 2 || \$foo == 3" }
+        when (/^a[bc]d$/) { say "\$foo eq 'abd' || \$foo eq 'acd'" }
+        when ($_ > 100)   { say "\$foo > 100" }
+        default           { say "None of the above" }
+    }
+    use feature ':5.10'; # loads all features available in perl 5.10
+    use v5.10;           # implicitly loads :5.10 feature bundle
+
+

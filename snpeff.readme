@@ -1,0 +1,14 @@
+ DIR=/home/adminrig/src/SNPEFF/snpEff_4_1
+
+ java -jar snpEff.jar databases | grep Mus_
+  java -jar snpEff.jar download GRCm38.78 
+  java -jar snpEff.jar download Escherichia_coli__BL21_Gold_DE3_pLysS_AG__uid59245
+
+
+#java -jar snpEff.jar download IRGSP-1.0.21
+java -jar snpEff.jar download rice7
+
+
+
+java -Xmx16G -jar /home/adminrig/src/SNPEFF/snpEff_4_2/snpEff.jar ann GRCh37.75 sample.alt.vcf > sample.alt.annotation.vcf
+

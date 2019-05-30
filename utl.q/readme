@@ -1,0 +1,4 @@
+# excute time : 2016-09-07 18:53:26 : get hostlist
+qconf -sq utl.q | grep ^hostlist -A 3 | tr " " "\n" | grep cp > hostlist 
+
+

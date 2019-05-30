@@ -1,0 +1,103 @@
+---
+title: "Rescan Result"
+author: "minmin"
+date: '2016 10 13 '
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(pacman)
+#p_load( dplyr, ggplot2, tidyr, plotly)
+p_load(dplyr, ggplot2, scales, printr, xtable, knitr, plotly, tidyr)
+
+setwd("/home/adminrig/workspace.min/AFFX/Axiom_KORV1.1/AnalysisResult/")
+
+df <-read.table("Summary.txt", header=T, sep="\t")
+
+#str(df)
+
+original <- df %>% 
+  filter( set %in% c("DL001326", "DL001327") ) %>%
+  select( id, set, axiom_dishqc_DQC, call_rate, het_rate, cn.probe.chrXY.ratio_gender_meanX, cn.probe.chrXY.ratio_gender_meanY, cn.probe.chrXY.ratio_gender_ratio)
+
+rescan <- df %>% 
+  filter( set %in% c("DL100326", "DL100327") ) %>%
+  select( id, set, axiom_dishqc_DQC, call_rate, het_rate, cn.probe.chrXY.ratio_gender_meanX, cn.probe.chrXY.ratio_gender_meanY, cn.probe.chrXY.ratio_gender_ratio)
+
+
+#str(original)
+#str(rescan)
+
+header<-colnames(original)
+colnames(original) <- paste(header, "original", sep="_")
+colnames(rescan)   <- paste(header, "rescan", sep="_")
+
+df<- left_join(original,rescan,by=c("id_original"="id_rescan"))
+
+#str(df)
+
+# CR <-
+# df %>% 
+#   select(id_original, set_original, call_rate_original, call_rate_rescan) %>%
+#   gather("type", "CR", c(3,4) ) 
+#   
+# ggplot(CR, aes(type, CR, group=id_original)) + 
+#   geom_point() +
+#   geom_line()
+
+
+DIFF <-  
+df %>% 
+  mutate( CR=(call_rate_original - call_rate_rescan), HET=(het_rate_original - het_rate_rescan), DQC=(axiom_dishqc_DQC_original - axiom_dishqc_DQC_rescan) ) %>%
+  select( id_original, set_original, CR, HET, DQC) %>%
+  gather("Variable", "Diff_Value", c(3,4,5)  ) 
+
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Rescan 후 동일 샘플 비교 분석
+
+전체적으로 327 은 큰 폭의 변화가 생김.  
+이는 결과에도 영향을 준것으로 판단됨.  
+
+***  
+**original analysis**  
+
+
+|Conc_PASS | DL001326| DL001327| DL001328|
+|:---------|--------:|--------:|--------:|
+|< 99.0    |        5|       32|       21|
+|>= 99.0   |       19|       58|       40|
+|>= 99.5   |        7|        3|       35|
+
+
+
+**rescan analysis**  
+
+
+|Conc_PASS | DL001326| DL001327| DL001328|
+|:---------|--------:|--------:|--------:|
+|< 99.0    |        3|        1|        5|
+|>= 99.0   |       22|       34|       51|
+|>= 99.5   |        6|       58|       40|
+
+
+
+
+
+
+## Including Plots
+
+```{r pressure, echo=FALSE,message=FALSE, warning=FALSE, fig.height=8, fig.width=14}
+ggplotly(
+  ggplot(DIFF, aes(id_original, Diff_Value, col=set_original)) + 
+  geom_point() + 
+  theme(axis.text.x=element_blank()) + 
+  labs(title="original - rescan", x="ID", y="DIFF") + 
+  facet_grid(Variable ~ ., scales = "free")
+)
+
+```
+
+

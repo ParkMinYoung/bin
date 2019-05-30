@@ -1,0 +1,157 @@
+---
+title: "KORV1_1 Blind Test Result"
+author: "minmin"
+date: '2016 10 19 '
+output: html_document
+---
+
+
+
+
+```{r setup, include=FALSE}
+library(pacman)
+#p_load(ggplot2, dplyr, gridExtra, plotly)
+p_load(dplyr, ggplot2, scales, printr, xtable, knitr, plotly, tidyr)
+
+#setwd("/home/adminrig/workspace.min/AFFX/Axiom_KORV1.1/Analysis/Analysis.20161005/440_OneBatch/BlindTest")
+# setwd("/home/adminrig/workspace.min/AFFX/Axiom_KORV1.1/Analysis/Analysis.20161005/440_OneBatch.Rescan/BlindTest")
+# system("ln -s /home/adminrig/workspace.min/AFFX/Axiom_KORV1.1/AnalysisResult/Summary.txt ./")
+system("grep -e ^probeset_id -e DL001 /home/adminrig/workspace.min/AFFX/Axiom_KORV1.1/AnalysisResult/Summary.txt > Summary.txt")
+  
+df<-read.table("Final.Concordance.summary.txt", header=T, sep="\t")
+
+#str(df)
+#summary(df)
+
+filter( df , A.CR < 98 | B.CR < 98)
+
+df <- mutate(df, Conc_PASS = ifelse(Concordance >= 99.5, ">= 99.5",ifelse(Concordance >= 99, ">= 99.0", "< 99.0" ) ) )
+df$Conc_PASS<-as.factor(df$Conc_PASS)
+
+
+  
+sum_df_A<-read.table("Summary.txt", header=T, sep="\t")
+colnames(sum_df_A)<-paste( colnames(sum_df_A), "A", sep="_")
+
+sum_df_B<-read.table("Summary.txt", header=T, sep="\t")
+colnames(sum_df_B)<-paste( colnames(sum_df_B), "B", sep="_")
+
+
+df<- left_join(df,sum_df_A,by=c("A"="id_A"))
+df<- left_join(df,sum_df_B,by=c("B"="id_B")) 
+
+
+#str(sum_df_A)
+#str(sum_df_B)
+
+
+
+
+```
+
+> Analysis
+
+1. 배치별 genotype call 에 의한 concordance : 98.96 %
+2. 440 샘플 one batch genotype call 에 의한 concordance : 99.20 %
+3. 2 번 분석에 KORV1_1에 업데이트 된 마커 7K 제거 후 concordance : 99.18 %
+4. 2 번 분석과 같으나 blind sample(326,327) 2 batch rescan : 99.41 %
+5. 4 번 분석에 추가로 GT2 에서 실험된 샘플 78 개 추가로 rescan : 99.56 %  
+
+***
+
+**5번 결과를 기본으로 한 결과 분석**
+
+
+```{r, echo=FALSE}
+## fig.height=8, fig.width=14
+
+df %>%
+  group_by( Conc_PASS, set_A) %>%
+  summarise( n = n()) %>%
+  spread(set_A, n ) %>%
+  kable(caption = '샘플 수')
+
+
+
+```
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+
+# ggplotly(CR)
+
+ggplotly(
+  ggplot(df, aes( A.CR, B.CR, col=Concordance)) +
+  geom_point()
+)
+
+ggplotly(
+ggplot(df, aes( A.CR, B.CR, col=Concordance)) +
+  geom_point() + 
+  facet_grid(Conc_PASS ~ set_A )
+)
+
+ggplotly(
+ggplot(df, aes( A.DQC, B.DQC, col=Concordance)) +
+  geom_point() + 
+  facet_grid(Conc_PASS ~ set_A )
+)
+
+ggplotly(
+ggplot(df, aes( A.HET, B.HET, col=Concordance)) +
+  geom_point() + 
+  facet_grid(Conc_PASS ~ set_A )
+)
+
+ggplotly(
+ggplot(df, aes( A.HET-B.HET, Concordance, col=Concordance)) +
+  geom_point() + 
+  facet_grid(Conc_PASS ~ set_A )
+)
+
+#str(df)
+#head(df)
+
+ggplotly(
+ggplot(df, aes( cn.probe.chrXY.ratio_gender_meanX_A, cn.probe.chrXY.ratio_gender_meanX_B, col=Concordance)) +
+  geom_point() + 
+  facet_grid(Conc_PASS ~ set_A )
+)
+
+ggplotly(
+ggplot(df, aes( cn.probe.chrXY.ratio_gender_meanY_A, cn.probe.chrXY.ratio_gender_meanY_B, col=Concordance)) +
+  geom_point() + 
+  facet_grid(Conc_PASS ~ set_A )
+)
+
+
+ggplotly(
+ggplot(df, aes( well_A, well_B, col=Concordance)) +
+  geom_point() 
+)
+# df %>% 
+#   group_by( well_A, well_B) %>%
+#   summarise( mean( Concordance))
+
+write.table(df, "df.txt", sep="\t", row.names=FALSE, col.names=TRUE, quote = FALSE) 
+
+df_het<-
+select (df, A, B, A.HET, B.HET, Conc_PASS, Concordance) %>%
+  gather(,"type", 3:4) 
+
+
+ggplotly(
+ggplot( df_het, aes(key, type, fill=key) ) + 
+  geom_boxplot() + 
+  facet_grid( Conc_PASS ~ .)
+)
+
+
+
+```
+
+

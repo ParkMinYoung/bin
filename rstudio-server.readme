@@ -1,0 +1,29 @@
+wget https://s3.amazonaws.com/rstudio-server/rstudio-server-rhel5-0.99.896-x86_64.rpm
+sudo yum install --nogpgcheck rstudio-server-rhel5-0.99.896-x86_64.rpm
+# https://www.rstudio.com/products/rstudio/download-server/
+
+## iptable setting
+vi /etc/sysconfig/iptables
+## add below line
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 8787 -j ACCEPT
+## service restart
+service iptables restart 
+## start
+sudo rstudio-server start
+## restart
+sudo rstudio-server restart
+
+
+mv ~/.rstudio ~/.rstudio.bak
+sudo rm -rf /tmp/rstudio-rsession/
+
+
+
+
+
+wget https://download2.rstudio.org/rstudio-server-rhel-1.0.44-x86_64.rpm
+
+
+sudo yum install --nogpgcheck rstudio-server-rhel-1.0.44-x86_64.rpm
+
+

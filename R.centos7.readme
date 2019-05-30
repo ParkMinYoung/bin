@@ -1,0 +1,72 @@
+# http://devopspy.com/linux/install-r-rstudio-centos-7/
+
+sudo yum install epel-release
+sudo yum update
+sudo yum install R -y
+
+
+wget https://download2.rstudio.org/rstudio-server-rhel-1.1.453-x86_64.rpm
+sudo yum install rstudio-server-rhel-1.1.453-x86_64.rpm -y
+
+
+systemctl stop firewalld
+
+
+sudo systemctl status rstudio-server
+
+
+
+# Required for png and jpeg packages used with mapping
+sudo yum install -y libpng-devel libjpeg-turbo-devel
+
+# These libraries relate to web scraping technology
+# They are primarily used by rvest + devtools
+sudo yum install -y libxml2-devel libcurl-devel openssl-devel libssh2-devel
+
+
+cat <<- EOF > rpkg-install.R
+# R Code Ahead to install packages!
+# The following are packages used in STAT 385
+pkg_list = c(
+             # EDA tools
+             'tidyverse', 'rmarkdown', 'shiny', 'flexdashboard', 'shinydashboard',                                               
+             # Development tools
+             'devtools', 'testthat', 'roxygen2', 'profvis', 'RSQLite', 
+             # C++ packages
+             'RcppArmadillo', 'rbenchmark', 'microbenchmark',                                    
+             # Time series packages
+             'zoo', 'xts', 'forecast',                                                          
+             # Mapping and graphing packages
+             'maps', 'maptools', 'mapproj', 'mapdata', 'ggmap',
+             'GGally', 'ggrepel', 'ggraph',
+             'cowplot', 'gridExtra', 'patchwork',
+             # Text Mining
+             'tidytext',
+             # Data packages
+             'survey', 'fivethirtyeight', 'nycflights13', 
+             'babynames', 'neiss', 'ggplot2movies', 
+              # Dependencies that are out of date for rmarkdown
+             'caTools', 'bitops',
+             'PKI', 'RCurl', 'RJSONIO', 'packrat', 'rstudioapi', 'rsconnect', 
+             'miniUI'                                                         
+             )
+             
+# Install the package list
+install.packages(pkg_list,
+                 repos = "https://cloud.r-project.org",
+                 # Run installation with a level of parallelization
+                 Ncpus = 2)
+                 
+# Install some data packages on GitHub
+devtools::install_github("kjhealy/socviz")
+devtools::install_github("coatless/uiucdata")
+devtools::install_github("coatless/ucidata")
+devtools::install_github("trinker/pacman")
+EOF
+
+# Run the script with sudo to write to `/usr/lib64/R/library`
+sudo Rscript rpkg-install.R
+
+
+
+

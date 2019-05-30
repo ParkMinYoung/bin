@@ -1,0 +1,1 @@
+zcat /var/log/cmdlog.log-20180*gz | perl -nle'BEGIN{ print join "\t", qw/account date time ip path cmd/ } if(/: \[(\w+)\s+.+\s+(2018.+) (\d{2}:\d{2}) \((.+)\)\]\[\d(.+)\]: (.+) \[0\]/){ print join "\t", $1, $2, $3, $4, $5, $6}' 

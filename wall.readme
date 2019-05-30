@@ -1,0 +1,2 @@
+wall -n "moni.sh JOBNAME_PATTERN. ex) moni.sh impute.  U moniter SGE status"
+

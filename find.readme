@@ -1,0 +1,67 @@
+#   http://pangate.com/32
+
+   find / -name "foobar" -print
+   find / -user foobar -print | more
+   find / -ctime -1 -a -type f | xargs ls -l | more
+   find / -mtime +30 -print | more
+   find / ! ( -atime -30 -a ( -type d -o -type f ) ) | xargs ls -l > not_access.txt
+   find . -prune ...
+   find / -perm 777 -print | xargs ls -l | more
+   find / -perm -2 -print | xargs ls -l | more
+   find / -perm -2 -print | xargs chmod o-w
+   find / -perm -2 -exec chmod o-w {} ; -print | xargs ls -l | more
+   find / ( -nouser -o -nogroup ) -print | more
+   find / -empty -print | more
+   find / -size 0 -print | more
+   find / -size +102400k -print | xargs ls -hl
+   find . -type d ...
+   find / ( -user root -a -perm +4000 ) -print | xargs ls -l | more
+   find / -xdev ...
+   find / -name "* *" -print
+   find / -name ".*" -print | more
+   find / -name "*.bak" -exec rm -rf {} ;
+   mv `find . -name "*.bak"` /home/bak/
+   find / -name "*.txt" -exce perl 
+   find / -name "*.txt" -exec perl -pi -e 's/A/B/g' {};
+
+   find ./ -maxdepth 1 -mindepth 1 -ctime -1 -name '*.CEL' | cut -d_ -f3 | sort | uniq -c
+
+
+   find $dir -size 0 -type f -delete
+   find $dir -size 0 ! -name "*.xml"
+
+# find broken symbolic files
+find ./ -maxdepth 1 -type l -xtype l 
+
+
+ls -li
+
+# excute time : 2017-06-21 17:48:23 : deleting file using inum
+find ./ -maxdepth 1  -inum 8796891618 -delete
+find ./ -maxdepth 1 -mindepth 1 -inum 9078422774 -o -inum 4556020569 -o -inum 9078422773 -delete
+
+
+
+
+ find ./ -maxdepth 1 -name "*.DAT" -exec mv {} DAT \;
+
+find ./ -type f -size +1000k -name "*.pdf" | grep -e \-scatter.pdf$ -e diagram.pdf$  | sort
+
+
+
+ find . -name '*.txt' -exec sh -c "tar cjvf {}.bz2 {}; rm -f {};" \;
+
+
+ find ./ -type f -name "*.AUDIT" -o -name "*.JPG" -o -name "*.DAT" -o -name "*.ARR" -exec mv {} Trash/ \;
+
+
+ find ./ -name "*.c" -exec sh -c 'grep ^5 {} > {}.out' \;
+
+
+ find * -name '*.c' -exec sh -c 'grep ABC "{}" | sort | head -1' \;
+
+
+ find -type f -size +1G
+
+
+find -type f -exec md5sum {} \; > md5sum

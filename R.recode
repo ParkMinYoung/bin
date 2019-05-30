@@ -1,0 +1,33 @@
+
+install.packages('ggthemes', dependencies = TRUE)
+https://github.com/jrnold/ggthemes
+
+
+
+devtools::install_github("briatte/ggnet")
+https://briatte.github.io/ggnet/
+
+
+devtools::install_github('thomasp85/ggraph')
+https://github.com/thomasp85/ggraph
+
+
+http://www.ggplot2-exts.org/gallery/
+
+
+source("https://bioconductor.org/biocLite.R")
+## biocLite("BiocUpgrade") ## you may need this
+biocLite("ggtree")
+https://guangchuangyu.github.io/ggtree/documentation/
+
+
+https://github.com/dgrtwo/gganimate
+devtools::install_github("dgrtwo/gganimate")
+
+
+https://github.com/davidgohel/ggiraph
+devtools::install_github('davidgohel/ggiraph')
+http://davidgohel.github.io/ggiraph/
+
+
+

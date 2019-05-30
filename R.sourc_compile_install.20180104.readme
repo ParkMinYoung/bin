@@ -1,0 +1,83 @@
+
+# R source compile 
+# https://oguya.ch/posts/2017-03-18-building-R-on-rhel-6/
+
+# R need zlib, bzip2, liblzma, pcre
+
+cd src
+mkdir -p ~/apps/R/3.3.3
+
+## download R 3.3.3
+wget -qO- https://cran.r-project.org/src/base/R-3/R-3.3.3.tar.gz | tar zxv
+#cd R-3.3.3/
+#./configure --prefix=$HOME/apps/R/3.3.2 --enable-R-static-lib
+
+
+## install zlib
+mkdir -p ~/apps/zlib/1.2.8
+wget -qO- https://downloads.sourceforge.net/project/libpng/zlib/1.2.8/zlib-1.2.8.tar.gz	 | tar zvx
+cd zlib-1.2.8/
+./configure -–prefix=$HOME/apps/zlib/1.2.8
+make -j4
+make install
+
+
+## install bzip2
+
+cd ../
+mkdir -p $HOME/apps/bzip/1.0.6
+wget -qO- http://www.bzip.org/1.0.6/bzip2-1.0.6.tar.gz | tar xzv
+cd bzip2-1.0.6/
+make -f Makefile-libbz2_so
+make clean
+make
+make -n install PREFIX=$HOME/apps/bzip/1.0.6/
+make install PREFIX=$HOME/apps/bzip/1.0.6/
+ 
+
+## liblzma
+
+cd ../
+wget -qO- http://tukaani.org/xz/xz-5.2.2.tar.gz | tar xzv
+cd xz-5.2.2/
+mkdir -p $HOME/apps/xz/5.2.2
+./configure --prefix=$HOME/apps/xz/5.2.2
+make -j4
+make install
+
+
+
+## pcre
+cd ../
+wget -qO- http://downloads.sourceforge.net/pcre/pcre-8.35.tar.bz2 | tar xjv
+cd pcre-8.35/
+mkdir -p $HOME/apps/pcre/8.35
+./configure --prefix=$HOME/apps/pcre/8.35 --enable-unicode-properties --enable-pcre16 --enable-pcre32 --enable-pcregrep-libz --enable-pcregrep-libbz2 --enable-pcretest-libreadline --enable-static
+make -j4
+make check
+make install
+
+
+## libcurl
+
+cd ../
+wget -qO- https://curl.haxx.se/download/curl-7.47.1.tar.gz | tar xvz
+cd curl-7.47.1
+mkdir -p $HOME/apps/curl/7.47.1/
+./configure --prefix=$HOME/apps/curl/7.47.1
+make -j4
+make install
+
+
+
+export PATH=$HOME/apps/curl/7.47.1/bin:$PATH
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/apps/curl/7.47.1/lib
+export LDFLAGS="-L$HOME/apps/zlib/1.2.8/lib -L$HOME/apps/bzip/1.0.6/lib -L$HOME/apps/xz/5.2.2/lib -L$HOME/apps/pcre/8.35/lib -L$HOME/apps/curl/7.47.1/lib"
+export CFLAGS="-I$HOME/apps/zlib/1.2.8/include -I$HOME/apps/bzip/1.0.6/include -I$HOME/apps/xz/5.2.2/include -I$HOME/apps/pcre/8.35/include -I$HOME/apps/curl/7.47.1/include"
+
+
+
+cd ../R-3.3.3
+./configure --prefix=$HOME/apps/R/3.3.3 --with-x=no 
+
+

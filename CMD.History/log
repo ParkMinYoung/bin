@@ -1,0 +1,844 @@
+Error: near line 170: near """": syntax error
+Error: near line 263: near "RW": syntax error
+Error: near line 272: near """": syntax error
+Error: near line 283: near "RW": syntax error
+Error: near line 290: near "RW": syntax error
+Error: near line 702: unrecognized token: "\"
+Error: near line 779: unrecognized token: "20181029_DNALink_Twist"
+Error: near line 1149: near "_S": syntax error
+Error: near line 1218: near "_S": syntax error
+Error: near line 1265: near "" "": syntax error
+Error: near line 1311: unrecognized token: "\"
+Error: near line 1313: unrecognized token: "\"
+Error: near line 1340: near """": syntax error
+Error: near line 1511: unrecognized token: "^"
+Error: near line 1677: near "_S": syntax error
+Error: near line 1698: near "_S": syntax error
+Error: near line 1717: near "_S": syntax error
+Error: near line 1743: near "_S": syntax error
+Error: near line 1774: near "_S": syntax error
+Error: near line 1790: near "_S": syntax error
+Error: near line 1820: near "_S": syntax error
+Error: near line 1865: near "_S": syntax error
+Error: near line 1908: near "_S": syntax error
+Error: near line 1933: near "_S": syntax error
+Error: near line 1934: near "_S": syntax error
+Error: near line 1973: near "_S": syntax error
+Error: near line 2051: near "_S": syntax error
+Error: near line 2081: near "_S": syntax error
+Error: near line 2109: near "_S": syntax error
+Error: near line 2110: unrecognized token: "\"
+Error: near line 2111: unrecognized token: "\"
+Error: near line 2116: unrecognized token: "\"
+Error: near line 2117: unrecognized token: "\"
+Error: near line 2118: unrecognized token: "\"
+Error: near line 2121: unrecognized token: "\"
+Error: near line 2133: near "_S": syntax error
+Error: near line 2147: near "_S": syntax error
+Error: near line 2162: near "_S": syntax error
+Error: near line 2163: unrecognized token: "\"
+Error: near line 2164: unrecognized token: "\"
+Error: near line 2165: unrecognized token: "\"
+Error: near line 2169: unrecognized token: "\"
+Error: near line 2238: near """": syntax error
+Error: near line 2277: unrecognized token: "^"
+Error: near line 2283: unrecognized token: "^"
+Error: near line 2396: unrecognized token: "\"
+Error: near line 2426: near "_S": syntax error
+Error: near line 2432: unrecognized token: "\"
+Error: near line 2436: unrecognized token: "\"
+Error: near line 2455: unrecognized token: "\"
+Error: near line 2456: unrecognized token: "\"
+Error: near line 2460: unrecognized token: "\"
+Error: near line 2461: unrecognized token: "\"
+Error: near line 2465: near """": syntax error
+Error: near line 2508: unrecognized token: "\"
+Error: near line 2509: unrecognized token: "\"
+Error: near line 2515: unrecognized token: "\"
+Error: near line 2649: unrecognized token: "\"
+Error: near line 2656: unrecognized token: "\"
+Error: near line 2687: near """": syntax error
+Error: near line 2743: unrecognized token: "^"
+Error: near line 2759: unrecognized token: "^"
+Error: near line 2761: unrecognized token: "^"
+Error: near line 2795: near "download": syntax error
+Error: near line 2805: near "download": syntax error
+Error: near line 3170: near ".1": syntax error
+Error: near line 3179: unrecognized token: "^"
+Error: near line 3180: unrecognized token: "^"
+Error: near line 3182: unrecognized token: "^"
+Error: near line 3202: unrecognized token: "^"
+Error: near line 3203: unrecognized token: "^"
+Error: near line 3282: unrecognized token: "^"
+Error: near line 3285: unrecognized token: "^"
+Error: near line 3287: near "$i": syntax error
+Error: near line 3315: near "$i": syntax error
+Error: near line 3317: near "$i": syntax error
+Error: near line 3331: near "$i": syntax error
+Error: near line 3339: unrecognized token: "{"
+Error: near line 3351: near "ln": syntax error
+Error: near line 3352: near "ln": syntax error
+Error: near line 3353: near "link": syntax error
+Error: near line 3358: near "make": syntax error
+Error: near line 3363: near "jobs": syntax error
+Error: near line 3382: unrecognized token: "^"
+Error: near line 3383: unrecognized token: "^"
+Error: near line 3397: near "_": syntax error
+Error: near line 3418: near "_": syntax error
+Error: near line 3423: near "_": syntax error
+Error: near line 3442: unrecognized token: "^"
+Error: near line 3446: near "$i": syntax error
+Error: near line 3461: near "$i": syntax error
+Error: near line 3464: near "$i": syntax error
+Error: near line 3468: near "$i": syntax error
+Error: near line 3476: unrecognized token: "^"
+Error: near line 3477: unrecognized token: "^"
+Error: near line 3478: unrecognized token: "^"
+Error: near line 3479: unrecognized token: "^"
+Error: near line 3480: unrecognized token: "^"
+Error: near line 3482: unrecognized token: "^"
+Error: near line 3483: unrecognized token: "^"
+Error: near line 3484: unrecognized token: "^"
+Error: near line 3485: unrecognized token: "^"
+Error: near line 3498: unrecognized token: "^"
+Error: near line 3541: near "$i": syntax error
+Error: near line 3543: near "$i": syntax error
+Error: near line 3545: near "$i": syntax error
+Error: near line 3546: near "$i": syntax error
+Error: near line 3547: near "$i": syntax error
+Error: near line 3554: near "$i": syntax error
+Error: near line 3558: unrecognized token: "^"
+Error: near line 3621: unrecognized token: "^"
+Error: near line 3644: unrecognized token: "^"
+Error: near line 3654: near """": syntax error
+Error: near line 3665: unrecognized token: "^"
+Error: near line 3739: unrecognized token: "^"
+Error: near line 3741: unrecognized token: "^"
+Error: near line 3743: unrecognized token: "^"
+Error: near line 3745: unrecognized token: "^"
+Error: near line 3751: unrecognized token: "^"
+Error: near line 3752: unrecognized token: "^"
+Error: near line 3760: unrecognized token: "^"
+Error: near line 3762: unrecognized token: "^"
+Error: near line 3769: unrecognized token: "^"
+Error: near line 3825: unrecognized token: "^"
+Error: near line 3827: unrecognized token: "^"
+Error: near line 3832: unrecognized token: "^"
+Error: near line 3833: unrecognized token: "^"
+Error: near line 3851: near ".1": syntax error
+Error: near line 3867: unrecognized token: "^"
+Error: near line 3893: near ".2": syntax error
+Error: near line 3900: near ".3": syntax error
+Error: near line 3903: near ".4": syntax error
+Error: near line 3909: near ".5": syntax error
+Error: near line 3913: near ".6": syntax error
+Error: near line 3948: unrecognized token: "^"
+Error: near line 3961: near ".1": syntax error
+Error: near line 4003: near "selectsample": syntax error
+Error: near line 4010: near "selectsample": syntax error
+Error: near line 4016: near "selectsample": syntax error
+Error: near line 4028: near ".1": syntax error
+Error: near line 4106: near "multiple": syntax error
+Error: near line 4107: near "multiple": syntax error
+Error: near line 4173: unrecognized token: "^"
+Error: near line 4179: unrecognized token: "^"
+Error: near line 4180: unrecognized token: "^"
+Error: near line 4198: unrecognized token: "^"
+Error: near line 4216: unrecognized token: "^"
+Error: near line 4243: unrecognized token: "^"
+Error: near line 4244: unrecognized token: "^"
+Error: near line 4253: unrecognized token: "^"
+Error: near line 4275: unrecognized token: "^"
+Error: near line 4279: unrecognized token: "^"
+Error: near line 4291: unrecognized token: "^"
+Error: near line 4294: unrecognized token: "^"
+Error: near line 4335: unrecognized token: "^"
+Error: near line 4343: unrecognized token: "^"
+Error: near line 4346: near "#012": syntax error
+Error: near line 4355: near ".1": syntax error
+Error: near line 4369: near "link": syntax error
+Error: near line 4421: unrecognized token: "^"
+Error: near line 4424: unrecognized token: "\"
+Error: near line 4447: unrecognized token: "\"
+Error: near line 4448: unrecognized token: "\"
+Error: near line 4470: near "0601": syntax error
+Error: near line 4473: near "run": syntax error
+Error: near line 4487: near "$i": syntax error
+Error: near line 4488: unrecognized token: "\"
+Error: near line 4496: unrecognized token: "\"
+Error: near line 4519: near "$i": syntax error
+Error: near line 4536: near "$i": syntax error
+Error: near line 4538: near "$i": syntax error
+Error: near line 4545: unrecognized token: "^"
+Error: near line 4560: near "$i": syntax error
+Error: near line 4571: near "$i": syntax error
+Error: near line 4577: near "$i": syntax error
+Error: near line 4579: near "$i": syntax error
+Error: near line 4581: near "$i": syntax error
+Error: near line 4583: near "$i": syntax error
+Error: near line 4587: near "intersect": syntax error
+Error: near line 4590: unrecognized token: "^"
+Error: near line 4626: unrecognized token: "^"
+Error: near line 4643: unrecognized token: "^"
+Error: near line 4717: unrecognized token: "^"
+Error: near line 4731: unrecognized token: "^"
+Error: near line 4732: unrecognized token: "^"
+Error: near line 4733: unrecognized token: "^"
+Error: near line 4734: unrecognized token: "^"
+Error: near line 4738: unrecognized token: "^"
+Error: near line 4743: unrecognized token: "^"
+Error: near line 4748: unrecognized token: "^"
+Error: near line 4749: unrecognized token: "^"
+Error: near line 4750: unrecognized token: "^"
+Error: near line 4763: near ".1": syntax error
+Error: near line 4768: unrecognized token: "^"
+Error: near line 4772: unrecognized token: "^"
+Error: near line 4773: unrecognized token: "^"
+Error: near line 4774: unrecognized token: "^"
+Error: near line 4781: unrecognized token: "^"
+Error: near line 4783: unrecognized token: "\"
+Error: near line 4798: near "qsub_wrapper": syntax error
+Error: near line 4821: unrecognized token: "^"
+Error: near line 4823: unrecognized token: "^"
+Error: near line 4954: near "qsub_wrapper": syntax error
+Error: near line 4968: unrecognized token: "^"
+Error: near line 4972: unrecognized token: "^"
+Error: near line 4977: unrecognized token: "^"
+Error: near line 4980: unrecognized token: "^"
+Error: near line 4981: unrecognized token: "^"
+Error: near line 4994: unrecognized token: "^"
+Error: near line 4996: unrecognized token: "^"
+Error: near line 4997: unrecognized token: "^"
+Error: near line 5010: unrecognized token: "^"
+Error: near line 5011: unrecognized token: "^"
+Error: near line 5033: unrecognized token: "^"
+Error: near line 5231: unrecognized token: "^"
+Error: near line 5348: near "insert": syntax error
+Error: near line 5352: near "insert": syntax error
+Error: near line 5356: near "insert": syntax error
+Error: near line 5358: near "insert": syntax error
+Error: near line 5363: near "insert": syntax error
+Error: near line 5372: near "insert": syntax error
+Error: near line 5387: near "insert": syntax error
+Error: near line 5389: near "insert": syntax error
+Error: near line 5399: near "insert": syntax error
+Error: near line 5402: near "insert": syntax error
+Error: near line 5405: near "insert": syntax error
+Error: near line 5410: near "insert": syntax error
+Error: near line 5431: unrecognized token: "^"
+Error: near line 5433: unrecognized token: "^"
+Error: near line 5435: unrecognized token: "^"
+Error: near line 5438: unrecognized token: "^"
+Error: near line 5439: unrecognized token: "^"
+Error: near line 5451: unrecognized token: "^"
+Error: near line 5454: unrecognized token: "^"
+Error: near line 5459: unrecognized token: "^"
+Error: near line 5464: unrecognized token: "^"
+Error: near line 5469: near "$i": syntax error
+Error: near line 5472: near "$i": syntax error
+Error: near line 5474: near "$i": syntax error
+Error: near line 5478: near "pseudoaligned": syntax error
+Error: near line 5479: near "pseudoaligned": syntax error
+Error: near line 5480: near "pseudoaligned": syntax error
+Error: near line 5481: near "pseudoaligned": syntax error
+Error: near line 5482: near "pseudoaligned": syntax error
+Error: near line 5483: near "$i": syntax error
+Error: near line 5487: unrecognized token: "^"
+Error: near line 5492: unrecognized token: "^"
+Error: near line 5493: unrecognized token: "^"
+Error: near line 5531: unrecognized token: "^"
+Error: near line 5567: near "$i": syntax error
+Error: near line 5576: unrecognized token: "^"
+Error: near line 5577: unrecognized token: "^"
+Error: near line 5578: unrecognized token: "^"
+Error: near line 5579: unrecognized token: "^"
+Error: near line 5580: unrecognized token: "^"
+Error: near line 5584: unrecognized token: "^"
+Error: near line 5623: near "$i": syntax error
+Error: near line 5637: unrecognized token: "^"
+Error: near line 5638: unrecognized token: "^"
+Error: near line 5643: unrecognized token: "^"
+Error: near line 5702: near "$i": syntax error
+Error: near line 5710: unrecognized token: "^"
+Error: near line 5711: unrecognized token: "^"
+Error: near line 5719: unrecognized token: "^"
+Error: near line 5754: near ".1": syntax error
+Error: near line 5776: unrecognized token: "^"
+Error: near line 5777: unrecognized token: "^"
+Error: near line 5780: unrecognized token: "^"
+Error: near line 5783: unrecognized token: "^"
+Error: near line 5784: unrecognized token: "^"
+Error: near line 5838: near ".2": syntax error
+Error: near line 5847: near ".3": syntax error
+Error: near line 5868: near "bed": syntax error
+Error: near line 5895: unrecognized token: "^"
+Error: near line 5914: near ".4": syntax error
+Error: near line 5932: near ".6": syntax error
+Error: near line 5938: near ".7": syntax error
+Error: near line 5987: near "$i": syntax error
+Error: near line 6012: unrecognized token: "^"
+Error: near line 6058: near ".1": syntax error
+Error: near line 6097: near ".1": syntax error
+Error: near line 6152: near "selectsample": syntax error
+Error: near line 6159: near "selectsample": syntax error
+Error: near line 6167: near "KORV1": syntax error
+Error: near line 6200: near "NA12878": syntax error
+Error: near line 6293: near "selectsample": syntax error
+Error: near line 6343: near "NA12878": syntax error
+Error: near line 6353: near "_": syntax error
+Error: near line 6354: near "_": syntax error
+Error: near line 6360: near "_": syntax error
+Error: near line 6363: near "_": syntax error
+Error: near line 6374: near "_": syntax error
+Error: near line 6376: near "_": syntax error
+Error: near line 6383: near "_": syntax error
+Error: near line 6391: near "_": syntax error
+Error: near line 6397: unrecognized token: "^"
+Error: near line 6411: near "_": syntax error
+Error: near line 6440: near ".0": syntax error
+Error: near line 6449: near "_": syntax error
+Error: near line 6455: near "_": syntax error
+Error: near line 6564: unrecognized token: "^"
+Error: near line 6566: unrecognized token: "^"
+Error: near line 6572: unrecognized token: "^"
+Error: near line 6573: unrecognized token: "^"
+Error: near line 6574: unrecognized token: "^"
+Error: near line 6586: near "bed": syntax error
+Error: near line 6588: near "bed": syntax error
+Error: near line 6600: unrecognized token: "^"
+Error: near line 6610: unrecognized token: "^"
+Error: near line 6664: unrecognized token: "^"
+Error: near line 6665: near "_": syntax error
+Error: near line 6666: near "_": syntax error
+Error: near line 6667: unrecognized token: "^"
+Error: near line 6668: unrecognized token: "^"
+Error: near line 6669: unrecognized token: "^"
+Error: near line 6675: near "_": syntax error
+Error: near line 6688: unrecognized token: "^"
+Error: near line 6697: unrecognized token: "^"
+Error: near line 6698: unrecognized token: "^"
+Error: near line 6699: near "_": syntax error
+Error: near line 6700: near "_": syntax error
+Error: near line 6720: unrecognized token: "^"
+Error: near line 6722: unrecognized token: "^"
+Error: near line 6728: unrecognized token: "^"
+Error: near line 6744: near "_": syntax error
+Error: near line 6764: unrecognized token: "^"
+Error: near line 6765: unrecognized token: "^"
+Error: near line 6776: near "selectsample": syntax error
+Error: near line 6818: unrecognized token: "^"
+Error: near line 6839: near "_": syntax error
+Error: near line 6840: near "_": syntax error
+Error: near line 6841: near "_": syntax error
+Error: near line 6843: near "_": syntax error
+Error: near line 6849: near "_": syntax error
+Error: near line 6850: near "_": syntax error
+Error: near line 6851: near "_": syntax error
+Error: near line 6852: near "_": syntax error
+Error: near line 6872: unrecognized token: "^"
+Error: near line 6881: near "_": syntax error
+Error: near line 6884: near "_": syntax error
+Error: near line 6895: near "_": syntax error
+Error: near line 6898: unrecognized token: "^"
+Error: near line 6901: unrecognized token: "^"
+Error: near line 6929: unrecognized token: "^"
+Error: near line 6936: unrecognized token: "^"
+Error: near line 6943: near "_": syntax error
+Error: near line 7118: unrecognized token: "^"
+Error: near line 7133: near "_": syntax error
+Error: near line 7173: near "_": syntax error
+Error: near line 7174: near "_": syntax error
+Error: near line 7175: near "_": syntax error
+Error: near line 7176: near "_": syntax error
+Error: near line 7189: near "_83": syntax error
+Error: near line 7190: near "_83": syntax error
+Error: near line 7226: near "_": syntax error
+Error: near line 7299: near "_": syntax error
+Error: near line 7316: near "_": syntax error
+Error: near line 7317: near "_": syntax error
+Error: near line 7329: near "_": syntax error
+Error: near line 7365: near "_": syntax error
+Error: near line 7425: near ".0": syntax error
+Error: near line 7523: near "_": syntax error
+Error: near line 7526: near ".0": syntax error
+Error: near line 7554: near "ln": syntax error
+Error: near line 7555: near ""$8}'"": syntax error
+Error: near line 7556: near "ln": syntax error
+Error: near line 7745: near "KORV1": syntax error
+Error: near line 7765: near "get": syntax error
+Error: near line 7781: near "get": syntax error
+Error: near line 7885: near """": syntax error
+Error: near line 8055: unrecognized token: "^"
+Error: near line 8056: unrecognized token: "^"
+Error: near line 8391: near "recal": syntax error
+Error: near line 8392: near "recal": syntax error
+Error: near line 8393: near "recal": syntax error
+Error: near line 8419: near "recal": syntax error
+Error: near line 8422: near "link": syntax error
+Error: near line 8450: near "recal": syntax error
+Error: near line 8451: near "link": syntax error
+Error: near line 8664: near "make": syntax error
+Error: near line 8760: near ".1": syntax error
+Error: near line 8821: near ".2": syntax error
+Error: near line 8830: near ".3": syntax error
+Error: near line 8842: near ".4": syntax error
+Error: near line 8847: near ".5": syntax error
+Error: near line 8852: near ".6": syntax error
+Error: near line 8859: near ".7": syntax error
+Error: near line 8860: near ".7": syntax error
+Error: near line 8874: near ".8": syntax error
+Error: near line 8879: near ".9": syntax error
+Error: near line 8939: near """": syntax error
+Error: near line 9025: unrecognized token: "^"
+Error: near line 9026: unrecognized token: "^"
+Error: near line 9030: unrecognized token: "^"
+Error: near line 9032: unrecognized token: "^"
+Error: near line 9033: unrecognized token: "^"
+Error: near line 9102: unrecognized token: "{"
+Error: near line 9169: unrecognized token: "^"
+Error: near line 9195: near "insert": syntax error
+Error: near line 9197: near "insert": syntax error
+Error: near line 9205: near "insert": syntax error
+Error: near line 9232: near "TWIST": syntax error
+Error: near line 9339: near "$_": syntax error
+Error: near line 9351: near "$_": syntax error
+Error: near line 9356: near "$_": syntax error
+Error: near line 9357: near "$_": syntax error
+Error: near line 9359: near "$_": syntax error
+Error: near line 9360: near "$_": syntax error
+Error: near line 9361: near "$_": syntax error
+Error: near line 9362: near "$_": syntax error
+Error: near line 9375: near "ln": syntax error
+Error: near line 9380: near "ln": syntax error
+Error: near line 9381: unrecognized token: "\"
+Error: near line 9383: near "ln": syntax error
+Error: near line 9385: near "ln": syntax error
+Error: near line 9386: near "link": syntax error
+Error: near line 9426: near "make": syntax error
+Error: near line 9428: unrecognized token: "\"
+Error: near line 9437: near "run": syntax error
+Error: near line 9483: unrecognized token: "\"
+Error: near line 9487: unrecognized token: "\"
+Error: near line 9496: near "bed": syntax error
+Error: near line 9497: near "bed": syntax error
+Error: near line 9508: near "bed": syntax error
+Error: near line 9517: unrecognized token: "\"
+Error: near line 9900: near "total": syntax error
+Error: near line 9919: near "total": syntax error
+Error: near line 10157: near "total": syntax error
+Error: near line 10329: unrecognized token: "^"
+Error: near line 10378: unrecognized token: "\"
+Error: near line 10379: unrecognized token: "\"
+Error: near line 10380: unrecognized token: "\"
+Error: near line 10384: unrecognized token: "\"
+Error: near line 10385: unrecognized token: "\"
+Error: near line 10386: unrecognized token: "\"
+Error: near line 10387: unrecognized token: "\"
+Error: near line 10388: unrecognized token: "\"
+Error: near line 10389: unrecognized token: "\"
+Error: near line 10391: unrecognized token: "\"
+Error: near line 10392: unrecognized token: "\"
+Error: near line 10417: unrecognized token: "\"
+Error: near line 10422: unrecognized token: "\"
+Error: near line 10427: unrecognized token: "\"
+Error: near line 10428: unrecognized token: "\"
+Error: near line 10432: unrecognized token: "\"
+Error: near line 10451: unrecognized token: "\"
+Error: near line 10452: unrecognized token: "\"
+Error: near line 10453: unrecognized token: "\"
+Error: near line 10454: unrecognized token: "\"
+Error: near line 10455: unrecognized token: "\"
+Error: near line 10456: unrecognized token: "\"
+Error: near line 10457: unrecognized token: "\"
+Error: near line 10458: unrecognized token: "\"
+Error: near line 10459: unrecognized token: "\"
+Error: near line 10485: unrecognized token: "\"
+Error: near line 10491: unrecognized token: "\"
+Error: near line 10500: unrecognized token: "\"
+Error: near line 10501: unrecognized token: "\"
+Error: near line 10504: unrecognized token: "\"
+Error: near line 10517: unrecognized token: "\"
+Error: near line 10523: unrecognized token: "\"
+Error: near line 10524: unrecognized token: "\"
+Error: near line 10866: near ".1": syntax error
+Error: near line 10903: near ".2": syntax error
+Error: near line 10993: near "Sample_": syntax error
+Error: near line 11012: near "Sample_": syntax error
+Error: near line 11066: near ".1": syntax error
+Error: near line 11077: near ".2": syntax error
+Error: near line 11128: near ".1": syntax error
+Error: near line 11138: near ".2": syntax error
+Error: near line 11139: near ".2": syntax error
+Error: near line 11314: near ".": syntax error
+Error: near line 11317: near ".": syntax error
+Error: near line 11320: near "_md5": syntax error
+Error: near line 11397: unrecognized token: "^"
+Error: near line 11398: unrecognized token: "^"
+Error: near line 11399: unrecognized token: "^"
+Error: near line 11400: unrecognized token: "^"
+Error: near line 11401: unrecognized token: "^"
+Error: near line 11407: unrecognized token: "^"
+Error: near line 11496: near "chr7": syntax error
+Error: near line 11539: near ".1": syntax error
+Error: near line 11591: near ".1": syntax error
+Error: near line 11598: near ".2": syntax error
+Error: near line 11646: near ".1": syntax error
+Error: near line 11663: near ".2": syntax error
+Error: near line 11667: near ".3": syntax error
+Error: near line 11742: near ".1": syntax error
+Error: near line 11755: near ".2": syntax error
+Error: near line 11784: near ".1": syntax error
+Error: near line 11790: near ".2": syntax error
+Error: near line 11824: near ".1": syntax error
+Error: near line 11840: near ".2": syntax error
+Error: near line 11927: near ".1": syntax error
+Error: near line 11933: near ".2": syntax error
+Error: near line 11975: near ".1": syntax error
+Error: near line 11980: near ".2": syntax error
+Error: near line 12224: unrecognized token: "^"
+Error: near line 12226: unrecognized token: "^"
+Error: near line 12227: unrecognized token: "^"
+Error: near line 12228: unrecognized token: "^"
+Error: near line 12287: unrecognized token: "218SA_6"
+Error: near line 12288: unrecognized token: "218SA_9"
+Error: near line 12290: unrecognized token: "218SA_13"
+Error: near line 12291: unrecognized token: "218SA_27"
+Error: near line 12293: unrecognized token: "218SA_36"
+Error: near line 12294: unrecognized token: "218SA_35"
+Error: near line 12299: unrecognized token: "218SA_20"
+Error: near line 12300: unrecognized token: "218SA_34"
+Error: near line 12304: unrecognized token: "218SA_28"
+Error: near line 12332: near "woori": syntax error
+Error: near line 12334: near "tgz": syntax error
+Error: near line 12364: near "woori": syntax error
+Error: near line 12365: near "woori": syntax error
+Error: near line 12457: unrecognized token: "218SA_9"
+Error: near line 12458: unrecognized token: "218SA_9"
+Error: near line 12462: unrecognized token: "218SA_9"
+Error: near line 12463: unrecognized token: "218SA_9"
+Error: near line 12467: unrecognized token: "218SA_9"
+Error: near line 12469: unrecognized token: "218SA_13"
+Error: near line 12470: unrecognized token: "218SA_28"
+Error: near line 12471: unrecognized token: "218SA_34"
+Error: near line 12472: unrecognized token: "218SA_6"
+Error: near line 12473: unrecognized token: "218SA_20"
+Error: near line 12474: unrecognized token: "218SA_35"
+Error: near line 12475: unrecognized token: "218SA_36"
+Error: near line 12476: unrecognized token: "218SA_27"
+Error: near line 12477: near "woori": syntax error
+Error: near line 12637: near "_S": syntax error
+Error: near line 12638: near "_S": syntax error
+Error: near line 12708: near "_md5": syntax error
+Error: near line 12710: near ".1": syntax error
+Error: near line 12718: near "_md5": syntax error
+Error: near line 12734: near ".2": syntax error
+Error: near line 12820: near "get": syntax error
+Error: near line 12822: near "get": syntax error
+Error: near line 12854: near "make": syntax error
+Error: near line 12855: near "make": syntax error
+Error: near line 12856: near "make": syntax error
+Error: near line 12857: near "make": syntax error
+Error: near line 12867: near "make": syntax error
+Error: near line 12868: near "make": syntax error
+Error: near line 12869: near "make": syntax error
+Error: near line 12957: near ".1": syntax error
+Error: near line 13048: near ".1": syntax error
+Error: near line 13051: near "removal": syntax error
+Error: near line 13066: near "removal": syntax error
+Error: near line 13114: near "link": syntax error
+Error: near line 13118: near ".1": syntax error
+Error: near line 13150: near "insert": syntax error
+Error: near line 13152: near "calc": syntax error
+Error: near line 13155: near "space": syntax error
+Error: near line 13157: near "step1": syntax error
+Error: near line 13159: near "add": syntax error
+Error: near line 13176: unrecognized token: "^"
+Error: near line 13177: unrecognized token: "^"
+Error: near line 13178: unrecognized token: "^"
+Error: near line 13179: unrecognized token: "^"
+Error: near line 13181: unrecognized token: "^"
+Error: near line 13248: near ".1": syntax error
+Error: near line 13264: near ".2": syntax error
+Error: near line 13304: unrecognized token: "^"
+Error: near line 13305: unrecognized token: "^"
+Error: near line 13306: unrecognized token: "^"
+Error: near line 13316: unrecognized token: "^"
+Error: near line 13347: near ".1": syntax error
+Error: near line 13354: near "Sample": syntax error
+Error: near line 13355: near "Sample": syntax error
+Error: near line 13360: near "variant": syntax error
+Error: near line 13386: near "eval": syntax error
+Error: near line 13392: unrecognized token: "#"
+Error: near line 13399: unrecognized token: "#"
+Error: near line 13403: unrecognized token: "#"
+Error: near line 13412: unrecognized token: "#"
+Error: near line 13413: unrecognized token: "#"
+Error: near line 13496: near ""|sort | uniq -c | less -S"": syntax error
+Error: near line 13499: near ""|sort | uniq -c | less -S"": syntax error
+Error: near line 13528: unrecognized token: "^"
+Error: near line 13530: unrecognized token: "^"
+Error: near line 13531: unrecognized token: "^"
+Error: near line 13532: unrecognized token: "^"
+Error: near line 13533: unrecognized token: "^"
+Error: near line 13534: unrecognized token: "^"
+Error: near line 13535: unrecognized token: "^"
+Error: near line 13536: unrecognized token: "^"
+Error: near line 13540: unrecognized token: "^"
+Error: near line 13618: unrecognized token: "^"
+Error: near line 13628: unrecognized token: "^"
+Error: near line 13881: unrecognized token: "^"
+Error: near line 13882: unrecognized token: "^"
+Error: near line 13883: unrecognized token: "^"
+Error: near line 13884: unrecognized token: "^"
+Error: near line 13893: unrecognized token: "^"
+Error: near line 13896: unrecognized token: "^"
+Error: near line 13904: unrecognized token: "^"
+Error: near line 13905: unrecognized token: "^"
+Error: near line 13906: unrecognized token: "^"
+Error: near line 13907: unrecognized token: "^"
+Error: near line 13908: unrecognized token: "^"
+Error: near line 13909: unrecognized token: "^"
+Error: near line 13910: unrecognized token: "^"
+Error: near line 13911: unrecognized token: "^"
+Error: near line 13912: unrecognized token: "^"
+Error: near line 13913: unrecognized token: "^"
+Error: near line 13914: unrecognized token: "^"
+Error: near line 13915: unrecognized token: "^"
+Error: near line 13916: unrecognized token: "^"
+Error: near line 13929: unrecognized token: "^"
+Error: near line 13932: unrecognized token: "^"
+Error: near line 13943: near ""|sort | uniq -c | less -S"": syntax error
+Error: near line 13949: near ""|sort | uniq -c | less -S > V7.all.pertarget.perGT.vcf"": syntax error
+Error: near line 13951: unrecognized token: "^"
+Error: near line 13952: near ""|sort | uniq -c | less -S > TW.all.pertarget.perGT.vcf"": syntax error
+Error: near line 14035: near "" | less -S"": syntax error
+Error: near line 14087: unrecognized token: "^"
+Error: near line 14095: unrecognized token: "^"
+Error: near line 14103: unrecognized token: "^"
+Error: near line 14120: unrecognized token: "^"
+Error: near line 14121: unrecognized token: "^"
+Error: near line 14143: unrecognized token: "^"
+Error: near line 14234: near "$a": syntax error
+Error: near line 14244: unrecognized token: "^"
+Error: near line 14254: unrecognized token: "^"
+Error: near line 14255: unrecognized token: "^"
+Error: near line 14256: unrecognized token: "^"
+Error: near line 14265: unrecognized token: "^"
+Error: near line 14267: unrecognized token: "^"
+Error: near line 14268: unrecognized token: "^"
+Error: near line 14269: unrecognized token: "^"
+Error: near line 14346: unrecognized token: "^"
+Error: near line 14478: near "pseudoaligned": syntax error
+Error: near line 14492: near "try": syntax error
+Error: near line 14521: near "try": syntax error
+Error: near line 14522: near "try": syntax error
+Error: near line 14530: near "try": syntax error
+Error: near line 14532: near "try": syntax error
+Error: near line 14537: near "try": syntax error
+Error: near line 14580: near "AAAAA": syntax error
+Error: near line 14581: near "AAAAA": syntax error
+Error: near line 14582: near "AAAAA": syntax error
+Error: near line 14583: near "AAAAA": syntax error
+Error: near line 14584: near "AAAAA": syntax error
+Error: near line 14585: near "AAAAA": syntax error
+Error: near line 14597: near "AAAAA": syntax error
+Error: near line 14598: near "AAAAA": syntax error
+Error: near line 14609: near "AAAAA": syntax error
+Error: near line 14613: near "AAAAA": syntax error
+Error: near line 14614: near "AAAAA": syntax error
+Error: near line 14643: near "AAAAA": syntax error
+Error: near line 14646: near "AAAAA": syntax error
+Error: near line 14657: near "AAAAA": syntax error
+Error: near line 14661: near "AAAAA": syntax error
+Error: near line 14663: near "AAAAA": syntax error
+Error: near line 14671: near "AAAAA": syntax error
+Error: near line 14672: near "AAAAA": syntax error
+Error: near line 14673: near "AAAAA": syntax error
+Error: near line 14674: near "AAAAA": syntax error
+Error: near line 14684: near "18": syntax error
+Error: near line 14688: near "AAAAA": syntax error
+Error: near line 14689: unrecognized token: "^"
+Error: near line 14690: near "18": syntax error
+Error: near line 14691: near "18": syntax error
+Error: near line 14692: near "18": syntax error
+Error: near line 14693: near "18": syntax error
+Error: near line 14694: near "18": syntax error
+Error: near line 14695: near "AAAAA": syntax error
+Error: near line 14698: near "AAAAA": syntax error
+Error: near line 14702: near "AAAAA": syntax error
+Error: near line 14703: near "AAAAA": syntax error
+Error: near line 14704: near "AAAAA": syntax error
+Error: near line 14705: near "AAAAA": syntax error
+Error: near line 14707: near "AAAAA": syntax error
+Error: near line 14721: near "AAAAA": syntax error
+Error: near line 14732: near "AAAAA": syntax error
+Error: near line 14735: near "AAAAA": syntax error
+Error: near line 14741: near "AAAAA": syntax error
+Error: near line 14742: near "AAAAA": syntax error
+Error: near line 14748: near "AAAAA": syntax error
+Error: near line 14749: unrecognized token: "\"
+Error: near line 14750: unrecognized token: "\"
+Error: near line 14756: unrecognized token: "\"
+Error: near line 14757: unrecognized token: "\"
+Error: near line 14762: unrecognized token: "\"
+Error: near line 14771: unrecognized token: "\"
+Error: near line 14777: unrecognized token: "\"
+Error: near line 14814: near "AAAAA": syntax error
+Error: near line 14826: near "AAAAA": syntax error
+Error: near line 14827: near ".1": syntax error
+Error: near line 14854: near ".2": syntax error
+Error: near line 14880: near "all": syntax error
+Error: near line 14889: near "eval": syntax error
+Error: near line 15022: unrecognized token: "^"
+Error: near line 15023: unrecognized token: "^"
+Error: near line 15026: near ""|sort | uniq -c | less -S > V7.all.pertarget.perGT.txt"": syntax error
+Error: near line 15028: near ""|sort | uniq -c | less -S > TW.all.pertarget.perGT.txt"": syntax error
+Error: near line 15032: near ""|sort | uniq -c | less -S > V7.all.pertarget.perGT.txt"": syntax error
+Error: near line 15034: near ""|sort | uniq -c | less -S > V7.all.pertarget.perGT.txt"": syntax error
+Error: near line 15035: near ""|sort | uniq -c | less -S > V7.all.pertarget.perGT.txt"": syntax error
+Error: near line 15043: unrecognized token: "^"
+Error: near line 15045: unrecognized token: "^"
+Error: near line 15055: unrecognized token: "^"
+Error: near line 15066: unrecognized token: "^"
+Error: near line 15067: unrecognized token: "^"
+Error: near line 15069: unrecognized token: "^"
+Error: near line 15077: unrecognized token: "^"
+Error: near line 15086: unrecognized token: "^"
+Error: near line 15087: unrecognized token: "^"
+Error: near line 15092: unrecognized token: "^"
+Error: near line 15093: near "18": syntax error
+Error: near line 15098: unrecognized token: "^"
+Error: near line 15102: unrecognized token: "^"
+Error: near line 15105: unrecognized token: "^"
+Error: near line 15108: unrecognized token: "^"
+Error: near line 15113: unrecognized token: "^"
+Error: near line 15114: unrecognized token: "^"
+Error: near line 15116: unrecognized token: "^"
+Error: near line 15117: unrecognized token: "^"
+Error: near line 15118: unrecognized token: "^"
+Error: near line 15119: unrecognized token: "^"
+Error: near line 15135: unrecognized token: "^"
+Error: near line 15168: unrecognized token: "^"
+Error: near line 15190: unrecognized token: "^"
+Error: near line 15239: unrecognized token: "^"
+Error: near line 15250: unrecognized token: "^"
+Error: near line 15266: unrecognized token: "^"
+Error: near line 15269: unrecognized token: "^"
+Error: near line 15276: unrecognized token: "^"
+Error: near line 15283: unrecognized token: "^"
+Error: near line 15285: unrecognized token: "^"
+Error: near line 15290: unrecognized token: "^"
+Error: near line 15293: unrecognized token: "^"
+Error: near line 15294: unrecognized token: "^"
+Error: near line 15299: unrecognized token: "^"
+Error: near line 15302: unrecognized token: "^"
+Error: near line 15307: unrecognized token: "^"
+Error: near line 15316: unrecognized token: "^"
+Error: near line 15326: unrecognized token: "^"
+Error: near line 15327: unrecognized token: "^"
+Error: near line 15331: unrecognized token: "^"
+Error: near line 15333: unrecognized token: "^"
+Error: near line 15334: unrecognized token: "^"
+Error: near line 15335: unrecognized token: "^"
+Error: near line 15337: unrecognized token: "^"
+Error: near line 15338: near "0": syntax error
+Error: near line 15342: near "0": syntax error
+Error: near line 15344: unrecognized token: "^"
+Error: near line 15348: near "0": syntax error
+Error: near line 15352: unrecognized token: "^"
+Error: near line 15354: unrecognized token: "^"
+Error: near line 15355: unrecognized token: "^"
+Error: near line 15356: unrecognized token: "^"
+Error: near line 15357: unrecognized token: "^"
+Error: near line 15361: unrecognized token: "^"
+Error: near line 15363: unrecognized token: "^"
+Error: near line 15364: unrecognized token: "^"
+Error: near line 15365: unrecognized token: "^"
+Error: near line 15366: unrecognized token: "^"
+Error: near line 15371: unrecognized token: "^"
+Error: near line 15375: unrecognized token: "^"
+Error: near line 15402: unrecognized token: "^"
+Error: near line 15410: unrecognized token: "^"
+Error: near line 15411: unrecognized token: "^"
+Error: near line 15494: near "bioalcidae": syntax error
+Error: near line 15497: near "dist": syntax error
+Error: near line 15500: near "" | less"": syntax error
+Error: near line 15501: near """": syntax error
+Error: near line 15518: near "jvarkit": syntax error
+Error: near line 15542: near "bioalcidae": syntax error
+Error: near line 15551: unrecognized token: "^"
+Error: near line 15552: unrecognized token: "^"
+Error: near line 15553: unrecognized token: "^"
+Error: near line 15561: near ""+ctx.getStart()+"": syntax error
+Error: near line 15566: near ""+ctx.getStart()+"": syntax error
+Error: near line 15572: near ""+ctx.getStart()+"": syntax error
+Error: near line 15575: unrecognized token: "^"
+Error: near line 15630: near ""+ctx.getStart()+"": syntax error
+Error: near line 15655: near ""+ctx.getStart()+"": syntax error
+Error: near line 15747: unrecognized token: "^"
+Error: near line 15753: unrecognized token: "^"
+Error: near line 15758: unrecognized token: "^"
+Error: near line 15761: unrecognized token: "^"
+Error: near line 15762: unrecognized token: "^"
+Error: near line 15765: unrecognized token: "^"
+Error: near line 15768: unrecognized token: "^"
+Error: near line 15774: unrecognized token: "^"
+Error: near line 15793: near "NA12878": syntax error
+Error: near line 15992: near "20": syntax error
+Error: near line 16642: unrecognized token: "\"
+Error: near line 16644: unrecognized token: "\"
+Error: near line 16646: unrecognized token: "\"
+Error: near line 16648: unrecognized token: "^"
+Error: near line 16650: unrecognized token: "^"
+Error: near line 16651: unrecognized token: "^"
+Error: near line 16653: unrecognized token: "^"
+Error: near line 16656: unrecognized token: "^"
+Error: near line 16662: unrecognized token: "^"
+Error: near line 16681: unrecognized token: "^"
+Error: near line 16690: unrecognized token: "^"
+Error: near line 16711: unrecognized token: "^"
+Error: near line 16733: unrecognized token: "^"
+Error: near line 17060: near "_S": syntax error
+Error: near line 17240: unrecognized token: "\"
+Error: near line 17246: unrecognized token: "\"
+Error: near line 17250: unrecognized token: "\"
+Error: near line 17297: near ".1": syntax error
+Error: near line 17303: near ".2": syntax error
+Error: near line 17349: near ".1": syntax error
+Error: near line 17364: near ".2": syntax error
+Error: near line 17435: near ".1": syntax error
+Error: near line 17444: near ".2": syntax error
+Error: near line 17470: near ".2": syntax error
+Error: near line 17495: near ".1": syntax error
+Error: near line 17568: near ".1": syntax error
+Error: near line 17571: near ".2": syntax error
+Error: near line 17635: near ".1": syntax error
+Error: near line 17640: near ".2": syntax error
+Error: near line 17658: near ".3": syntax error
+Error: near line 17853: near ".1": syntax error
+Error: near line 17854: near ".2": syntax error
+Error: near line 17855: near ".2": syntax error
+Error: near line 17856: near ".2": syntax error
+Error: near line 17857: near ".6": syntax error
+Error: near line 17986: near "A": syntax error
+Error: near line 18096: near "_S": syntax error
+Error: near line 18211: near "link": syntax error
+Error: near line 18212: near "link": syntax error
+Error: near line 18270: unrecognized token: "\"
+Error: near line 18272: unrecognized token: "\"
+Error: near line 18427: unrecognized token: "\"
+Error: near line 18434: unrecognized token: "\"
+Error: near line 18436: unrecognized token: "\"
+Error: near line 18466: near "_S": syntax error
+Error: near line 18675: unrecognized token: "\"
+Error: near line 18677: unrecognized token: "\"
+Error: near line 18724: unrecognized token: "\"
+Error: near line 18725: unrecognized token: "\"
+Error: near line 18815: unrecognized token: "\"
+Error: near line 18817: unrecognized token: "\"
+Error: near line 18823: unrecognized token: "\"
+Error: near line 18825: unrecognized token: "\"
+Error: near line 18856: unrecognized token: "\"
+Error: near line 18858: unrecognized token: "\"
+Error: near line 18913: unrecognized token: "\"
+Error: near line 18915: unrecognized token: "\"

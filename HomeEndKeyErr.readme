@@ -1,0 +1,6 @@
+
+echo "set -o emacs" >> ~/.profile
+
+출처: http://viewise.tistory.com/entry/쉘-커맨드에서-Home-End-키-안먹을-때-1493287490689 [삽질창고]
+
+

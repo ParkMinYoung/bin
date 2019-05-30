@@ -1,0 +1,5 @@
+http://stackoverflow.com/questions/14562423/is-there-a-way-to-ignore-header-lines-in-a-unix-sort
+
+
+tblfilter -e '$L{Concordance} < 99.5' Final.Concordance  | hsort - -r -k6,6
+

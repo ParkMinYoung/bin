@@ -1,0 +1,9 @@
+for i in $(cut -f 1 23me.tfam| cut -d"_" -f5 | sed 's/.CEL//' ); 
+        do 
+        echo "$i $((++COL))"
+        perl -F'\t' -aslne'BEGIN{$num--; $num+=4 } print join "\t", @F[1,0,3,$num]' -- -num=$COL 23me.tab.XYMT | grep -v "\---"  | sed 's/\t00/\t--/' > $i.txt
+        zip $i.txt.zip $i.txt
+
+
+done
+

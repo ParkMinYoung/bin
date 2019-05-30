@@ -1,0 +1,1 @@
+/home/adminrig/src/short_read_assembly/bin/fai2genome.sh

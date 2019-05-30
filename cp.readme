@@ -1,0 +1,22 @@
+cp --preserve=links
+
+
+
+#I used the following to duplicate a really large directory. All symbolic links were preserved, the copy was done recursively and I was able to have some visual feedback of the process:
+
+cp -Prv /sourcer_dir/* /target_dir
+
+
+# symbolic like directory and files
+# https://unix.stackexchange.com/questions/196537/how-to-copy-a-folder-structure-and-make-symbolic-links-to-files
+cp -as "$(pwd)/SOURCE" COPY  # sym
+cp -al "$(pwd)/SOURCE" COPY  # hard
+# or lndir
+#
+#
+#
+
+
+# copy directory structure and files
+cp `find SP* -type f | egrep "(readme|Rmd)"$ | sort ` --parents ../EWHA.PDX.100.95.28.353/
+# https://unix.stackexchange.com/questions/83593/copy-specific-file-type-keeping-the-folder-structure

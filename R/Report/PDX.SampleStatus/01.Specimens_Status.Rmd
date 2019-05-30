@@ -1,0 +1,297 @@
+---
+output: 
+        html_notebook
+---
+
+
+<br><br>
+
+# 시료 분석 현황  
+
+<br>
+
+
+```{r}
+group_type_count <-
+seq %>% 
+  group_by( Group, Type) %>% 
+  summarise(N = n()) 
+
+ggplot(group_type_count, aes( Group, Type ) ) + 
+  geom_tile( aes(fill=N), col="white") + 
+  theme_classic() + 
+  geom_text(aes(label=N), color="yellow") 
+
+
+```
+
+```{r, include=FALSE}
+seq %>% 
+  filter( is.na(Group) | is.na(Type)) %>% 
+  select(-(Sample:Estimated.Library.Size))
+```
+
+```{r, include=FALSE}
+seq %>% 
+  select(-(Sample:Estimated.Library.Size))
+```
+
+
+```{r, include=FALSE}
+# primary<-
+# seq %>% 
+#   filter( grepl("X\\d", Type, perl=TRUE ) ) %>% 
+#   arrange( NewID, Type ) %>% 
+#   group_by(NewID) %>% 
+#   nest() %>% 
+#   mutate( 
+#      primary = purrr::map(data, ~.x %>% .[[1]] %>% .[[1]]  )
+#   ) %>% 
+#    select(NewID, primary) %>% 
+#    unnest(primary)
+
+```
+
+```{r, include=FALSE}
+# normal<-
+# seq %>% 
+#   filter( Type %in% c("NT", "BL") ) %>% 
+#   arrange( NewID, desc(Type) ) %>% 
+#   group_by(NewID) %>% 
+#   nest() %>% 
+#   mutate( 
+#      normal = purrr::map(data, ~.x %>% .[[1]] %>% .[[1]]  )
+#   ) %>% 
+#    select(NewID, normal) %>% 
+#    unnest()
+
+```
+
+
+```{r}
+primary<-
+seq %>% 
+  group_by( NewID ) %>% 
+  nest() %>% 
+  mutate( 
+          normal = map_chr(data,
+                            ~.x %>%
+                              filter( Type %in% c("NT", "BL") ) %>%
+                              arrange( desc(Type) ) %>%
+                              head(1) %>%
+                              select(Sample) %>%
+                              as.character()
+                          ),
+          
+          primary  = map_chr(data,
+                            ~.x %>%
+                              filter( grepl("X\\d", Type, perl = TRUE)) %>%
+                              arrange( Type ) %>%
+                              head(1) %>%
+                              select(Sample) %>%
+                              as.character()
+                              )
+            ) %>% 
+  select( -data ) #%>% 
+  #filter( NewID %in% c("DP_003"))
+
+primary[primary == "character(0)"] = NA
+```
+
+
+
+```{r write_file1}
+# seq %>%
+# filter( grepl(34, IID))
+left_join(seq, primary, by = ("NewID")) ->
+  seq
+
+#str(seq)
+write.table(seq, file="seq.step1", quote=FALSE, sep="\t", row.names = FALSE)
+#names(seq)
+```
+
+
+
+<br>
+
+## 시료 타입 별 수
+
+<br>
+
+
+```{r, fig.cap="Count by Type"}
+
+n_fun <- function(x){
+  return(data.frame(y = sum(x), label = sum(x)))
+}
+
+ggplot(group_type_count, aes( Type,N, fill=Type ) ) + 
+  stat_summary(fun.y=sum, geom="bar") + 
+  stat_summary(fun.data=n_fun, geom="text") 
+
+```
+<br>
+
+### NA Type
+
+<br>
+
+```{r}
+  
+seq %>% 
+  filter(is.na(Group) | is.na(Type))
+```
+
+<br>
+
+## 시료 그룹 별 수
+
+<br>
+
+
+
+```{r, fig.cap="Count by Group"}
+ggplot(group_type_count, aes( Group,N, fill=Group ) ) + 
+  stat_summary(fun.y=sum, geom="bar") + 
+  stat_summary(fun.data=n_fun, geom="text") +
+  scale_fill_brewer(palette = "BuPu")
+  
+```
+
+
+
+<br>
+
+## 시료 그룹 별 시료 현황  
+
+<br>
+
+
+
+```{r functions}
+#levels( seq$Group )
+
+make_model <- function(df, group){
+  
+  df %>%
+    filter( grepl( group, Group))  %>% 
+    mutate( NewID= paste( Group, IID, sep="_") ) %>% 
+    select( NewID, Type) %>% 
+    table %>% 
+    as.data.frame.matrix()
+
+}
+
+# make_model(seq, "P")
+# upset(model, sets = names(model)[colSums(model)>0], mb.ratio = c(0.55, 0.45), order.by = "freq")
+```
+
+
+```{r, include=FALSE}
+
+for (i in levels(seq$Group)){
+  
+  filename <- paste(i, "group" , "png", sep=".")
+  png(filename, width = 600, height = 600)
+  #print(i)
+  model <- make_model(seq, i)
+  upset(model, sets = names(model)[colSums(model)>0], mb.ratio = c(0.55, 0.45), order.by = "freq")
+  dev.off()
+}
+
+```
+
+```{r, results='asis', echo=FALSE, comment=""}
+for (i in levels(seq$Group)){
+  
+  filename <- paste(i, "group" , "png", sep=".")
+  cat("###", i, sep=" ")
+  cat("\n\n")
+  
+  cat("![](",filename,")")
+  cat("\n\n")
+}
+
+```
+
+```{r}
+
+#upset(model, sets = c("NT", "TT", "X0", "X1", "X2", "X3", "X","BL"), mb.ratio = c(0.55, 0.45), order.by = "freq")
+#upset(model, nsets = 8, mb.ratio = c(0.5, 0.5),order.by = c("freq", "degree"), decreasing = c(TRUE,FALSE))
+```
+
+
+
+<br>
+
+## NT - TT - XN
+
+<br>
+
+ * NT = NT or BL
+ * TT = TT
+ * XN = X0, X1, X2, X3
+
+
+```{r}
+
+model_info<-
+seq %>% 
+  group_by(NewID, Group) %>% 
+  summarise(mean_reads = mean(Total.Reads)*101/1000000000, mean_dup = mean(Duplicates.Rate)*100) %>% 
+  ungroup()
+
+
+model <- make_model(seq, "P") 
+
+model_1<-
+model %>% 
+  mutate(
+    NT=as.integer( ifelse( BL+NT > 0, 1, 0) ),
+    TT=TT,
+    XN=as.integer( ifelse( X0+X1+X2+X3 > 0, 1, 0) )
+            ) %>% 
+  select(NT, TT, XN)
+
+
+
+model_1<-
+mutate(model_1, NewID=rownames(model)) %>% 
+  select(NewID, 1:3)
+
+model_1<-
+left_join( model_1, model_info, by=("NewID"))
+
+```
+
+```{r, include=FALSE}
+
+png("N-T-X.png", width = 600, height = 600)
+
+upset(model_1, 
+      query.legend = "bottom", 
+      sets = c("NT", "TT", "XN"), 
+      mb.ratio = c(0.55, 0.45),
+      order.by = "freq",
+      queries = list(
+        list(query = elements, params = list("Group", "SP", "DP"), color="orange", active=T, query.name="SP+DP"),
+        list(query = elements, params = list("Group", "JP"), color="green", active=T, query.name="JP")
+                     
+        )
+      )
+
+dev.off()
+
+```
+
+
+
+```{r}
+# vignette("queries", package="UpSetR")
+# vignette("attribute.plots", package="UpSetR")
+```
+
+
+![](N-T-X.png)
+

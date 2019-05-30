@@ -1,0 +1,179 @@
+# R CMD BATCH --no-save --no-restore AffyChipSummary.R
+
+library(xlsx)
+library(reshape2)
+library(ggplot2)
+library(gridExtra)
+library(plyr)
+library(scales)
+library(GGally)
+
+df <- read.table("Summary.txt", header=T)
+
+# bar plot per gender 
+g1<-ggplot(df , aes(apt_probeset_genotype_gender, fill=apt_probeset_genotype_gender)) + geom_bar() + stat_bin( geom="text", aes(label=..count..), size=6, vjust=1.5, colour="white")
+
+# bar plot per set
+g2<-ggplot(df , aes(set, fill=apt_probeset_genotype_gender)) + geom_bar(size=1) + stat_bin(geom="text", aes(label=..count..), size=6, vjust=1.5, colour="white") + annotate("text", x=-Inf, y=Inf, label=paste("Total Exp Sample Count", length(df$id), length( unique(df$set) ), sep=":"), size=5 , hjust=-.2, vjust=2, colour="black") + theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.5)) #+ ylim(y=c(90,100)) 
+#g2<-ggplot(df , aes(set, fill=apt_probeset_genotype_gender)) + geom_bar(position="dodge",size=1) 
+
+# DQC boxplot per set
+g3<-ggplot(df, aes(set, axiom_dishqc_DQC, fill=set)) + geom_boxplot() + theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.5))
+#g3<-ggplot(df, aes(set, axiom_dishqc_DQC, fill=set)) + geom_boxplot() + theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.5)) + facet_wrap(~ set, ncol=20)
+
+g20<-ggplot(df, aes(set, axiom_dishqc_DQC, fill=set)) + geom_boxplot() + theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.5)) + ylim(c(0.6,1)) + geom_hline(yintercept = 0.82, colour="blue", linetype="dashed")  + annotate("text", x=-Inf, y=Inf, label="DQC Pass Cutoff Value : 0.82", size=4, hjust=-0.1, vjust=25, colour="red") 
+
+
+# DQC boxplot per set
+#g4<-ggplot(df, aes(interaction(set,apt_probeset_genotype_gender), axiom_dishqc_DQC, fill=set)) + geom_boxplot() + theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.5))
+g4<-ggplot(df, aes(set, axiom_dishqc_DQC, fill=set)) + geom_boxplot() + theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.5)) + facet_grid(apt_probeset_genotype_gender~.)
+
+# call rate per set
+g5<-ggplot(df, aes(set, call_rate, fill=set)) + geom_boxplot() + theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.5)) 
+#g5<-ggplot(df, aes(set, call_rate, fill=set)) + geom_boxplot() + theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.5)) +  facet_wrap(~ set, ncol=20) 
+g6<-ggplot(df, aes(set, call_rate, fill=set)) + geom_boxplot() + theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.5)) + facet_grid(apt_probeset_genotype_gender~.)
+
+
+
+g7<-ggplot(df, aes(set, het_rate, fill=set)) + geom_boxplot() + theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.5)) 
+#g7<-ggplot(df, aes(set, het_rate, fill=set)) + geom_boxplot() + theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.5)) +  facet_wrap(~ set, ncol=20) 
+g8<-ggplot(df, aes(set, het_rate, fill=set)) + geom_boxplot() + theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.5))  + facet_grid(apt_probeset_genotype_gender~.)
+
+
+
+# DQC
+g11<-ggplot(df, aes(axiom_dishqc_DQC)) + geom_histogram(binwidth=.01, fill="cornsilk", colour="grey60", size=.2) + stat_bin(binwidth=.01, geom="text", aes(label=scales::percent( (..count..)/sum(..count..) )), colour="blue") + geom_density(colour="blue") 
+g12<-ggplot(df, aes(axiom_dishqc_DQC)) + geom_histogram(binwidth=.01, fill="cornsilk", colour="grey60", size=.2) + stat_bin(binwidth=.01, geom="text", aes(label=..count..), colour="blue") + geom_density(colour="blue") 
+
+# Call rate
+g9<-ggplot(df, aes(call_rate)) + geom_histogram(binwidth=1, fill="cornsilk", colour="grey60", size=.2) + stat_bin(binwidth=1, geom="text", aes(label=scales::percent( (..count..)/sum(..count..) )), colour="blue") + geom_density(colour="blue") 
+g10<-ggplot(df, aes(call_rate)) + geom_histogram(binwidth=1, fill="cornsilk", colour="grey60", size=.2) + stat_bin(binwidth=1, geom="text", aes(label=..count..), colour="blue") + geom_density(colour="blue") 
+#g9<-ggplot(df, aes(x=call_rate, y=..density..)) + geom_histogram(binwidth=.01, fill="cornsilk", colour="grey60", size=.2) + stat_bin(binwidth=.01, geom="text", aes(label=..count..)) + geom_density() 
+#ggplot(df, aes(x=call_rate)) + geom_histogram()
+
+g11<-ggplot(df, aes(axiom_dishqc_DQC)) + geom_histogram(binwidth=.01, fill="cornsilk", colour="grey60", size=.2) + stat_bin(binwidth=.01, geom="text", aes(label=scales::percent( (..count..)/sum(..count..) )), colour="blue") + geom_density(colour="blue") 
+
+# x call rate, y het_rate scatter plot
+g13<-ggplot(df, aes(call_rate, het_rate, col=set)) + geom_point(alpha=1)
+
+
+g20<-ggplot(df, aes(set, axiom_dishqc_DQC, fill=set)) + geom_boxplot() + theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.5)) + ylim(c(0.6,1)) + geom_hline(yintercept = 0.82, colour="blue", linetype="dashed")  + annotate("text", x=-Inf, y=Inf, label="DQC Pass Cutoff Value : 0.82", size=4, hjust=-0.1, vjust=25, colour="red") 
+
+g21<-ggplot(df, aes(set, call_rate, fill=set)) + geom_boxplot() + theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.5)) + ylim(c(90,100)) + geom_hline(yintercept = 99, colour="red", linetype="dashed")  + annotate("text", x=-Inf, y=Inf, label="CR : 99%", size=3, hjust=-0.2, vjust=2, colour="red") 
+	
+#DQC histogram
+g22<-ggplot(df, aes(axiom_dishqc_DQC)) + geom_histogram(binwidth=.02, fill="cornsilk", colour="grey60", size=.2) + stat_bin(binwidth=.02, geom="text", aes(label=scales::percent( (..count..)/sum(..count..) )), colour="blue", vjust=-.5) + geom_density(colour="blue") + xlim(c(0.75,1))
+# CR histogram
+g23<-ggplot(df, aes(call_rate)) + geom_histogram(binwidth=.5, fill="cornsilk", colour="grey60", size=.2) + stat_bin(binwidth=.5, geom="text", aes(label=scales::percent( (..count..)/sum(..count..) )), colour="blue", vjust=-.5) + geom_density(colour="blue") +xlim(c(90,100))
+
+
+
+
+
+#png("Summary.GGally.png", width=2400, height=4800)
+#ggpairs(data=df, columns=3:9, title="summary", colour = "set") # aesthetics, ggplot2 style
+#dev.off()
+
+png("Summary.png", width=1600, height=3000)
+grid.arrange(g1, g2, g3, g4, g5, g6, g7, g8, g9, g10, g11, g12, g20, g21, g22, g23, g13 ncol=2)
+#grid.arrange(g1, g2, g3, g5, g7,  g9, g10, g11, g12, g13, ncol=2)
+dev.off()
+
+
+
+
+
+
+
+doPlot_CR = function(sel_name) {
+   dum = subset(df, set == sel_name)
+   ggobj = ggplot(dum, aes( reorder(id, call_rate), call_rate, col=apt_probeset_genotype_gender)) + geom_point() + theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.5)) + labs(x=sel_name) 
+   print(ggobj)
+   #ggsave(sprintf("%s.pdf", sel_name))
+}
+
+doPlot_DQC = function(sel_name) {
+   dum = subset(df, set == sel_name)
+   ggobj = ggplot(dum, aes( reorder(id, axiom_dishqc_DQC), axiom_dishqc_DQC, col=apt_probeset_genotype_gender)) + geom_point() + theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.5)) + labs(x=sel_name) 
+   print(ggobj)
+   #ggsave(sprintf("%s.pdf", sel_name))
+}
+
+#lapply(unique(df$set), doPlot_CR)
+
+
+
+
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  require(grid)
+
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+
+  numPlots = length(plots)
+
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                    ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+
+ if (numPlots==1) {
+    print(plots[[1]])
+
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+
+
+
+
+plots <- list() 
+sets<-as.character( unique(df$set) )
+set_num<-length(sets)
+for (i in 1:set_num ) { 
+   dum = subset(df, set == sets[i])
+   plots[[i]] = ggplot(dum, aes( reorder(id, call_rate), call_rate, col=apt_probeset_genotype_gender)) + geom_point() + theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.5)) + labs(x=sets[i]) 
+
+}
+
+png("CR.png", width=1200, height=200*set_num)
+multiplot(plotlist = plots, cols = 1)
+dev.off()
+
+
+plots <- list() 
+sets<-as.character( unique(df$set) )
+set_num<-length(sets)
+for (i in 1:set_num ) { 
+   dum = subset(df, set == sets[i])
+   plots[[i]] = ggplot(dum, aes( reorder(id, axiom_dishqc_DQC), axiom_dishqc_DQC, col=apt_probeset_genotype_gender)) + geom_point() + theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.5)) + labs(x=sets[i]) 
+
+}
+
+png("DQC.png", width=1200, height=200*set_num)
+multiplot(plotlist = plots, cols = 1)
+dev.off()
+
+
+ncol<-5
+png("CR.histogram.png", width=1200, height=200*ceiling(set_num/ncol))
+ggplot(df, aes(call_rate, fill=set)) + geom_histogram(binwidth=1, size=.2) + stat_bin(binwidth=1, geom="text", aes(label=..count..), colour="red")+ xlim(c(70,100)) + facet_wrap(~ set, ncol=5) 
+dev.off()
+
+

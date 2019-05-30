@@ -1,0 +1,16 @@
+#!/bin/sh
+
+. ~/.bash_function
+
+
+EFF=/home/adminrig/src/SNPEFF/snpEff_2_1b
+
+if [ $# -eq 2 ];then
+
+	java -jar $EFF/SnpSift_v1_3_4b.jar tstv $1 $2 > $2.TiTvRatio.$1
+
+else 
+	echo -e "$(date)\njava -jar $EFF/SnpSift_v1_3_4b.jar tstv [hom,het,any] XXX.vcf"
+	usage " [hom,het,any] XXX.vcf"
+fi
+

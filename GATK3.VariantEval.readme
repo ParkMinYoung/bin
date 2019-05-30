@@ -1,0 +1,3 @@
+/home/wes/src/wes-analysis/modules/variant/gatk3.varianteval.sh $REF NGS_Lung_9 Human_kit.Mouse.WES "-ST Sample -noEV -EV CountVariants -L Mouse.WES.chrM.bed" Human_kit.Mouse.vcf
+/home/wes/src/wes-analysis/modules/variant/gatk3.varianteval.sh /wes/TEST/20160204_SNUH_BaekSunha/Alignment/human.fa GBL step3.chr22 "-ST Sample -noEV -EV CountVariants" step3.vcf
+

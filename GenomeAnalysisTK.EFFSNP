@@ -1,0 +1,38 @@
+#!/bin/sh
+
+# GenomeAnalysisTK.sh 
+# $6 must be [XXX.bam]
+# output      
+#             
+#             
+
+source ~/.bash_function
+source ~/.GATKrc
+GATK_param
+
+EGATK=/home/adminrig/src/GATK/GenomeAnalysisTK-1.2-60-g585a45b/GenomeAnalysisTK.jar
+
+if [ $# -eq 0 ];then
+	echo "usage : `basename $0` DB[GRCh37.63|Sscrofa9.63|athalianaTair10] XXXX.vcf"
+	java $JMEM -jar $ESNPEFF --help	
+	exit 1
+fi
+
+# T=$(date '+%Y%m%d%H%M')
+# READGROUP=$2
+# RG=${READGROUP:=$T}
+
+
+TMPDIR=$PWD
+
+ESNPEFF_CONFIG=/home/adminrig/src/SNPEFF/snpEff_2_0_3/snpEff.config
+ESNPEFF=/home/adminrig/src/SNPEFF/snpEff_2_0_3/snpEff.jar
+
+# MAX_INSERT_SIZE=1000[default:100000]
+java $JMEM -Djava.io.tmpdir=$TMPDIR -jar $ESNPEFF eff -v -i vcf -o vcf -config $ESNPEFF_CONFIG $1 $2 > $2.$1.vcf
+# java $JMEM -Djava.io.tmpdir=$TMPDIR -jar $ESNPEFF eff -v -i txt -o txt -config $ESNPEFF_CONFIG $1 $2 > $2.$1.vcf
+
+DIR=$2.SNPEff
+mkdir $DIR
+mv snpEff_summary.html snpEff_genes.txt $DIR
+

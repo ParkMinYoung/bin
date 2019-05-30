@@ -1,0 +1,32 @@
+---
+title: "test v1"
+output: 
+    html_notebook: default
+---
+
+
+***
+
+***test v1***
+
+```{r setp}
+#knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE )
+#opts_chunk$set(fig.width = 7, fig.height = 5)
+
+knitr::opts_chunk$set(echo=FALSE)
+
+```
+
+
+```{r test}
+data(cars)
+```
+
+```{r}
+head(cars)
+```
+
+```{r}
+plot(cars)
+```
+

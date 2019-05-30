@@ -1,0 +1,1 @@
+perl -le'$l="#"x80;print `w`,"$l\n",`qstat -f`,"$l\n",`qhost`,"$l\n",`df -h`'

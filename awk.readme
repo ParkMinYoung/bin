@@ -1,0 +1,29 @@
+ awk '  $5 == "MT" { print $1 } ' $SNUHDMEXL
+ awk ' {if($10==0) print }' BovineSNP50_v3_A2.csv.tab | less -S 
+
+
+$ cat file.txt 
+BB1520_v1.0_0103        exon    3329    3601
+BB1520_v1.0_0103        exon    3650    4040
+BB1520_v1.0_0089        exon    1       862
+BB1520_v1.0_0089        exon    1312    1357
+BB1520_v1.0_0089        exon    1423    1531
+BB1520_v1.0_0084        exon    5196    5283
+$ awk '{ print >$1".txt"}' file.txt
+$ cat BB1520_v1.0_0103.txt 
+BB1520_v1.0_0103        exon    3329    3601
+BB1520_v1.0_0103        exon    3650    4040
+
+
+awk '{print $1"\t"FILENAME}' *fam > SAM 
+
+
+cat -n $FILE | sed 's/^ \+//g;s/( )/()/g'|  awk -F'\t' '{printf "%+2s\t%-22s\t%-60s\t%-30s\n", $1, $2, $3, $4}'
+
+awk 'BEGIN{OFS="\t"}{print $3,$4,$4+length($10)-1} 
+
+## delete last column
+AddRow.w.sh stdout '\.\/(.+?)\/' ID $(find | grep target$) | grep Add  | sh | awk 'BEGIN{OFS="\t"} NF{NF--};1' > A
+
+ N=( $(awk '{print NF}' $IN | sort -nu | sed -n '1p;$p') )
+

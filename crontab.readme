@@ -1,0 +1,26 @@
+# | minute | hour | day | month | weekday 
+#    0~59    0~23   1~31  1~12     1~7
+
+
+# weekday 1 = monday, 0,7 = sunday
+# http://egloos.zum.com/lupusmaru/v/1090823
+
+
+# http://sooyasarang.tistory.com/tag/%ED%99%98%EA%B2%BD%EB%B3%80%EC%88%98
+
+##SHELL=/bin/bash
+##PATH=/sbin:/bin:/usr/sbin:/usr/bin
+##MAILTO=root
+##HOME=/
+### run-parts
+##01 * * * * root run-parts /etc/cron.hourly
+##02 4 * * * root run-parts /etc/cron.daily
+##22 4 * * 0 root run-parts /etc/cron.weekly
+##42 4 1 * * root run-parts /etc/cron.monthly
+
+
+crontab -u adminrig /etc/crontab
+
+sudo grep adminrig /var/log/cron | lesss
+sudo less /var/spool/cron/adminrig
+

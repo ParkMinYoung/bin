@@ -1,0 +1,119 @@
+#!/usr/bin/perl -w 
+#===============================================================================
+#
+#         FILE:  FindCoveragePerDepth.pl
+#
+#        USAGE:  ./FindCoveragePerDepth.pl
+#
+#  DESCRIPTION:  Calculate Coverage per Depths.
+#
+#      OPTIONS:  ---
+# REQUIREMENTS:  ---
+#         BUGS:  ---
+#        NOTES:  ---
+#       AUTHOR:  Min Young Park (mn), minmin@dnalink.com
+#      COMPANY:  DNALink.inc
+#      VERSION:  1.0
+#      CREATED:  09/22/09 14:20:37
+#     REVISION:  ---
+#===============================================================================
+
+use strict;
+
+use Getopt::Std;
+use NgsCoverV2;
+use Min;
+
+use base qw();
+BEGIN { ; }
+
+my %args;
+getopt( "i:r:o:", \%args );
+
+die get_usage() if keys %args < 1;
+
+#print Dumper \%args;
+my $file = $args{o} || "output";
+my $obj = NgsCoverV2->new;
+
+if ( $args{r} ) {
+    $obj->GetReadPosition( $args{r}, "LimitRegion",
+        { chr => 1, start => 2, end => 3 } );
+    $obj->make_set__IntSpan_obj("LimitRegion");
+}
+
+$obj->GetReadPosition( $args{i}, "Read",
+    { chr => 1, start => 2, end => 3, id => 4 } );
+
+$obj->make__Set__IntSpan_Island_obj( "Read", "GetCover", "LimitRegion" );
+$obj->Get_Covers( "GetCover", $file );
+
+my %m = %{ $obj->{output} };
+#make_matrix_file_new( $file, %m );
+my %rm = h2r( %m );
+mmfsn( $file, %rm );
+
+
+
+sub get_usage {
+    exec( 'perldoc', $0 );
+}
+
+__END__
+
+=head1 NAME FindCoveragePerDepth.pl
+
+=head1 SYNOPSIS
+
+	Calculate Read Counts in the specific region (1-10,11-20,...) per Sample.
+	The output format is matrix.
+	Zero is displayed "NN".
+
+	If restrict region is, use the -r option following file name.
+
+
+Usage : FindCoveragePerDepth.pl -i 090904.kobb2read.coordi.divide.00 -r ../TiledRegion 
+
+
+
+=head1 DESCRIPTION
+
+./FindCoveragePerDepth.pl  
+
+
+
+=head1 OPTIONS
+-
+-
+-
+-
+-
+
+
+=head2 1.
+
+	file format : only use 1,2,3,4 columns
+
+	chr1    42000074        42000117        F1HVJ5302FRO5Q  KoBB0909_103
+	chr1    42000074        42000117        F1HVJ5302FRO5Q  KoBB0909_103
+	.
+	.
+	.
+
+
+=head2 2.
+
+=head2 3.
+
+=head2 4.
+
+=head2 5.
+
+=head1 EXSAMPLE
+
+=head1 HISTORY
+
+=cut
+
+
+

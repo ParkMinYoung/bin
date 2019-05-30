@@ -1,0 +1,4 @@
+while read line
+do
+  echo "$line"
+done < "${1:-/dev/stdin}" | sort | uniq -c | sort -nr -k1,1 | awk 'BEGIN{OFS="\t"} {first = $1; $1 = ""; print first$0; }'

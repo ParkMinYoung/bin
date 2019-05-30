@@ -1,0 +1,21 @@
+
+PICARD=/home/adminrig/src/picard/picard-tools-1.128/picard.jar
+
+## sort
+java -Xmx4g -jar $PICARD SortSam I=1_PgFib_ATGCCTAA_L008_R1_001_bismark_bt2_pe.deduplicated.bam O=1_PgFib.bam SORT_ORDER=coordinate CREATE_INDEX=true TMP_DIR=$PWD
+ 
+## index 
+# java -jar $PICARD BuildBamIndex I=1_PgFib_ATGCCTAA_L008_R1_001_bismark_bt2_pe.deduplicated.bam
+
+## extract specific reads in the file
+java -Xmx4g -jar $PICARD FilterSamReads I=1_PgFib.bam O=1_PgFib.bam.Meth.bam READ_LIST_FILE=read_names.txt FILTER=includeReadList SORT_ORDER=coordinate CREATE_INDEX=true TMP_DIR=$PWD
+       
+       
+
+
+
+
+
+
+
+

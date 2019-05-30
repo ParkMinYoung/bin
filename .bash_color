@@ -1,0 +1,104 @@
+export TERM=xterm 
+
+## Color Setting
+
+NORM=`tput sgr0`
+BOLD=`tput bold`
+REV=`tput smso`
+
+#color
+NONE='\033[0m'
+RED=`tput setaf 1`
+GREEN=`tput setaf 2`
+YELLOW=`tput setaf 3`
+BLUE=`tput setaf 4`
+MAGENTA=`tput setaf 5`
+CYAN=`tput setaf 6`
+
+
+
+## color function
+
+_green(){
+     echo ${GREEN}$1${NORM}
+}
+
+_red(){
+     echo ${RED}$1${NORM}
+}
+
+_yellow(){
+     echo ${YELLOW}$1${NORM}
+}
+
+_blue(){
+     echo ${BLUE}$1${NORM}
+}
+
+_magenta(){
+     echo ${RED}$1${NORM}
+}
+
+_cyan(){
+     echo ${CYAN}$1${NORM}
+}
+
+
+_bold(){
+     echo ${BOLD}$1${NORM}
+}
+
+_rev(){
+     echo ${REV}$1${NORM}
+}
+
+
+
+## color function example 
+
+# _green $(LINE 80)
+# _green "show green color text"
+# _bold "show blod... text"
+# _rev "show rev... text"
+
+
+# cat <<EOF
+# A
+# B
+# $(_green "show") $(_red "C")
+# EOF
+
+# ($ _green "show" ;  _green "A") | tr "\n" " "
+
+_H1() { 
+
+        BG_COL=$1
+        MAIN_COL=$2
+        shift
+        shift
+
+    	_${BG_COL} $(LINE 80)
+        echo ""
+        _${MAIN_COL} "$@"
+        echo ""
+        _${BG_COL} $(LINE 80)
+
+}
+
+# usage : _H1 blue red "A B C : $A"
+
+_M1() {
+
+		M_TYPE_COL=$1
+		T_TYPE_COL=$2
+		shift
+		shift
+		
+		LC_TIME=C
+		(date; _${M_TYPE_COL} ["$1"]; _${T_TYPE_COL} "$2") | sed ':a;N;$!ba;s/\n/ /g' 
+}
+
+# usage :  _M1 blue red Warning "time is gold"
+
+
+

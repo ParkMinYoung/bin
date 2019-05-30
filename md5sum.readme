@@ -1,0 +1,2 @@
+find -type f -exec md5sum {} \; > md5sum
+md5sum -c md5sum 

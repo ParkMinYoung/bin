@@ -1,0 +1,22 @@
+
+# excute time : 2016-12-07 13:23:25 : init hash map
+hinit GSK
+
+
+# excute time : 2016-12-07 13:26:07 : hput list
+while read ID CEL Gender; do hput GSK $ID $Gender ; done < ../GSK.List 
+
+unset COL
+
+for i in $(cut -f 1 23me.tfam| cut -d"_" -f5 | sed 's/.CEL//' ); 
+        do 
+        #((++$COL))
+        echo "$i $((++COL))"
+        Gender=$(hget GSK $i)
+        OUT=${i}_${Gender}.txt
+        perl -F'\t' -aslne'BEGIN{$num--; $num+=4 } print join "\t", @F[1,0,3,$num]' -- -num=$COL 23me.tab.XYMT | grep -v "\---"  | sed 's/\t00/\t--/' > $OUT
+        zip $OUT.zip $OUT
+
+
+done
+

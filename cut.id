@@ -1,0 +1,45 @@
+. ~/.bash_function
+
+FILE=$1
+shift
+
+TMP=$(datenum.sh)
+echo $@ | tr " " "\n" > $TMP
+
+if [ -f "$FILE" ] & [ -f "$TMP" ];then
+
+
+perl -F'\t' -anle'
+if(@ARGV){
+	$h{$_}++;
+	$order{$_} = ++$order;
+}else{
+	next if /^##/;
+	if( ++$c == 1 ){
+		print STDERR ">>> Header Col Number  : ",@F+0;
+	
+		for ( 0 .. $#F ){
+			if( $h{$F[$_]} ){
+				push @idx, $_;
+				delete $h{$F[$_]};
+			}
+		}
+		
+#		print join "\t", @idx;
+		@sorted_idx = sort { $order{$F[$a]} <=> $order{$F[$b]} } @idx;
+		print STDERR join "\n", @F[@sorted_idx];
+		print STDERR ">>> UnMatch Col ", (keys %h)+0;
+		
+		print join "\t", @F[@sorted_idx];
+	}else{
+		print join "\t", @F[@sorted_idx];
+	}
+
+}' $TMP $FILE 
+
+rm -rf $TMP
+
+else
+	usage "Table ColName1 ColName2 ....."
+fi
+

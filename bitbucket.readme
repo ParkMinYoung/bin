@@ -1,0 +1,17 @@
+https://bitbucket.org/account/user/MinYoungPark/plan-users/
+
+
+
+[adminrig@node01 KNIH_KORV1_Report]$ cat readme 
+# excute time : 2017-03-30 17:21:52 : git clone using bitbucket
+git clone https://p791227@bitbucket.org/MinYoungPark/knih_korv1_2017.git
+
+
+# excute time : 2018-04-24 15:07:00 : create new project 2018
+git clone https://p791227@bitbucket.org/MinYoungPark/knih_korv1_2018.git
+
+
+
+update : dnalinkmin
+
+

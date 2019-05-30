@@ -1,0 +1,180 @@
+# http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml#mergelist
+
+# --mind 0.1 (sample QC, equal than CR 90%)
+# --maf 0.1 
+# --geno 0.1 (marker QC, eaual than CR 90%)
+# --hwe 0.001 (HWE QC)
+#
+/home/adminrig/src/PLINK/plink-1.09-x86_64/plink --bfile ./8575/AxiomGT1.calls.txt.extract.plink_fwd.gender --bmerge ./148/AxiomGT1.calls.txt.extract.plink_fwd.gender.bed ./148/AxiomGT1.calls.txt.extract.plink_fwd.gender.bim ./148/AxiomGT1.calls.txt.extract.plink_fwd.gender.fam --make-bed --out merge --allow-no-sex --threads 20
+
+# genome-full
+/home/adminrig/src/PLINK/plink-1.09-x86_64/plink --bfile merge --genome --min 0.8 --out merge.out --allow-no-sex --threads 20
+PlinkOut2Tab.sh merge.out.genome
+
+# Call Rate
+plink2 --bfile Unique --missing --out Unique --allow-no-sex --threads 10
+
+# --update-map rs2map
+# (marker position)
+# --update-name rsID.lst
+# --update-map chr-codes.txt --update-chr 
+e --update-alleles mylist.txt -
+# rsid A B a b
+# --reference-allele mylist.txt 
+# rsid a
+
+# --update-ids recoded.txt --make-bed --out mydata2
+# A1 A2 B1 B2
+# --update-sex myfile1.txt
+# A1 A2 1/2/0 [male/female/missing]
+# --update-parents myfile2.txt
+$ A1 A2 [New paternal IID code] [New maternal IID code]
+
+
+# --bmerge data2.bed data2.bim data2.fam 
+# --merge-mode N
+
+     1    Consensus call (default)
+     2    Only overwrite calls which are missing in original PED file
+     3    Only overwrite calls which are not missing in new PED file
+     4    Never overwrite
+     5    Always overwrite mode
+     6    Report all mismatching calls (diff mode -- do not merge)
+     7    Report mismatching non-missing calls (diff mode -- do not merge)
+
+# --keep --remove (sample)
+# --extract --exclude (marker)
+
+# sample sortting by file 
+# plink --bfile [original fileset] --indiv-sort file [file describing new order] --make-bed --out [new prefix]
+# /home/adminrig/src/PLINK/plink-1.09-x86_64/plink --bfile AxiomGT1.calls.txt.extract.plink_fwd.gender --indiv-sort file plink.sample.order --make-bed --out ChosunUniv.768.ReorderSample --allow-no-sex --threads 20
+
+plink --bfile AxiomGT1.calls.txt.extract.plink_fwd.gender.SNPolisherPassSNV.chr22 --recode --transpose --tab --out TAB --noweb
+
+plink2 --bfile step1 --hardy --freq --missing --het --out step1 --allow-no-sex --threads 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ln -s $LIB/KOR.RemoveMarker  ./
+cut -f2 KOR.RemoveMarker > KOR.RemoveMarker.m
+
+## exclude redun marker
+/home/adminrig/src/PLINK/plink-1.09-x86_64/plink --bfile KHU_KNIH --exclude KOR.RemoveMarker.m --make-bed --out KHU_KNIH.RmRedun --allow-no-sex --threads 20
+
+
+
+## update marker name
+perl -F'\t' -anle'print join "\t", @F[0,2] if $F[2]=~/rs/' Axiom_KORV1_0.na34.annot.csv.tab > AFFX2RS
+/home/adminrig/src/PLINK/plink-1.09-x86_64/plink --bfile KHU_KNIH.RmRedun --update-name AFFX2RS --make-bed --out KHU_KNIH.AFFX2RS --allow-no-sex --threads 20
+
+cut -f2 KHU_KNIH.AFFX2RS.bim | grep ^rs | sort | uniq > KHU_KNIH.AFFX2RS.bim.u
+cut -f2 MergePlink.bim | grep ^rs | sort | uniq > MergePlink.bim.u
+cat *.u | sort | uniq -d > Commom
+
+
+join.sh Commom KHU_KNIH.AFFX2RS.bim 1 2 1 > Commom.Chr  
+join.sh Commom KHU_KNIH.AFFX2RS.bim 1 2 4 > Commom.Bp 
+
+
+/home/adminrig/src/PLINK/plink-1.09-x86_64/plink --bfile MergePlink --extract Commom --make-bed --out step1.CommonMarker --allow-no-sex --threads 20
+/home/adminrig/src/PLINK/plink-1.09-x86_64/plink --bfile step1.CommonMarker --update-map Commom.Bp --make-bed --out step2.UpdateBp --allow-no-sex --threads 20
+/home/adminrig/src/PLINK/plink-1.09-x86_64/plink --bfile step2.UpdateBp --update-map Commom.Chr --update-chr --make-bed --out step3.UpdateChr --allow-no-sex --threads 20
+
+perl -F'\t' -anle'$GT=$F[4].$F[5]; print $F[1] if $GT !~ /(AT|CG)/' step3.UpdateChr.bim  > Commom.ExcludeAT-CG
+
+/home/adminrig/src/PLINK/plink-1.09-x86_64/plink --bfile step3.UpdateChr --extract Commom.ExcludeAT-CG --make-bed --out step4.ExcludeAT-CG --allow-no-sex --threads 20
+
+/home/adminrig/src/PLINK/plink-1.09-x86_64/plink --bfile KHU_KNIH.AFFX2RS --extract Commom.ExcludeAT-CG --make-bed --out KHU_KNIH.AFFX2RS.ExcludeAT-CG --allow-no-sex --threads 20
+
+
+# excute time : 2016-10-14 17:08:01 : get sex
+plink2 --bfile MergePlink --check-sex --out sex.check --allow-no-sex 
+
+# count
+plink --bfile BRCA --freq --counts --out BRCA.freq --noweb
+
+mkdir test && cd test
+TwoPlinkCompare.sh KHU_KNIH.AFFX2RS.ExcludeAT-CG step4.ExcludeAT-CG
+
+# cd /home/adminrig/workspace.min/AFFX/Axiom_KORV1.0/Axiom_KORV1.0.2015.v9.KHU.8314-KNIH.3197/Analysis/ConcordanceVs.Illumina/plinkMerge/BuildUpdate
+
+
+
+     X    X chromosome                    -> 23
+     Y    Y chromosome                    -> 24
+     XY   Pseudo-autosomal region of X    -> 25
+     MT   Mitochondrial                   -> 26
+
+
+plink --bfile BRCA --extract BRCAI_II.InKORV1_1.QC --recode --transpose --out BRCA.QC --noweb
+
+
+--chr excludes all variants not on the listed chromosome(s). Normally, valid choices for humans are 0 (i.e. unknown), 1-22, X, Y, XY (pseudo-autosomal region of X; see --split-x/--merge-x), and MT. Separate multiple chromosomes with spaces or commas, and use dashes to specify ranges. Spaces are not permitted immediately before or after a range-denoting dash.
+
+For example, the following are all valid and equivalent:
+
+--chr 1-4, 22, xy
+--chr 1-4 22 XY
+--chr 1,2,3,4,22,25
+
+You might wonder about the '25'. Non-autosomal chromosomes can also be identified by numeric code: if there are n autosomes, n+1 is the X chromosome, n+2 is Y, n+3 is XY, and n+4 is MT.
+
+--not-chr is the reverse of --chr: variants on listed chromosome(s) are excluded. So
+
+--not-chr 0 5-21 x y mt
+
+is equivalent to the three --chr examples above (assuming human data).
+
+If you specified --allow-extra-chr, you can refer to the extra chromosome codes by name. For example,
+
+--allow-extra-chr --not-chr chr1_gl000191_random
+
+--autosome
+--autosome-xy
+
+--autosome excludes all unplaced and non-autosomal variants, while --autosome-xy does not exclude the pseudo-autosomal region of X. They can be combined with --not-chr, e.g.
+
+--autosome-xy --not-chr 5-21
+
+is also equivalent to the three --chr examples.
+
+
+
+
+Phenotypes
+Loading from an alternate phenotype file
+--pheno [filename]
+--mpheno [n]
+--pheno-name [column name]
+--all-pheno
+--pheno-merge
+
+
+
+
+
+
+
+
+# r square = 1
+plink2 --bfile FinalQC --r2  --ld-window-r2 1 --show-tags all --tag-kb 250 --tag-r2 1 --out r2.1 --allow-no-sex --threads 10 
+PlinkOut2Tab.sh r2.1.tags.list 
+grep -v  NONE$ r2.1.tags.list.tab | hsort - -nr -k4,4 | lesss
+
+
+
+
+plink2 --bfile step2 --autosome -not-chr X Y MT 6 8 --maf 0.2 --thin 0.01 --make-bed --out step2.sample --allow-no-sex --threads 10
+

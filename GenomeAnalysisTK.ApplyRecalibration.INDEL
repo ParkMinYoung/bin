@@ -1,0 +1,39 @@
+#!/bin/sh
+
+# GenomeAnalysisTK.sh 
+# $1 must be [XXX.vcf]
+
+# output      
+#             
+#             
+
+source ~/.bashrc
+source ~/.GATKrc
+GATK_param
+
+EGATK=/home/adminrig/src/GATK/GenomeAnalysisTK-1.2-60-g585a45b/GenomeAnalysisTK.jar
+
+if [ $# -eq 0 ];then
+	echo "usage : `basename $0` XXXX.vcf yyy.recal zzz.tranches"
+	java $JMEMMax -jar $EGATK -T ApplyRecalibration --help
+	exit 1
+fi
+
+
+
+TMPDIR=$(dirname $1)
+
+# MAX_INSERT_SIZE=1000[default:100000]
+java $JMEMMax -Djava.io.tmpdir=$TMPDIR -jar $EGATK  							\
+-T ApplyRecalibration 		\
+-l INFO 					\
+-R $REF 					\
+--input $1					\
+--ts_filter_level 99.0 		\
+-tranchesFile $3 			\
+-recalFile $2 				\
+-o $1.ApplyRecalibration.INDEL.vcf \
+-mode INDEL					\
+>& $1.ApplyRecalibration.INDEL.log 
+
+grep -v "^#" $1.ApplyRecalibration.INDEL.vcf | cut -f7 | sort | uniq -c | awk '{print $2,"\t",$1}' > $1.ApplyRecalibration.INDEL.vcf.TypeCount

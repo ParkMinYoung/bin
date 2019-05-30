@@ -1,0 +1,192 @@
+#!/usr/bin/perl -w 
+#===============================================================================
+#
+#         FILE:  NGS_fourth_coverage.pl
+#
+#        USAGE:  ./NGS_fourth_coverage.pl
+#
+#  DESCRIPTION:
+#
+#      OPTIONS:  ---
+# REQUIREMENTS:  ---
+#         BUGS:  ---
+#        NOTES:  ---
+#       AUTHOR:  Min Young Park (mn), minmin@dnalink.com
+#      COMPANY:  DNALink.inc
+#      VERSION:  1.0
+#      CREATED:  07/28/09 16:17:35
+#     REVISION:  ---
+#===============================================================================
+
+use strict;
+
+use Data::Dumper;
+use Getopt::Std;
+use Set::IntSpan;
+
+use NgsCoverage;
+use base qw(NgsCoverage);
+
+BEGIN { ; }
+
+my %args;
+getopt( "f:1:a:s:2:b:", \%args );
+
+## default set ##
+my $fir    = $args{a} || "fir";
+my $sec    = $args{b} || "sec";
+my $col_1  = $args{1} || "1,2,3";
+my $col_2  = $args{2} || "1,2,3";
+
+my $output = $args{o} || $fir."_vs_".$sec.".intersect.GFF";
+
+
+
+print Dumper \%args and die get_usage() unless $args{f} and $args{s};
+
+my $obj = __PACKAGE__->new;
+
+my @col_1 = split /\s*,\s*/, $args{1};
+my @col_2 = split /\s*,\s*/, $args{2};
+
+$obj->Get_Position( $fir, $args{f}, @col_1 );
+$obj->Get_Position( $sec, $args{s}, @col_2 );
+
+$obj->Compare( $fir, $sec );
+$obj->write_GFF_name( "intersect", $output );
+$obj->write_GFF_name( $fir,        "$fir.uniq.GFF" );
+$obj->write_GFF_name( $sec,        "$sec.uniq.GFF" );
+
+
+## Override Subroutin Compare
+sub Compare {
+    my $self = shift;
+    my $A    = shift;
+    my $B    = shift;
+    my $name = "$A-compare-$B";
+	
+	my %keys;
+	map { $keys{$_}++ } (keys %{ $self->{$A} }, keys %{ $self->{$B} } );
+
+    for my $chr ( sort keys %keys  ) {
+        my $obj_A = Set::IntSpan->new( $self->{$A}{$chr} || 0 );
+        my $obj_B = Set::IntSpan->new( $self->{$B}{$chr} || 0 );
+
+        my $intersect = intersect $obj_A $obj_B;
+
+        $self->{intersect}{$chr} = $intersect;
+
+        my $diff_A = diff $obj_A $obj_B;
+        my $diff_B = diff $obj_B $obj_A;
+
+        $self->{$A}{$chr} = $diff_A;
+        $self->{$B}{$chr} = $diff_B;
+
+        $self->{$name}{$chr}{intersect} = $intersect->size;
+
+        $self->{$name}{$chr}{"$A-diff"} = $diff_A->size;
+        $self->{$name}{$chr}{$A} = $obj_A->size;
+
+        $self->{$name}{$chr}{"$B-diff"} = $diff_B->size;
+        $self->{$name}{$chr}{$B} = $obj_B->size;
+
+    }
+    $self->_Compare_write($name);    # write $self->{$name}{chr*}
+
+    #	return ;
+}
+
+# only first tile because contig have random...
+
+#################################################################################
+sub get_usage {
+    exec( 'perldoc', $0 );
+}
+
+__END__
+
+=head1 NAME
+
+=head1 SYNOPSIS
+
+Usage : ComparePosition -f hg18.fa.out.123 -1 1,2,3 -s contig.diff-compare-ccds.diff.only.contig.gff -2 1,4,5 
+
+
+
+=head1 DESCRIPTION
+
+ComparePosition -f hg18.fa.out.123 -1 1,2,3 -s contig.diff-compare-ccds.diff.only.contig.gff -2 1,4,5 
+
+
+
+=head1 OPTIONS
+
+- output file group name (default value -a : fir, -b : sec)
+- a : first group name
+- b : second group name
+
+- input file name
+- f : first file name
+- s : second file name
+
+- column num that have chr, start and end information (default value : -1,-2 : 1,2,3)
+- 1 : 1,2,3
+- 2 : 1,2,3
+
+=head2 1.
+
+	create construction.
+	my $obj = __PACKAGE__->new;
+
+=head2 2.
+
+	add group name and coordinate 
+	$obj->Get_Position( "fir", "input_file_name1", "1,2,3" );
+	$obj->Get_Position( "sec", "input_file_name2", "1,2,3" );
+
+	create data structure
+	$obj->{fir}{chr*}
+	$obj->{sec}{chr*}
+
+=head2 3.
+
+	compare group between fir and sec
+
+	$obj->Compare( $fir, $sec );
+
+	create data structure
+	
+	1. intersect region
+	$obj->{intersect}{chr*}
+	
+	2. uniq region
+	$obj->{$fir}{chr*} = diff $set_A $set_B;
+    $obj->{$sec}{chr*} = diff $set_B $set_A;
+
+	2. size count
+	$obj->{"$fir-compare-$B"}{chr*}
+
+=head2 4.
+	
+	Not use. Because Compare subroutin is overrided.
+	$obj->Get_Diff( $fir, $sec );    # get uniq region
+	$obj->write_GFF( $fir, $sec );
+
+=head2 5.
+	
+	write output file
+
+	$obj->write_GFF_name( "intersect", "output_file_name");
+	$obj->write_GFF_name( $fir, "output_file_name.fir.uniq.GFF");
+	$obj->write_GFF_name( $sec, "output_file_name.sec.uniq.GFF");
+
+=head1 EXSAMPLE
+
+=head1 HISTORY
+
+	created 08/11/09 15:09:46 
+
+=cut
+
+
+

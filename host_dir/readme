@@ -1,0 +1,4 @@
+# excute time : 2017-12-27 17:21:14 : update host
+qstat -f | perl -nle'if(/^(\w+).q\@(.+).local/){ print "$2 all,$1,compute" if $1 ne "all" }' > host.min 
+
+

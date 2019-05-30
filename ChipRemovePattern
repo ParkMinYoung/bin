@@ -1,0 +1,16 @@
+gender.SNPolisherPass
+VCFform
+plink.IBS
+gender.count
+AxiomGT1.confidences.txt$
+AxiomGT1.normalized-summary.txt$
+AxiomGT1.calls.txt.extract.tped$
+AxiomGT1.calls.txt.extract.tfam$
+AxiomGT1.calls.txt.extract$
+Genotype$
+Genotype.AddExtraColumn$
+allele.txt$
+MARKER$
+AxiomGT1.calls.txt.extract.plink....$
+AxiomGT1.calls.txt.extract.plink.fam....$
+AxiomGT1.calls.txt.extract.plink_fwd....$

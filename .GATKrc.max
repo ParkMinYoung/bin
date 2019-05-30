@@ -1,0 +1,60 @@
+#!/bin/sh
+
+# GATK configure setting var [.GATKrc]
+
+# DB PATH # 
+# GRC37 
+REF=/home/adminrig/src/Sting/resources/human_g1k_v37.fasta
+REFFAI=/home/adminrig/src/Sting/resources/human_g1k_v37.fasta.fai
+REFDICT=/home/adminrig/src/Sting/resources/human_g1k_v37.dict
+
+# UCSC hg18
+#REF=/home/adminrig/Genome/sort/hg18/hg18.UCSC.fa
+#REFFAI=/home/adminrig/Genome/sort/hg18/hg18.UCSC.fa.fai
+#REFDICT=/home/adminrig/Genome/sort/hg18/hg18.UCSC.dict
+
+
+# reference 
+# GRC37
+MRNA=/home/adminrig/src/Sting/resources/GRCh37.refSeq
+VCF=/home/adminrig/Genome/VCF/dbsnp132.vcf
+HAPMAP=/home/adminrig/src/Sting/resources/CHBJPT.low_coverage.2010_07.sites.vcf
+PT1KG=/home/adminrig/src/Sting/resources/ALL.2of4intersection.20100804.sites.vcf
+
+# hg18
+#ROD=/home/adminrig/src/Sting/resources/dbsnp_130_hg18.rod
+#HAPMAP=/home/adminrig/src/Sting/resources/CHBJPT.low_coverage.2010_07.sites.vcf
+
+
+# Interval
+SureSelectINTERVAL=/home/adminrig/Genome/SureSelect/SureSelect_All_Exon_G3362_with_names.v2.hg19.intervals
+#SureSelectINTERVAL=/home/adminrig/Genome/SureSelect/SureSelect_All_Exon_G3362_with_names.v2.hg18.intervals
+
+# Tool PATH # 
+GATKPATH=/home/adminrig/src/Sting/dist
+GATKDIR=/home/adminrig/src/Sting
+
+GATK_PYTHON=$GATKDIR/python
+GATK_PERL=$GATKDIR/perl
+GATK_R=$GATKDIR/R
+
+PICARDPATH=/home/adminrig/src/picard-tools-1.35/
+R_subdir=/home/adminrig/src/Sting/R
+R=/home/adminrig/R/R-2.10.1/bin/Rscript
+
+# Tool NAME
+GATK=GenomeAnalysisTK.jar
+PYTHON=/usr/bin/python26
+
+# JAVA Mem
+JMEM=-Xmx16g
+
+
+# PICRAD ARG SET
+ASSUME_SORTED=true
+VALIDATION_STRINGENCY=LENIENT
+MAX_RECORDS_IN_RAM=4000000
+CREATE_MD5_FILE=true
+TMP_DIR=$PWD
+
+######################################################################################################

@@ -1,0 +1,82 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use Pod::Usage;
+use Getopt::Long;
+use File::Slurp qw/slurp/;
+use MIME::Lite;
+use Readonly;
+
+Readonly my $CONTENT_SEPARATOR => <<SEPARATOR;
+
+===========================================
+SEPARATOR
+
+my %options;
+GetOptions(\%options, "--help", "--from=s", "--to=s", "--subject=s", "--contents=s@");
+run(\%options, @ARGV);
+
+sub run {
+    my($opts, @args) = @_;
+	$opts->{from} = $ENV{EMAIL_FROM} unless $opts->{from};
+    if ($opts->{help} or not ($opts->{from} or $opts->{to} or $opts->{subject})) {
+        pod2usage(0);
+    }
+
+	my $contents;
+	unless ($opts->{contents}) {
+		$contents = join '', <STDIN>;
+	} else {
+		my @contents = map { -e $_ ? scalar slurp($_) : $_ } @{ $opts->{contents} };
+		$contents = join($CONTENT_SEPARATOR, @contents);
+	}
+
+	my $msg = MIME::Lite->new(
+			'Return-Path' => $opts->{from}, 
+			'From'        => $opts->{from}, 
+			'To'          => $opts->{to}, 
+			'Subject'     => $opts->{subject}, 
+			'Charset'     => 'utf-8',
+			'Encoding'    => '8bit',
+			'Data'        => $contents, 
+			);
+	$msg->send;
+}
+
+__END__
+
+=head1 INSTALL
+
+	sudo apt-get install ssmtp
+
+F</etc/ssmtp/ssmtp.conf>
+
+	root=your.email@gmail.com
+	mailhub=smtp.gmail.com:587
+	useSTARTTLS=YES
+	AuthUser=your.email@gmail.com
+	AuthPass=your.password
+	rewriteDomain=gmail.com
+	FromLineOverride=YES
+	hostname=blah
+
+L<MIME::Lite>
+
+	cpanm MIME::Lite
+
+=head1 SYNOPSIS
+
+	email [-h|--help] [-f|--from] <SENDER> [-t|--to] <RECEIVER> [-s|--subject] <SUBJECT> [-c|--contents] <CONTENT or File>
+
+	e.g.
+	echo "export EMAIL_FROM=sender@example.com" >> $HOME/.bashrc && source $HOME/.bashrc
+	email -t receiver@example.com -s Subject -c Content
+	echo content | email -t receiver@example.com -s subject
+
+	or
+
+	email -f sender@example.com -t receiver@example.com -s Subject -c Content
+	email -f sender@example.com -t receiver@example.com -s Subject -c /path/to/foo.file -c Content          # multiple
+	email -from="sender@example.com" --to="receiver@example.com" --subject="Subject" --contents="Content"
+
+=cut

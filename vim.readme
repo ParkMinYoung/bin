@@ -1,0 +1,12 @@
+
+
+
+Sure thing, you can 'write' any content of the current file into the stdin of another program:
+
+:.w !bash
+Here . (the part before w) refers to the range of lines you are writing, and . is only the current line. Then you use !bash to write those lines to bash.
+
+
+
+:r! e 28 ~/src/short_read_assembly/bin/seq.readme
+

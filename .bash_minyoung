@@ -1,0 +1,210 @@
+#########
+# ALIAS #
+#########
+
+#alias du_e='du -h --max-depth 1'
+alias du_e='du --block-size=1M --max-depth=1'
+alias rm='rm -i'
+alias mv='mv -i'
+#alias lll='ls -thl | head -20'
+alias cp='cp -i'
+alias wl='watch ls -l'
+alias wqstat='watch qstat -f'
+alias qs='qstat -f | less'
+alias lsbin='ls ~/src/short_read_assembly/bin/'
+alias ls='ls --color=auto'
+alias monw='watch mon'
+alias pstree='ps axjf | less'
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias GATKb='zip GATKrc.`date +%Y%m%d`.zip ~/.GATKrc && mv GATKrc.`date +%Y%m%d`.zip ~/.GATKrc.backup/'
+alias igv='sh ~/src/IGV/IGV_2.0.9/igv.sh'
+alias ion='cd /home/adminrig/workspace.min/IonTorrent/IonProton/bin'
+alias bedtools='/home/adminrig/workspace.min/Education/bedtools/bedtools2/bin/bedtools'
+alias lesss='less -S'
+#  alias python='/home/adminrig/bin/python'
+
+alias bedtools='/home/adminrig/workspace.min/Education/bedtools/bedtools2/bin/bedtools'
+alias lesss='less -S'
+#  alias python='/home/adminrig/bin/python'
+
+alias a27='ssh ionadmin@211.174.205.27'
+alias a28='ssh ionadmin@211.174.205.28'
+alias a29='ssh ionadmin@211.174.205.29'
+alias a30='ssh ionadmin@211.174.205.30'
+alias a31='ssh ionadmin@211.174.205.31'
+alias a32='ssh ionadmin@211.174.205.32'
+alias a33='ssh ionadmin@211.174.205.33'
+alias a34='ssh ionadmin@211.174.205.34'
+alias a35='ssh ionadmin@211.174.205.35'
+alias a36='ssh ionadmin@211.174.205.36'
+alias a99='ssh ionadmin@211.174.205.99'
+alias c93='ssh casava@211.174.205.93'
+alias a90='ssh 211.174.205.90'
+alias a93='ssh 211.174.205.93'
+alias a70='ssh 211.174.205.70'
+alias a71='ssh 211.174.205.71'
+alias a74='ssh 211.174.205.74' # sa0001
+alias a73='ssh 211.174.205.73' # 1T mem
+alias a69='ssh 211.174.205.69' # 1T mem
+alias a68='ssh 211.174.205.68'
+alias a92='ssh ionadmin@211.174.205.92'
+alias rocksminmin='ssh -p 8022 minmin@rocks.dnalinklabs.com'
+alias A5='cd /home/adminrig/workspace.min/AFFX/211.174.205.5'   # GT2
+alias A19='cd /home/adminrig/workspace.min/AFFX/211.174.205.19' # GT1
+alias A66='cd /home/adminrig/workspace.min/AFFX/211.174.205.66' # GT3
+alias min='cd /home/adminrig/workspace.min'
+alias el='e | lesss'
+
+#log
+alias clog='less /var/log/cmdlog.log'
+
+
+#qsub
+alias high_q='qsub -pe orte 20 -V -S /bin/bash -cwd -q high.q'
+alias mid_q='qsub -pe orte 20 -V -S /bin/bash -cwd -q mid.q'
+alias low_q='qsub -pe orte 20 -V -S /bin/bash -cwd -q low.q'
+alias bedtools2='~/src/bedtools/bedtools2/bin/bedtools'
+
+
+alias mless='less ~/.bash_minyoung'
+alias fless='less ~/.bash_function'
+alias cdg='cd /home/adminrig/Genome'
+alias cdwes='cd /home/adminrig/Genome/WES_Target_Region_Bed'
+alias k2018='cd /home/adminrig/workspace.min/AFFX/Axiom_KORV1.1/AnalysisResult/KNIH_KORV1_Report/knih_korv1_2018'
+
+#short cut
+alias para_tut="cd ~/workspace.min/parallel/;clear;man parallel_tutorial"
+
+#####################################################################################################
+# customised prompt
+#####################################################################################################
+
+# PS1="$PS1"'$([ -n "$TMUX" ] && tmux setenv TMUXPWD_$(tmux display -p "#D" | tr -d %) "$PWD")'
+
+# PS1 default set
+# export PS1="[\u@\h \W]\$ "
+
+# user name : cyan
+U="\e[0;36m\u\e[m"
+# @ : red
+A="\e[0;31m@\e[m"
+# hostname : purple
+H="\e[0;35m\h\e[m"
+# current dir : brown
+w="\e[0;36m\w\e[m"
+W="\e[0;33m\W\e[m"
+# time 11:57:49 : green
+T="\e[2;32m\t\e[m"
+# date Thu Jun 30 : green
+D="\e[2;36m\d\e[m"
+
+# export PS1="$D $T \! \# [$U$A$H $W] $ "
+# export PS1="[$U$A$H $W] $ "
+
+#P2="\e[0;31m>\e[m"
+#PS2="$P2"
+
+# EMAIL
+export EMAIL_FROM=minmin@dnalink.com
+
+# TMP
+export TMPDIR=$PWD
+export TMP=$PWD
+
+# PATH
+export src=~/src/short_read_assembly/bin
+export BPIPE_LIB=~/bpipes
+export SSH_ASKPASS=
+export IGV=/home/adminrig/src/IGV_2.1.28/igv.sh
+#export NGSPLOT=/home/adminrig/src/ngsplot/ngsplot
+#export NGSPLOT=/home/adminrig/src/ngsplot/develop.version/ngsplot-777302a89234
+export NGSPLOT=/home/adminrig/src/ngsplot/2.47/ngsplot
+
+##############################################################################
+# FILE #
+##############################################################################
+
+# genome 
+export humanG=/home/adminrig/workspace.min/MethylSeq/Reference/human_g1k_v37.fasta.genome
+
+# fasta
+export b37=/home/wes/src/GATK/resource_bundle/latest/b37/human_g1k_v37.fasta
+
+# WES BED
+# show_wes.sh 
+export TWIST=/home/adminrig/Genome/TwistExome/Twist_Exome_Target_hg19_noUn.bed.NUM.bed
+export SSV1=/home/adminrig/Genome/SureSelect/WES.Target/S0274956.v1/S0274956_Regions.bed.NUM.bed
+export SSV2=/home/adminrig/Genome/SureSelect/WES.Target/S0293689.v2/S0293689_Regions.bed.NUM.bed
+export SSV3=/home/adminrig/Genome/SureSelect/WES.Target/S02972011.v3.50M/S02972011_Regions.bed.NUM.bed
+export SSV4=/home/adminrig/Genome/SureSelect/WES.Target/S03723314.v4.51M/S03723314_Regions.bed.NUM.bed
+export SSV4U=/home/adminrig/Genome/SureSelect/WES.Target/S03723424.v4_UTR.71M/S03723424_Regions.bed.NUM.bed
+export SSV5=/home/adminrig/Genome/SureSelect/WES.Target/S04380110.v5/S04380110_Regions.bed.NUM.bed
+export SSV5U=/home/adminrig/Genome/SureSelect/WES.Target/S04380219.v5_UTR/S04380219_Regions.bed.NUM.bed
+export SSV6=/home/adminrig/Genome/SureSelect/WES.Target/S07604514.v6/S07604514_Regions.bed.NUM.bed
+export SSV6U=/home/adminrig/Genome/SureSelect/WES.Target/S07604624.v6_UTR/S07604624_Regions.bed.NUM.bed
+export SSV6C=/home/adminrig/Genome/SureSelect/WES.Target/S07604715.v6_COSMIC/S07604715_Regions.bed.NUM.bed
+export SSV2CRE=/home/adminrig/Genome/SureSelect/WES.Target/S30409818.ClinicalResearchExome.V2/S30409818_Regions.bed.NUM.bed
+export SSV7=/home/adminrig/Genome/SureSelect/WES.Target/S31285117_hs_hg19.v7/Sureselect_V7_Regions.bed.NUM.bed
+
+# Chip 
+
+export K1G=/home/adminrig/workspace.min/AFFX/Axiom_KORV1.1/AnalysisResult/Summary.Gender.txt
+export K1=/home/adminrig/workspace.min/AFFX/Axiom_KORV1.1/AnalysisResult/Summary.txt
+
+export NA12878=/home/adminrig/Genome/NA12878/NA12878.wgs.broad_truth_set.20131119.snps_and_indels.genotypes.vcf
+#export NA12878.old=/home/adminrig/Genome/NA12878/NA12878.vcf
+
+##############################################################################
+# Program #
+##############################################################################
+
+SNPEFF_DIR=/home/adminrig/src/SNPEFF/snpEff_4_2
+snpsift="java -Xmx512g -jar $SNPEFF_DIR/SnpSift.jar"
+
+
+
+
+
+
+##############################################################################
+# DIR #
+##############################################################################
+
+# PDX
+export PDX_Somatic=/home/adminrig/workspace.krc/PDX/180309/result
+#PDX_BAM=
+
+export Pembro_Somatic=/home/adminrig/workspace.krc/20181019_DNALink_PembrolizumabWES
+
+
+
+export WEB=/home/adminrig/workspace.min/DNALink/AffyChip
+export RMD=/home/adminrig/workspace.min/DNALink/Project
+export LIB=/home/adminrig/workspace.min/AFFX/untested_library_files
+export SNUHDMEXL=$LIB/Axiom_SNUHDMEX.na34.annot.csv.tab
+export KORV1L=$LIB/Axiom_KORV1_0.na34.annot.csv.tab 
+export KORV2L=$LIB/Axiom_KORV1.1/Axiom_KORV1_1.na35.annot.csv.tab
+export PMR1L=$LIB/Axiom_PMRA/Axiom_PMRA.na35.annot.csv.tab
+
+export SNU=/home/adminrig/workspace.min/AFFX/Axiom_BioBankPlus_SNUHDMEX
+export SNUA=/home/adminrig/workspace.min/AFFX/Axiom_BioBankPlus_SNUHDMEX/20150114/Analysis/Analysis.3062.20150114/batch
+export KNIH=/home/adminrig/workspace.min/AFFX/Axiom_KORV1.0
+export PMR=/home/adminrig/workspace.min/AFFX/Axiom_PMRA
+export KNIH1=/home/adminrig/workspace.min/AFFX/Axiom_KORV1.1
+export dbSNP=/home/adminrig/Genome/dbSNP/dbSNP141
+export SNUHDMEX_DESIGN=/home/adminrig/workspace.min/SNU.PKS.AffyBiobankArray.20140708/Design.Completion.20141015
+
+#export GSK=/home/adminrig/workspace.min/AFFX/Axiom_KORV1.0/Axiom_KORV1.0.2015.GSK.v1/Analysis/Analysis.4753.20150128/batch
+export GSK=/home/adminrig/workspace.min/AFFX/Axiom_KORV1.0/Axiom_KORV1.0.2015.GSK.v2
+export KYOUNGHEEUNIV_OBS=/home/adminrig/workspace.min/AFFX/Axiom_KORV1.0/Axiom_KORV1.0.2015.v1/Analysis/Analysis.2606.20150122/batch
+export KHOBS=/home/adminrig/workspace.min/AFFX/Axiom_KORV1.0/Axiom_KORV1.0.2015.v1/Analysis/Analysis.2606.20150122/batch
+
+export PDX=/home/adminrig/workspace.min/DNALink.PDX
+export LOH=/home/adminrig/workspace.min/DNALink.PDX/LOH
+
+ChosunUniv=~/workspace.min/AFFX/Axiom_KORV1.0/Axiom_KORV1.0.LeeKeunHo.v7.3719/Analysis/Complain/SNU
+
+
+export KORV1_LABEL=/home/adminrig/workspace.min/KOREAN_CHIP/UKBB.Annotation/ADME/knih_markers_fin_20141104.txt.ubkk.annotation.Affx

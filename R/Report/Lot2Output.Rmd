@@ -1,0 +1,295 @@
+---
+title: "KNIH 2017 Review by Lot Number"
+output: html_notebook
+---
+
+***
+
+```{r}
+#setwd("/home/adminrig/workspace.ExpTeams/KNIH.2017.40K")
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, fig.width=10)
+```
+
+```{r}
+library(pacman)
+p_load(tidyverse, ggplot2, tidyr, readxl, padr)
+```
+
+```{r}
+# https://www.datacamp.com/community/tutorials/r-tutorial-read-excel-into-r
+df <- read_excel("/home/adminrig/workspace.ExpTeams/KNIH.2017.40K/Axiom-시간표-미숙-2017.xlsx",  sheet=5)
+
+df$Lot<-as.factor(df$Lot)
+colnames(df)[2] <- "PlateID"
+
+
+```
+
+```{r}
+Lot<-
+df[, c(2,4)] %>% 
+  filter( !is.na(Lot) ) %>% 
+  mutate(set = paste0("DL", PlateID)) %>% 
+  select( set, Lot)
+
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, }
+df <- read.table("/home/adminrig/workspace.min/AFFX/Axiom_KORV1.1/Analysis/KNIH.2017/CELfile_Information.Summary.KNIH.2017.txt", header=T, sep="\t")
+
+df$time <- as.POSIXct(df$hyb_fluidics_time, tz="", format="%Y-%m-%d %H:%M:%S")  
+
+df<-
+df %>% 
+  thicken('hour', 
+          start_val=as.POSIXct('2017-03-01 12:00:00', tz=""), 
+          colname = 'daystart') 
+
+
+```
+
+
+#### ***Number of Sample by Lot Number***
+```{r, echo=FALSE, message=FALSE, warning=FALSE, }
+
+df<-
+  left_join( df, Lot, by=("set")  ) %>%  
+  filter(! is.na(Lot) )
+  
+group_by(df, Lot) %>% 
+  dplyr::count() %>% 
+  arrange(n) %>% 
+  ggplot( aes(reorder(Lot,n), n) ) + 
+    geom_bar(stat="identity") + 
+    labs(x="Lot number", y ="count") + 
+    theme(axis.text.x=element_text(angle=90)) + 
+    geom_text(aes(label=n), vjust=1.5, colour="darkorange", size=3)
+  
+```
+
+```{r}
+
+# ./KNIH2016.44K/CELInfo.vs.lots.Rmd
+plot_value <- function(df, variable_num="axiom_dishqc_DQC", mach="serial_num", lot="lot"){
+  
+  # https://www.r-bloggers.com/data-frame-columns-as-arguments-to-dplyr-functions/
+  require("dplyr")
+  
+  # print(group)
+  # value<-
+  # df %>% 
+  #   filter_( !grepl("E", group) ) 
+  
+  
+  ggplot(df, aes_string(lot, variable_num, col=mach)) +  
+    #geom_point() + 
+    stat_summary(fun.y = mean, geom='point', size=4, shape=21  ) +
+    stat_summary(fun.data=mean_cl_normal, geom='smooth', mapping = aes_string(group = mach)) +
+    theme(axis.text.x=element_text(angle=90))
+  
+}
+
+
+```
+
+
+```{r}
+means<-
+df %>% 
+  group_by( Lot, set, serial_num ) %>% 
+  summarise( Count=n(), axiom_dishqc_DQC=mean(axiom_dishqc_DQC), call_rate=mean(call_rate), het_rate=mean(het_rate), daystart=mean(daystart)) 
+
+```
+
+
+***
+
+## **Performance by Time**  
+
+
+```{r}
+ctext <- 
+  theme(
+    axis.ticks = element_blank(),
+        plot.title=element_text(family="Verdana"),
+        axis.text.x=element_text(size=9,family="Verdana"), #http://www.cookbook-r.com/Graphs/Fonts/#table-of-fonts
+        axis.title.x=element_text(size=10),
+        axis.text.y=element_text(size=7.5,family="Verdana"),
+        axis.title.y=element_text(size=10,family="Verdana"),
+        legend.title=element_text(size=9,family="Verdana",vjust=0.5), #specify legend title color
+        legend.text=element_text(size=7,family="Verdana",face="italic")
+)
+ 
+dark_t <- 
+  theme_minimal()+
+  theme(
+    plot.background = element_rect(fill="#191919"), #plot background
+    panel.border = element_blank(), #removes border
+    panel.background = element_rect(fill = "#000000",colour="#000000",size=2), #panel background and border
+    panel.grid = element_line(colour = "#333131"), #panel grid colours
+    panel.grid.major = element_line(colour = "#333131"), #panel major grid color
+    panel.grid.minor = element_blank(), #removes minor grid
+    
+    plot.title=element_text(size=16, face="bold",family="Verdana",hjust=0,vjust=1,color="#E0E0E0"), #set the plot title
+    plot.subtitle=element_text(size=12,face=c("bold","italic"),family="Verdana",hjust=0.01,color="#E0E0E0"), #set subtitle
+    
+    axis.text.x = element_text(size=9,angle = 0, hjust = 0.5,vjust=1,margin=margin(r=10),colour="#E0E0E0"), # axis ticks
+    axis.title.x = element_text(size=11,angle = 0,colour="#E0E0E0"), #axis labels from labs() below
+    axis.text.y = element_text(size=9,margin = margin(r=5),colour="#E0E0E0"), #y-axis labels
+    
+    legend.title=element_text(size=11,face="bold",vjust=0.5,colour="#E0E0E0"), #specify legend title color
+    legend.background = element_rect(fill="#262626",colour="#383838", size=.5), #legend background and cborder
+    legend.text=element_text(colour="#E0E0E0")) + #legend text colour
+  
+  # plot.margin=unit(c(t=1,r=1.2,b=1.2,l=1),"cm")) #custom margins
+  ctext
+
+```
+
+
+```{r, fig.width=10}
+
+#head(means)
+#PREVALENCE per 100k
+library(forcats) #https://blog.rstudio.org/2016/11/14/ggplot2-2-2-0/
+
+  ggplot(means,aes(y=Lot,x=daystart, col=axiom_dishqc_DQC, size=call_rate)) + # prevalence (100k)
+    labs(title="Performance by Lot",
+         subtitle="KNIH 2017 Axiom KORV1_1 Project Performance by Lot - Time", x="day",y="Lot",colour="#E0E0E0") +
+    geom_point(shape=20,aes(colour=axiom_dishqc_DQC,fill=axiom_dishqc_DQC),alpha=0.6) +
+    scale_y_discrete(expand=c(0.002, 1))+
+    #scale_x_continuous(limits=c(0,1500),labels=scales::comma)+
+    scale_fill_gradient(guide_legend(title="DQC"),low="#F9FA00",high="#8C00E6") + #assigns colours to fill in aes
+    scale_colour_gradient(guide_legend(title="DQC"),low="#F9FA00",high="#8C00E6") + #assigns colours to colour in aes
+    dark_t + 
+    geom_point(data=df %>% filter(axiom_dishqc_DQC<0.95), aes(y=Lot,x=daystart), shape=21, size=5, colour="yellow" )
+    
+
+```
+
+
+***
+
+## **DQC**  
+
+#### ***DQC Boxplot***
+```{r, fig.width=10}
+ggplot(df, aes( set, axiom_dishqc_DQC, fill=serial_num)) + 
+  geom_boxplot() + 
+  geom_hline(yintercept = 0.97, colour="green") + 
+  theme(axis.text.x = element_text(angle = 90)) + 
+  ylim(c(0.94, 0.99)) + 
+  facet_wrap(~Lot, ncol=4, scales="free_x")
+```
+
+#### ***DQC scatter plot***
+
+```{r}
+ggplotly(
+ggplot(means, aes(daystart, axiom_dishqc_DQC, col=Lot, group=serial_num) ) + geom_point() + geom_smooth(method="loess")  + facet_grid(serial_num~.) + geom_hline(yintercept = 0.97)
+)
+```
+
+#### ***DQC scatter plot, sorted by mean***
+
+```{r, fig.width=10}
+
+ggplot(means, aes(reorder( set,axiom_dishqc_DQC), axiom_dishqc_DQC, col=Lot )) + geom_point() + 
+  theme(axis.text.x = element_text(angle=90)) + 
+  labs(x="Plate") + 
+  facet_grid(.~Lot, scales="free")
+
+
+```
+
+
+```{r}
+A<-plot_value(df, "axiom_dishqc_DQC", "serial_num", "Lot")
+```
+
+
+
+***
+
+## **CR**  
+
+#### ***CR Boxplot***
+
+```{r, fig.width=10}
+ggplot(df, aes( set, call_rate, fill=serial_num)) + 
+  geom_boxplot() + 
+  geom_hline(yintercept = 99, colour="green") + 
+  theme(axis.text.x = element_text(angle = 90)) + 
+  ylim(c(97, 100)) + 
+  facet_wrap(~Lot, ncol=4, scales="free_x")
+```
+
+
+#### ***CR scatter plot***
+
+
+```{r}
+ggplotly(
+ggplot(means, aes(daystart, call_rate, col=Lot, group=serial_num) ) + geom_point() + geom_smooth(method="loess")  + facet_grid(serial_num~.) + geom_hline(yintercept = 99)
+)
+```
+
+#### ***CR scatter plot, sorted by mean***
+
+```{r, fig.width=10}
+
+ggplot(means, aes(reorder( set, call_rate), call_rate, col=Lot )) + geom_point() + 
+  theme(axis.text.x = element_text(angle=90)) + 
+  labs(x="Plate") + 
+  facet_grid(.~Lot, scales="free")
+
+
+```
+
+
+
+***
+
+## **HET**  
+
+#### ***HET Boxplot***
+
+
+```{r, fig.width=10}
+ggplot(df, aes( set, het_rate, fill=serial_num)) + 
+  geom_boxplot() + 
+  geom_hline(yintercept = 14.5, colour="green") + 
+  theme(axis.text.x = element_text(angle = 90)) + 
+  ylim(c(13, 16)) + 
+  facet_wrap(~Lot, ncol=4, scales="free_x")
+```
+
+#### ***HET scatter plot***
+
+```{r}
+
+ggplotly(
+ggplot(means, aes(daystart, het_rate, col=Lot, group=serial_num) ) + geom_point() + geom_smooth(method="loess")  + facet_grid(serial_num~.) + geom_hline(yintercept = 14.5) + ylim(c(14, 15.5)) 
+)
+```
+
+
+#### ***HET scatter plot, sorted by mean***
+
+```{r, fig.width=10}
+
+ggplot(means, aes(reorder( set, het_rate), het_rate, col=Lot )) + geom_point() + 
+  theme(axis.text.x = element_text(angle=90)) + 
+  labs(x="Plate") + 
+  facet_grid(.~Lot, scales="free")
+
+
+```
+
+***
+
+#### ***CR vs. HET scatter plot***
+
+```{r}
+ggplot(means, aes(call_rate, het_rate, col=Lot)) + geom_point()
+```

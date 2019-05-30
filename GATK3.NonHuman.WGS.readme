@@ -1,0 +1,22 @@
+
+
+## WGS analysis
+## Non-Human Reference
+## /home/adminrig/workspace.jhye/20170915_IBS_KimYoonju/Alignment
+
+## only dedup + realign.bam
+## step 1
+ngs.pipe.fastq2bam.project.genome.ge.gatk3.sh IBS ./arabidopsis_Ler-0.fasta WGS NO Sample_1*
+
+## UG germline call from step 1
+## step 2 
+ngs.pipe.unifiedgenotyper.analysisready.wgs.ge.gatk3.sh IBS ./arabidopsis_Ler-0.fasta WGS "" Sample_1*/*dedup.bam
+
+## depth coverage from step 1 
+## step 3 
+# excute time : 2017-10-30 11:36:45 : 
+qsub_jn.sh wgs 2 ngs.pipe.qc.bam.ge.gatk3.sh SINGLE 1 arabidopsis_Ler-0.fasta WGS "" Sample_1444_s/*dedup.bam
+
+
+
+

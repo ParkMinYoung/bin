@@ -1,0 +1,72 @@
+## install tex live
+
+wget http://ftp.ktug.or.kr/tex-archive/systems/texlive/tlnet/install-tl-unx.tar.gz
+tar xvzf install-tl-unx.tar.gz 
+
+cd install-tl-20180111/
+./install-tl --location=http://ftp.ktug.or.kr/tex-archive/systems/texlive/tlnet/
+# only type ./install-tl if suspened
+./install-tl
+
+
+
+cat << EOF >> /etc/profile
+
+export MANPATH=/usr/local/texlive/2017/texmf-dist/doc/man:$MANPATH
+export INFOPATH=/usr/local/texlive/2017/texmf-dist/doc/info:$INFOPATH
+export PATH=/usr/local/texlive/2017/bin/x86_64-linux:$PATH
+
+EOF
+
+
+
+#cd /usr/local/texlive/2017
+
+cd /usr/local/bin
+ln -s ../texlive/2017/bin/x86_64-linux/tlmgr ./
+ln -s ../texlive/2017/bin/x86_64-linux/kpseaccess ./
+ln -s ../texlive/2017/bin/x86_64-linux/kpsepath ./
+ln -s ../texlive/2017/bin/x86_64-linux/kpsereadlink ./
+ln -s ../texlive/2017/bin/x86_64-linux/kpsestat ./
+ln -s ../texlive/2017/bin/x86_64-linux/kpsetool ./
+ln -s ../texlive/2017/bin/x86_64-linux/kpsereadlink ./
+ln -s ../texlive/2017/bin/x86_64-linux/kpsewhere ./
+ln -s ../texlive/2017/bin/x86_64-linux/kpsewhich ./
+ln -s ../texlive/2017/bin/x86_64-linux/kpsexpand ./
+ln -s ../texlive/2017/bin/x86_64-linux/updmap ./
+ln -s ../texlive/2017/bin/x86_64-linux/updmap-sys ./
+ln -s ../texlive/2017/bin/x86_64-linux/fmtutil ./
+ln -s ../texlive/2017/bin/x86_64-linux/fmtutil-sys ./
+ln -s ../texlive/2017/bin/x86_64-linux/mktexlsr ./
+ln -s ../texlive/2017/bin/x86_64-linux/pdftex ./
+ln -s ../texlive/2017/bin/x86_64-linux/luatex ./
+ln -s ../texlive/2017/bin/x86_64-linux/tex ./
+ln -s ../texlive/2017/bin/x86_64-linux/xetex ./
+ln -s ../texlive/2017/bin/x86_64-linux/mf-nowin ./
+
+
+#findtexmf xxx.sty
+#mktexlsr
+#texhash
+#kpsewhich ifluatex.sty
+
+
+
+## install korean fond
+tlmgr repository add http://ftp.ktug.org/KTUG/texlive/tlnet ktug
+tlmgr pinning add ktug "*"
+tlmgr install nanumttf hcr-lvt
+tlmgr update --all --self
+
+
+
+https://github.com/jaimyoung/data-science-in-korean/blob/master/r-markdown-korean.md
+
+
+
+# install sty packages 
+sudo tlmgr update --self
+sudo tlmgr install framed
+sudo tlmgr install titling
+
+conda install -c conda-forge texlive-core 

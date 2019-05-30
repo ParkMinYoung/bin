@@ -1,0 +1,457 @@
+---
+params:
+    dynamictitle: "HLA Analysis Report"
+    reportdate: !r Sys.Date()
+output: 
+        html_notebook:
+#        html_document:
+         toc: true
+         toc_float: true
+         depth: 3
+#         number_section: true
+#         theme: readable
+         theme: united
+         highlight: tango
+#         fig_caption: true
+#         df_print: paged
+#         df_print: tibble
+#         df_print: kable
+#         fig_caption: yes 
+#         fig_retina: 1 
+#         code_download: false
+         
+#kable
+title: "`r params$dynamictitle`"
+#date: "`r params$reportdate`"
+author: Park MinYoung(minmin@dnalink.com) in BI, DNA Link
+    
+---
+
+***
+
+```{r setting, echo=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, fig.width=7)
+options(DT.options = list(pageLength = 10, language = list(search = 'Filter:')))
+
+```
+
+```{r library, echo=FALSE, message=FALSE, warning=FALSE}
+library(pacman)
+p_load(DT, mosaic, scales, d3heatmap, tidyverse, data.table)
+# library(scales) # for comma
+# library(d3heatmap)
+# library(tibble) # for data_table
+# library(data.table) # for setnames
+# 
+# library(purrr) # for setnames
+# library(scales) # for setnames
+# library(mosaic) # for setnames
+
+# http://rstudio.github.io/DT/extensions.html
+```
+
+<br><br>
+
+
+
+# **Overview**
+
+<br>
+
+Determining HLA genotypes is an important part of many studies to understand the genetic basis of immune response, disease associations, and transplant tolerance or rejection. The ability to determine HLA types from new or pre-existing genotyping data in parallel with other genetic analyses is a combination that will enable new scientific insights with greater efficiency. Axiom HLA Analysis software uses a multi-population reference panel and the HLA type imputation model HLA*IMP:021 to statistically infer the HLA types of human samples from genotype data generated from ThermoFisher genotyping arrays. 
+
+<br>
+
+# **Analysis Flow**
+
+<br>
+
+![](/home/adminrig/src/short_read_assembly/bin/R/Report/HLA_Axiom_Report/MHC.final.png)
+
+<br>
+
+
+# **Viewing Reports**  
+
+<br>
+Each sample displays two allele calls (Allele1 and Allele2) that represent the calls on the two copies of chromosome 6. The assignment of a call to one copy of the chromosome (or the other) is random and has no biological significance. The calls may switch from Allele1 to Allele2 between the 2 Digit and 4 Digit reports and/or between analysis runs on different workstations. This behavior is not significant.
+Each call is assigned a probability score. Each score (Allele1_Probability and Allele2 _Probability) is the individual probability that the corresponding call is correct. The algorithm calls Allele1 first, then based on that call, makes the call for Allele2. The Combined_Probability is the overall probability that both calls have been assigned correctly. [Axiom HLA Analysis User Guide](https://tools.thermofisher.com/content/sfs/manuals/axiom_hla_analysis_user_guide.pdf) [^1]
+
+[^1]: . Axiom HLA Analysis User Suite Guide
+
+
+<br>
+
+`NOTE: In some instances, a particular loci may not be represented within the sample. If this is the case, the call is reported as "9901"  and its HLA type is not defined.`
+
+
+<br>
+
+
+```{r data}
+
+df<-read.table( "HLA_4dig.AnalysisResult", header =T, sep="\t", 
+                colClasses=c("character", "factor", "numeric", "factor", "numeric", "factor", "numeric", "factor")
+                )
+
+colnames(df)<-c("sample", "allele_A", "A_QScore", "allele_B", "B_QScore", "AB", "QScore", "Gene")
+
+df<-
+df %>% 
+  mutate_at( vars(A_QScore,B_QScore, QScore), funs(round(.,4))   )
+
+
+```
+
+
+# **Analysis Result**  
+
+```{r}
+NumberOfSample<-length( unique(df$sample) )
+NumberOfGene<-length( unique(df$Gene) )
+```
+
+<br>
+
+|Content|Number|
+|-------|------|
+|Number of Samples|`r NumberOfSample`|
+|Number of Genes|`r NumberOfGene`|
+
+<br>
+
+### HLA allele calls by Sample
+
+<br>
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+filename_dt<-"HLA_AnalysisResult"
+
+# datatable( 
+#   df, extensions = 'Buttons', options = list( 
+#     dom = 'Bfrtip',
+#     buttons = list('copy', 
+#                    list(extend='excel',filename=filename_dt),
+#                    list(extend='csv',filename=filename_dt)),
+#     lengthMenu = c( 10, 15, 20, 100)
+#     )
+# )
+# 
+
+
+datatable(df %>% dplyr::rename(Combined_Prob=QScore), 
+          extensions = c('Scroller', 'Buttons'), 
+          options = list(
+          #autoWidth = TRUE,
+          deferRender = TRUE,
+          scrollX = TRUE,
+          scrollY = 200,
+          scroller = TRUE,
+          dom = 'Bfrtip',
+          buttons = list('copy', 
+                     list(extend='excel',filename=filename_dt),
+                     list(extend='csv',filename=filename_dt)),
+          lengthMenu = c( 10, 15, 20, 100), 
+          columnDefs = list(list(width = '1000px', targets = "_all", className = 'dt-center')
+            )
+          )
+)
+
+
+
+```
+
+<br>
+
+### HLA allele calls Matrix
+
+<br>
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+TypeM<-read.table("HLA.Gene.txt", header=T, sep="\t")
+
+filename_dt<-"HLATypeMatrix"
+
+datatable(TypeM %>% dplyr::rename(Sample=probeset_id), 
+          extensions = c('Scroller', 'Buttons'), 
+          options = list(
+          #autoWidth = TRUE,
+          deferRender = TRUE,
+          scrollX = TRUE,
+          scrollY = 200,
+          scroller = TRUE,
+          dom = 'Bfrtip',
+          buttons = list('copy', 
+                     list(extend='excel',filename=filename_dt),
+                     list(extend='csv',filename=filename_dt)),
+          lengthMenu = c( 10, 15, 20, 100), 
+          columnDefs = list(list(width = '1000px', targets = "_all", className = 'dt-center')
+            )
+          )
+)
+
+
+```
+
+
+
+```{r hist_by_Gene, fig.width=8, fig.height=9}
+# ggplot( df, aes(QScore, fill=Gene)) + geom_histogram(bins=30) + 
+#   facet_grid(Gene~.) + 
+#   labs(x="Quality Score", y="Number of Sample", subtitle="Quality Score Distribution by Gene")
+```
+
+
+<br>
+
+### HLA Analysis Combined Probability Distribution
+
+<br>
+
+```{r boxplot_by_Gene}
+
+ggplot( df, aes(Gene, QScore, fill=Gene)) + geom_boxplot() + 
+    labs(x="HLA Genes", y="Number of Sample", title="Combined Probability Distribution", subtitle=paste0("Total Sample are ", NumberOfSample," and predicted Genes are ", NumberOfGene ))
+```
+
+<br>
+
+### Combined Probability >= 0.7 Samples
+
+<br>
+
+
+```{r GT_0.7}
+nest(df, -Gene) %>% 
+  dplyr::mutate( Total = map_int(data, ~.x %>% NROW ), 
+                 GreatEqual_0.7 = map_int(data, ~.x %>% filter( QScore >=0.7) %>%  NROW ), 
+                 Percent= round(GreatEqual_0.7/Total*100,2)
+                 ) %>% 
+  
+  #gather("Content", "NumberOfSample", 3:4) %>% 
+  ggplot(aes(Gene, GreatEqual_0.7, fill=Gene)) + geom_col() + 
+  geom_text(aes(label=Percent), vjust=-.3, colour="brown", size=3) + 
+  labs(y="Number of Sample", subtitle=" Sample Status by Gene, Combined Probability >= 0.7")
+  
+
+```
+
+
+<br>
+
+### Two allele calls Status
+
+<br>
+
+**Criteria**  
+
+* BothLow  : A and B's Probability < 0.7
+* OneLow   : A or B's Probability < 0.7
+* BothHigh : A and B's Probability >= 0.7
+
+<br>
+
+```{r}
+
+
+df<-
+mutate(df,
+         Type=derivedFactor(
+           "BothLow"  = ( A_QScore < 0.7 & B_QScore < 0.7 ),
+           "OneLow"   = ( A_QScore < 0.7 | B_QScore < 0.7 ),
+           "BothHigh" = ( A_QScore >= 0.7 & B_QScore >= 0.7 ),
+           .method = "first",
+           .default = "NA"
+           )
+       )
+
+ggplot(df, aes( Type, fill=Type)) + geom_bar() + 
+  facet_grid(.~Gene) + 
+  labs(x="", y="Number of Sample", subtitle="Sample Status by Gene", fill="Type") + 
+  theme(axis.text.x=element_blank())
+
+```
+
+
+<br>
+
+### Combined HLA Type by Gene, Top 10
+
+<br>
+
+
+<!-- ```{r, fig.width=10, fig.height=12} -->
+
+<!-- filter(df, Type !="BothHigh") %>%  -->
+<!-- ggplot( aes(AB, fill=Type)) + geom_bar() + facet_wrap(~Gene, scales="free", ncol=1) -->
+
+<!-- ``` -->
+
+
+
+
+```{r}
+df1<-
+df %>% 
+  group_by(Gene, AB) %>% 
+  dplyr::summarise(Count=n()) %>% 
+  ungroup() %>% 
+  group_by(Gene) %>% 
+  mutate(Percent=round(Count/sum(Count)*100,2)) %>% 
+
+  split(.$Gene) %>% 
+  map_df( ~ arrange(., desc(Percent)) %>% head(10))
+
+#   top_n(10, Count) %>% 
+# #  filter(Gene=="A") %>% 
+#   arrange( desc(Count)) #%>% 
+#   #arrange(Gene)
+  
+
+#  xtabs(~Gene, data=df1)
+```
+
+```{r AB plot, fig.width=10, fig.height=12}
+ggplot(df1, aes(reorder(AB, Percent), Percent, fill=Gene)) + 
+  geom_col() + 
+  facet_wrap(~Gene, ncol=1, scales="free") + 
+  geom_text(aes(y=0,label=Percent), vjust=-.3, colour="brown", size=3) + 
+  labs(x="A|B alleles", y="Percent (%)", title="Combined HLA Type")
+
+```
+
+<br>
+<br>
+
+### Combined HLA Type Table
+
+<br>
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+filename_dt<-"CombinedHLAType"
+
+datatable(
+          df %>% 
+          group_by(Gene, AB) %>% 
+          dplyr::summarise(Count=n()) %>% 
+          ungroup() %>% 
+          group_by(Gene) %>% 
+          mutate(Percent=round(Count/sum(Count)*100,2)),
+          
+          extensions = c('Scroller', 'Buttons'), 
+          options = list(
+          #autoWidth = TRUE,
+          deferRender = TRUE,
+          scrollX = TRUE,
+          scrollY = 200,
+          scroller = TRUE,
+          dom = 'Bfrtip',
+          buttons = list('copy', 
+                     list(extend='excel',filename=filename_dt),
+                     list(extend='csv',filename=filename_dt)),
+          lengthMenu = c( 10, 15, 20, 100), 
+          columnDefs = list(list(width = '1000px', targets = "_all", className = 'dt-center')
+            )
+          )
+)
+
+
+```
+
+<br>
+
+### HLA Type by Gene, Top 10
+
+<br>
+
+
+```{r, warning=FALSE}
+df2<-
+df %>% 
+  select(Gene, allele_A, allele_B) %>% 
+  gather("type", "AB", 2:3) %>% 
+  group_by(Gene, AB) %>% 
+  dplyr::summarise(Count=n()) %>% 
+  ungroup() %>% 
+  group_by(Gene) %>% 
+  mutate(Percent=round(Count/sum(Count)*100,2)) %>% 
+
+  split(.$Gene) %>% 
+  map_df( ~ arrange(., desc(Percent)) %>% head(10))
+
+#   top_n(10, Count) %>% 
+# #  filter(Gene=="A") %>% 
+#   arrange( desc(Count)) #%>% 
+#   #arrange(Gene)
+
+#  xtabs(~Gene, data=df1)
+```
+
+```{r allele plot, fig.width=10, fig.height=12}
+ggplot(df2, aes(reorder(AB, Percent), Percent, fill=Gene)) + 
+  geom_col() + 
+  facet_wrap(~Gene, ncol=1, scales="free") + 
+  geom_text(aes(y=0,label=Percent), vjust=-.3, colour="brown", size=3) + 
+  labs(x="alleles", y="Percent (%)", title="HLA Type")
+
+```
+
+<br>
+<br>
+
+### HLA Type Table
+
+<br>
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+filename_dt<-"HLAType"
+
+#width = NULL, height = NULL,
+
+datatable(
+        df %>% 
+          select(Gene, allele_A, allele_B) %>% 
+          gather("type", "AB", 2:3) %>% 
+          droplevels() %>% 
+          group_by(Gene, AB) %>% 
+          dplyr::summarise(Count=n()) %>% 
+          ungroup() %>% 
+          group_by(Gene) %>% 
+          mutate(Percent=round(Count/sum(Count)*100,2)) ,
+
+#        width = 700, height = NULL,
+        
+          extensions = c('Scroller', 'Buttons'), 
+          options = list(
+          #autoWidth = TRUE,
+          deferRender = TRUE,
+          scrollX = TRUE,
+          scrollY = 200,
+          scroller = TRUE,
+          dom = 'Bfrtip',
+          buttons = list('copy', 
+                     list(extend='excel',filename=filename_dt),
+                     list(extend='csv',filename=filename_dt)),
+          lengthMenu = c( 10, 15, 20, 100), 
+          columnDefs = list(list(width = '1000px', targets = "_all", className = 'dt-center')
+            )
+          )
+)
+
+columnDefs = list(list(className = 'dt-center', targets = 0:4))
+```
+
+
+<br><br>
+
+
+
+

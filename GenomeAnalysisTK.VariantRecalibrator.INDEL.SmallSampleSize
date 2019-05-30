@@ -1,0 +1,58 @@
+#!/bin/sh
+
+# GenomeAnalysisTK.sh 
+# $1 must be [XXX.vcf]
+
+# output      
+#             
+#             
+
+source ~/.bash_function
+source ~/.GATKrc
+GATK_param
+
+EGATK=/home/adminrig/src/GATK/GenomeAnalysisTK-1.2-60-g585a45b/GenomeAnalysisTK.jar
+
+if [ $# -eq 0 ];then
+	echo "usage : `basename $0` XXXX.vcf "
+	java $JMEMMax -jar $EGATK -T VariantRecalibrator --help
+	exit 1
+fi
+
+TMPDIR=$(dirname $1)
+
+# MAX_INSERT_SIZE=1000[default:100000]
+java $JMEMMax -Djava.io.tmpdir=$TMPDIR -jar $EGATK  							\
+-T VariantRecalibrator 				\
+-l INFO 							\
+-R $REF 							\
+--input $1							\
+--ignore_filter HARD_TO_VALIDATE 	\
+--ignore_filter LowQual 			\
+--ignore_filter StandardFilters 	\
+-resource:mills,VCF,known=true,training=true,truth=true,prior=12.0 $INDELVCF \
+-an QD 						\
+-an FS 						\
+-an HaplotypeScore 			\
+-an ReadPosRankSum 			\
+--percentBadVariants 0.05	\
+--maxGaussians 4			\
+-recalFile $1.recal			\
+--target_titv 3.2 			\
+-tranche 100.0 -tranche 99.9 -tranche 99 -tranche 90 	\
+-tranchesFile $1.VariantRecalibrator.INDEL.tranches 	\
+-Rscript $R 											\
+-resources $GATK_R 										\
+-rscriptFile $1.GaussianMixtureModelFit.INDEL 			\
+-nt 4													\
+-mode INDEL 			\
+>& $1.VariantRecalibrator.INDEL.log
+##### ERROR MESSAGE: NaN LOD value assigned. Clustering with this few variants and these annotations is unsafe. Please consider raising the number of variants used to train the negative model (via --percentBadVariants 0.05, for example) or lowering the maximum number of Gaussians to use in the model (via --maxGaussians 4, for example)
+
+# --target_titv 3.0 			\
+# -tranche 0.1 -tranche 1 -tranche 10 	\
+
+# if a few bad variants, use
+# --maxGaussians 4
+# or
+# --percentBadVariants 0.05

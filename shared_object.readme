@@ -1,0 +1,15 @@
+objdump -TC /usr/lib64/R/modules//internet.so | less
+ldd /usr/lib64/R/modules//internet.so
+
+
+
+ldconfig
+ldconfig -p
+ •ldd - 공유 라이브러리의 의존성을 검사해 준다. 동적 라이브러리도 공유 라이브러리 이므로 link 시나 load 시에 에러가 난다면 점검을 해보자.
+
+ldd <binary name>
+ • objdump - 오브젝트 파일에 대한 정보를 출력해 준다. Dynamic Section의 NEEDED 로 표기된 항목이 공유 라이브러리를 표시한다고 한다.
+
+objdump -p <object(binary) name>
+
+

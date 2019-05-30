@@ -1,0 +1,77 @@
+#!/bin/sh
+
+# GenomeAnalysisTK.sh 
+# $6 must be [XXX.bam]
+# output      
+#             
+#             
+
+source ~/.GATKrc
+
+if [ $# -eq 0 ];then
+	echo "usage : `basename $0` XXXX.vcf"
+	java $JMEM -jar $EGATK -T VariantFiltration --help	
+	exit 1
+fi
+
+# T=$(date '+%Y%m%d%H%M')
+# READGROUP=$2
+# RG=${READGROUP:=$T}
+
+
+TMPDIR=$PWD
+
+# MAX_INSERT_SIZE=1000[default:100000]
+java $JMEMMAX -Djava.io.tmpdir=$TMPDIR -jar $EGATK   \
+-T VariantFiltration \
+-l INFO \
+-R $REF \
+-B:variant,VCF $1						\
+-B:dbsnp,VCF $VCF                       \
+-B:indel,VCF $INDELVCF                  \
+--clusterSize 3 --clusterWindowSize 10  \
+--filterExpression "QUAL < 50.0"		\
+--filterName "QUAL50" 		\
+--filterExpression "AB < 0.01"		\
+--filterName "AB0.01" 		\
+--filterExpression "AB > 0.99"		\
+--filterName "AB0.99" 		\
+--filterExpression "DP < 40"		\
+--filterName "DP40" 		\
+--filterExpression "QD < 5.0"		\
+--filterName "QD5.0" 		\
+--filterExpression "HRun > 5"		\
+--filterName "HRun5" 		\
+--filterExpression "SB > -0.10"		\
+--filterName "SB-0.10" 		\
+--filterExpression "MQ0 > 40"		\
+--filterName "MQ040" 		\
+--filterExpression "MQ < 25.0"		\
+--filterName "MQ25.0" 		\
+--filterExpression "MQ0 >= 4 && ((MQ0 / (1.0 * DP)) > 0.1)" \
+--filterName "HARD_TO_VALIDATE"			\
+-o $1.VariantFiltration.vcf 			\
+>& $1.VariantFiltration.log
+ 
+## must be reseted
+# -L $SureSelectINTERVAL			\
+
+
+
+# --default_platform illumina     	\  do not use
+# --default_read_group $RG        	\  do not use
+# --output_mode EMIT_ALL_SITES		\  if u want to all sites, use this
+# --min_base_quality_score 30           \  if u want to many results, use lower values [20]
+
+
+# --standard_min_confidence_threshold_for_calling	default 30
+# deep date (10x or better) is recommended as 50
+
+# --output_all_callable_bases \
+# --verbose_mode $1.verbose \
+# --genotype			\
+
+
+
+# -B:comp1KG,VCF $PT1KG					\
+# -B:compHapmap,VCF $HAPMAP				\

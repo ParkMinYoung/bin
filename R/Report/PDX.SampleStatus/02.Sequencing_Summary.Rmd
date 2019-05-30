@@ -1,0 +1,186 @@
+---
+output: html_notebook
+---
+
+<br><br>
+
+# Sequencing 현황
+
+<br>
+
+## 그룹 별 시퀸싱양 
+
+<br>
+
+
+```{r raw_boxplot, include=FALSE}
+#names(seq) <- gsub( "\\.", "_",  names(seq))
+
+seq %>% 
+  filter( Group != "NA") %>% 
+  ggplot( aes(Group, Raw.Reads*101)) + 
+  geom_boxplot() + 
+  geom_jitter(aes(col=Group), alpha=.2) + 
+  scale_y_continuous( label=unit_format(unit="Gbp", scale=1e-9, digits=1 )) + 
+  labs(y="Raw Data")
+
+```
+
+
+
+```{r raw_hist}
+#names(seq) <- gsub( "\\.", "_",  names(seq))
+
+seq %>% 
+  filter( Group != "NA") %>% 
+  ggplot( aes( Raw.Reads*101 ,fill=Group)) + 
+  geom_histogram(col="white", bins=30) + 
+  scale_x_continuous( label=unit_format(unit="Gbp", scale=1e-9, digits=1 )) + 
+  labs(x="Raw Data") + 
+  facet_grid(Group~.)
+
+```
+
+<br>
+
+## Aligned Human Ref. 
+
+<br>
+
+### Mapped Rate by Type
+
+<br>
+
+```{r}
+seq %>% 
+  filter( Group != "NA") %>%
+  ggplot( aes(Type, Human) ) + 
+  geom_boxplot() + 
+  labs(y = "mapped only Human Ref. / raw data (%)")
+#+ geom_jitter( aes(col=Group), alpha=.5)
+```
+
+
+<br>
+
+### Mapped Rate Table by Type
+
+<br>
+
+```{r}
+breaks=c(-1, 0, 20, 50, 70, 80, 90, 95, 98, 99, 100)
+mapping<-
+table( seq$Type, cut(seq$Human, breaks=breaks, labels = breaks[-1]) ) %>% 
+  as.data.frame.matrix()
+
+kable(mapping, "html") %>%
+  kable_styling("striped", full_width = T) %>%
+  add_header_above(c( "bad" = 6, "good" = 5)) %>% 
+  column_spec(1:6, bold = T) %>%
+  row_spec(4:8, bold = T) %>% 
+  group_rows("Xenograft", 4, 8, label_row_css = "background-color: #666; color: #fff;")
+  
+
+```
+<br>
+
+### Low Mapped Rate List 
+
+<br>
+
+```{r}
+
+LowMappedList<-
+  seq %>% 
+  filter( Human < 80) %>% 
+  mutate(Human = round(Human, 2), 
+         Raw.Reads = round( Raw.Reads*101/1000000000,2 ) 
+         ) %>% 
+  select( Sample, Group, Type, Raw.Reads, Human) %>% 
+  arrange( desc(Human))
+
+
+filename_dt="LowMapped"
+datatable(LowMappedList, filter = "bottom",
+          extensions = c('Scroller', 'Buttons'),
+          options = list(pageLength = 10,
+                         deferRender = TRUE,
+                         scrollX = TRUE,
+                         scrollY = 200,
+                         scroller = TRUE,
+                         dom = 'Bfrtip',
+                         buttons = list('copy',
+                                        list(extend='excel',filename=filename_dt),
+                                        list(extend='csv',filename=filename_dt)),
+                         columnDefs = list(list(width = '1000px', targets = "_all", className = 'dt-center')
+                         )
+          )
+)
+
+
+```
+
+<br>
+
+## Duplicates Rate
+
+<br>
+
+
+
+### Dup. Rate by Type
+
+<br>
+
+
+```{r}
+
+seq %>% 
+  filter( Group != "NA") %>%
+  ggplot( aes(Type, Duplicates.Rate) ) + 
+  geom_boxplot() + 
+  labs(y = "Dup. Rate (%)")
+#+ geom_jitter( aes(col=Group), alpha=.5)
+
+
+```
+
+
+
+<br>
+
+### Dup. Rate by Raw Data v1
+
+<br>
+
+```{r}
+seq %>% 
+  filter( Group != "NA") %>%
+  ggplot( aes(Raw.Reads*101/1000000000, Duplicates.Rate) ) + 
+  geom_point( aes( col=Type)) + 
+  geom_smooth( method=lm, se=FALSE) + 
+  scale_x_continuous( label = unit_format(unit="Gbp", digits=1)) + 
+  labs(x="Raw Data") 
+
+```
+
+
+<br>
+
+### Dup. Rate by Raw Data v2
+
+<br>
+
+```{r}
+seq %>% 
+  filter( Group != "NA") %>%
+  ggplot( aes(Raw.Reads*101/1000000000, Duplicates.Rate) ) + 
+  geom_point( aes( col=Type)) + 
+  geom_smooth( method=lm, se=FALSE) + 
+  scale_x_continuous( label = unit_format(unit="Gbp", digits=1)) + 
+  labs(x="Raw Data") + 
+  facet_wrap(~Type, ncol=2)
+
+```
+
+

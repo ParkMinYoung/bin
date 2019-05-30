@@ -1,0 +1,22 @@
+#!/bin/bash
+
+. ~/.bash_function
+
+
+if [ "$1" == "-h" ]; then
+       echo "File syntax : $ huniq file [uniq-options] [file...]";
+       echo "STDIN syntax: $ huniq - [uniq-options] [file...]";
+       return 0;
+elif [ -f "$1" ]; then
+       file=$1;
+       shift;
+       (head -n 1 $file && tail -n +2 $file | sort | uniq );
+elif [ "$1" == "-" ]; then
+       shift;
+       (read -r; printf "%s\n" "$REPLY"; sort $* | uniq );
+else
+       >&2 echo "Error. File not found: $1";
+       >&2 echo "Use either 'huniq <file> [uniq-options]' or 'huniq - [uniq-options]'";
+       return 1;
+fi
+

@@ -1,0 +1,9 @@
+perl `which apt-probeset-genotype.PrepareFormatForClusterPlot.pl` --call AxiomGT1.calls.txt --summary AxiomGT1.summary.txt --sample SAM --marker MARKER
+perl `which apt-probeset-genotype.CreateClusterPlot.pl` SignalCluster.txt
+
+## or
+# FileLineSplit.sh SignalCluster.txt
+# ls SignalCluster.txt.x?? | xargs -n 1 -P 9 perl `which apt-probeset-genotype.CreateClusterPlot.pl` 
+
+
+/home/adminrig/src/APT/apt-1.18.0-x86_64-intel-linux/bin/apt-probeset-genotype --explain brlmm-p

@@ -1,0 +1,11 @@
+
+# make .Rprofile file in the root dir
+
+# write below block
+
+local({
+		  r <- getOption("repos")
+		    r["CRAN"] <- "http://cran.nexr.com/"
+			  options(repos = r)
+})
+

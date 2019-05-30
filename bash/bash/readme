@@ -1,0 +1,16 @@
+# excute time : 2017-09-25 10:57:19 : test
+for i in {1..100}; do mkdir $i; echo $(($i +2 )) > $i/$(($i+1)); done 
+
+
+# excute time : 2017-09-25 10:57:58 : mk test
+mkdir test 
+
+
+# excute time : 2017-09-25 10:59:35 : 
+for i in {1..100}; do [ $( expr $i % 2 ) -eq 0 ] && mv $i test ; done 
+
+
+# execute time : 2019-05-30 10:13:42 : 
+echo {1..100} | xargs rm -rf 
+
+

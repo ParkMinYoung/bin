@@ -1,0 +1,28 @@
+excute.MergePlink.sh $PWD
+
+/home/adminrig/workspace.min/AFFX/Axiom_KORV1.0/Analysis/Analysis.20161026/plinkMerge 
+
+
+ln -s /home/adminrig/workspace.min/AFFX/untested_library_files/TaqMan/TaqManInfo ./
+
+
+# excute time : 2016-10-26 14:12:44 : get Marker
+awk '{print $1"\t"$1}' TaqManInfo | tail -n +2 > Marker 
+
+
+# excute time : 2016-10-26 14:13:29 : make taqman plink
+plink --bfile MergePlink --extract Marker --make-bed --out TaqMan --noweb 
+
+
+# excute time : 2016-10-26 14:15:25 : plink 2 genotype
+plink2genotype.sh TaqMan.bed 
+
+
+# excute time : 2016-10-26 14:17:54 : get 12 marker genotype overlap count
+cut -f2- TaqMan.Genotype | tail -n +2 | sort | uniq -dc | awk '{print $1}' | sort | uniq -c 
+
+
+# excute time : 2016-10-26 14:18:56 : make genotype xls
+TAB2XLSX.sh TaqMan.Genotype 
+
+

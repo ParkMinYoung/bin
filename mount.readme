@@ -1,0 +1,7 @@
+
+mount -t nfs 192.168.200.180:/data/v01 /backup01
+
+
+mount -t nfs 192.168.200.121:/ifs/data/dlstorage02 /dlst
+
+mount -t nfs 192.168.200.235:/ifs/data/hiseq /hiseq_ds2/

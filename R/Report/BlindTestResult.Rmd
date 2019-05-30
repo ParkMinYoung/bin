@@ -1,0 +1,133 @@
+---
+title: "Blind Test Summary"
+output: html_notebook
+---
+
+***
+
+```{r,echo=FALSE, message=FALSE, warning=FALSE}
+
+library(pacman)
+p_load(plyr, dplyr, tidyr, ggplot2, scales, printr, xtable, knitr, plotly, gridExtra, reshape2)
+
+df<-read.table("Final.Concordance.summary.txt", header=T, sep="\t")
+
+#mean_Conc<-sprintf( "%1.2f", mean(df$Concordance))
+mean_Conc <- round(mean(df$Concordance), 2)
+sample_num <- comma( nrow(df))
+
+#str(df)
+
+```
+  
+* 전체 `r sample_num` 명에 대한  Blind Test 의 Concordant Rate 은 `r mean_Conc` %
+* DQC, CR, Het 값이 pair 상 한 샘플이라도 낮으면, concordance 에 대한 부분이 떨어지는 것을 관찰 할 수 있다.  
+* 왼쪽 레전드 스케일을 보면 하늘색이 진할수록 low concordance 임을 알 수 있다.  
+  <br><br><br><br>
+  
+    
+#### **DQC 에 대한 scatter plot**  
+***
+```{r,echo=FALSE, message=FALSE, warning=FALSE, fig.height=8, fig.width=14}
+
+DQC<-
+ggplot( df, aes(A.DQC, B.DQC, col=Concordance)) +
+  geom_point() +
+  xlim(c(0.80, 1)) + 
+  ylim(c(0.80, 1)) + 
+  labs(x="Blind Sample", y="Paired Sample")
+
+ggplotly(
+  DQC
+)
+```
+
+<br>
+
+#### **CR 에 대한 scatter plot**
+***
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.height=8, fig.width=14}
+
+CR<-
+ggplot( df, aes(A.CR, B.CR, col=Concordance)) +
+  geom_point() +
+  xlim(c(92, 100)) + 
+  ylim(c(92, 100)) +
+  labs(x="Blind Sample", y="Paired Sample")
+ggplotly(
+  CR
+)
+```
+
+<br>
+
+#### **HET 에 대한 scatter plot**
+***
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.height=8, fig.width=14}
+
+# ggplot( df, aes(A.HET, B.HET, col=Concordance)) +
+#   geom_point() +
+#   xlim(c(13, 15.5)) + 
+#   ylim(c(13, 15.5)) +
+#   labs(x="Blind Sample", y="Paired Sample")
+
+df<-mutate(df, diff_HET=A.HET - B.HET, AB=paste(A,B,sep=" - "))
+
+HET<-
+ggplot( df, aes(reorder(AB,diff_HET), diff_HET, col=Concordance)) + 
+  geom_point() + 
+  labs(x="Sample", y="Blind Het Rate - Paired Het Rate (%)") +
+  theme(axis.text.x=element_blank())
+
+ggplotly(
+  HET
+)
+
+```
+
+<br> 
+
+#### **DQC, CR, HET 과 Concordance**
+***
+```{r,echo=FALSE, message=FALSE, warning=FALSE, fig.height=5, fig.width=14}
+plot_list=list()
+plot_list = c(plot_list,list(DQC, CR, HET))
+
+do.call(grid.arrange, c(plot_list, list(ncol=3) ) )
+
+```
+
+<br>
+
+#### **Mismatch 와 Nocall Marker 와의 관계**
+***
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.height=8, fig.width=14}
+#str(df)
+Count<-
+ggplot(df, aes(Diff, NotCMPMarker, col=Concordance)) + 
+  geom_point() + 
+  labs(x="Number of Mismatch Maker", y="Number of Un-Comparable Marker")
+
+ggplotly(
+  Count
+)
+
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.height=8, fig.width=14}
+
+Con<-
+ggplot(df, aes(reorder(AB, Concordance ), Concordance)) +
+  geom_point() + 
+  geom_hline(aes(yintercept=mean_Conc, colour="red") ) +
+  #geom_text( aes(y=mean_Conc, label=mean_Conc) ) +
+  annotate("text", x=-Inf, y=mean_Conc, label=paste0("Average Concordant Rate : ", mean_Conc), size=4, hjust=-.1, vjust=-.5, colour="red") +
+  theme(axis.text.x = element_blank()) + 
+  labs(x="Sample", y="Concordant Rate(%)") +
+  theme(legend.position ="none")
+  
+ggplotly(
+  Con
+)
+```
+

@@ -1,0 +1,30 @@
+# excute time : 2016-10-27 16:12:29 : transform chip
+MatrixTransform.sh chip 
+
+#header is marker
+#so, must be transformed
+
+# excute time : 2016-10-27 16:12:43 : tranform taqman
+MatrixTransform.sh taqman 
+
+
+# excute time : 2016-10-27 16:13:41 : sort
+GenoSort.sh chip.transform.txt 
+
+
+# excute time : 2016-10-27 16:14:01 : sort
+GenoSort.sh taqman.transform.txt 
+
+
+# excute time : 2016-10-27 16:21:33 : excute paring
+Concordance.pairwise.sh chip.transform.txt.GenoSort taqman.transform.txt.GenoSort 
+
+
+# excute time : 2016-10-27 16:21:21 : match
+GenoMatch.sh chip.transform.txt.GenoSort taqman.transform.txt.GenoSort 
+
+
+# excute time : 2016-10-27 16:21:55 : make plot
+R CMD BATCH --no-save --no-restore ~/src/short_read_assembly/bin/R/Concordance.R 
+
+

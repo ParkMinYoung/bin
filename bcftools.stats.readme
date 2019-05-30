@@ -1,0 +1,21 @@
+bcftools stats -1 -S Samples try.vcf  | less -S 
+# This file was produced by bcftools stats (1.2+htslib-1.2.1) and can be plotted using plot-vcfstats.
+# The command line was:	bcftools stats  -1 -S Samples try.vcf
+#
+# Definition of sets:
+# ID	[2]id	[3]tab-separated file names
+ID	0	try.vcf
+# SN, Summary numbers:
+# SN	[2]id	[3]key	[4]value
+SN	0	number of samples:	397
+SN	0	number of records:	9965
+SN	0	number of SNPs:	9965
+SN	0	number of MNPs:	0
+SN	0	number of indels:	0
+SN	0	number of others:	0
+SN	0	number of multiallelic sites:	4
+SN	0	number of multiallelic SNP sites:	4
+# TSTV, transitions/transversions:
+# TSTV	[2]id	[3]ts	[4]tv	[5]ts/tv	[6]ts (1st ALT)	[7]tv (1st ALT)	[8]ts/tv (1st ALT)
+TSTV	0	7439	2526	2.94	7439	2526	2.94
+# SiS, Singleton stats:

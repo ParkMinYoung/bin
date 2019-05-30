@@ -1,0 +1,2 @@
+#!/bin/sh
+ls | egrep [eo][0-9].+$

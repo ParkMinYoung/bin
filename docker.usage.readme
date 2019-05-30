@@ -1,0 +1,92 @@
+
+docker root dir : /var/lib/docker
+
+docker search elasticsearch
+docker pull wwuimi/appreci8
+docker pull ubuntu:latest
+
+# list downloaded images 
+docker images
+
+docker run -it --name ubuntu01 ubuntu:16.04 /bin/bash
+
+docker restart ubuntu01
+docker attach ubuntu01 # same thing : docker run -it --name ubuntu01 ubuntu:16.04 /bin/bash
+
+# check docker status 
+docker ps -a
+
+# stop specfic docker
+docker stop a5f1e92ecaa5
+
+# stop all dockers
+docker stop $(docker ps -a -q)
+
+# delete docker container
+docker rm e16575112dfc
+
+# stop docker image
+docker rmi image_name:tag
+
+# delete all docker images
+docker rmi $(docker images -q)
+
+# after exit command, container are deleted : --rm 
+docker run --rm -it ubuntu:16.04 /bin/bash
+
+docker container ls
+
+docker run hello-world
+
+
+qhost | perl -nle'print $& if /cp\d{2}-\d{2}/'
+
+scp node_setting.sh cp05-01:/root
+ssh cp05-01 ./node_setting.sh 201 231 144
+
+
+docker load -i xxx.tar
+docker images
+
+docker run -d -p 8787:8787 -p -v /tmp/.X11-unix:/tmp/.X11-unix -v /home/adminrig/XXXX/app:/ext/ -e DISPLAY=$DISPLAY --name rstudio_shiny_server vc_pipeline
+
+docker container ls
+
+docker restart ubuntu0
+docker exec (ubuntu0|a305ddbe940a) echo "hello world"
+docker exec (ubuntu0|a305ddbe940a) -it /bin/bash
+
+
+Dockerfile
+
+FROM ubuntu:14.04
+MAINTAINER Foo Bar <foo@bar.com>
+
+RUN apt-get update
+RUN apt-get install -y nginx
+RUN echo "\ndaemon off;" >> /etc/nginx/nginx.conf
+RUN chown -R www-data:www-data /var/lib/nginx
+
+VOLUME ["/data", "/etc/nginx/site-enabled", "/var/log/nginx"]
+
+WORKDIR /etc/nginx
+
+CMD ["nginx"]
+
+EXPOSE 80
+EXPOSE 443
+
+우분투 14.04를 기반으로 nginx 서버를 설치한 Docker 이미지를 생성하는 예제입니다.
+
+FROM: 어떤 이미지를 기반으로 할지 설정합니다. Docker 이미지는 기존에 만들어진 이미지를 기반으로 생성합니다. <이미지 이름>:<태그> 형식으로 설정합니다.
+MAINTAINER: 메인테이너 정보입니다.
+RUN: Shell 스크립트 혹은 명령을 실행합니다.
+이미지 생성 중에는 사용자 입력을 받을 수 없으므로 apt-get install 명령에서 -y 옵션을 사용합니다(yum install도 동일).
+나머지는 nginx 설정입니다.
+VOLUME: 호스트와 공유할 디렉터리 목록입니다. docker run 명령에서 -v 옵션으로 설정할 수 있습니다. 예) -v /root/data:/data 호스트의 /root/data 디렉터리를 Docker 컨테이너의 /data 디렉터리에 연결합니다.
+CMD: 컨테이너가 시작되었을 때 실행할 실행 파일 또는 스크립트입니다.
+WORKDIR: CMD에서 설정한 실행 파일이 실행될 디렉터리입니다.
+EXPOSE: 호스트와 연결할 포트 번호입니다.
+
+
+

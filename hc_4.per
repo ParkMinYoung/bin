@@ -1,0 +1,35 @@
+#!/bin/sh
+. ~/.bash_function
+
+if [ $# -eq 2 ] & [ -f "$1" ];then
+
+perl -F'\t' -MMin -asnle'
+if( $. <= $line ){
+	map { $l[$.-1][$_] = $F[$_] } 0..$#F;
+	$max = @F+0 if $max < @F+0;
+	$l[$.-1][$#F+1] = sum(@F[1..$#F]);
+
+	if($. == 1){
+		map { $p[$.-1][$_] = $F[$_] } 0..$#F;
+	}else{
+		$p[$.-1][0]=$F[0];
+		map { $p[$.-1][$_] = sprintf "%.2f", $l[$.-1][$_] / $l[$.-1][$#F+1] * 100 } 1..$#F;
+	}
+
+}else{
+last;
+} 
+}{ 
+
+for $i ( 0 .. $max ){
+	@line=();
+	for $j ( 0 .. $#l ){
+		push @line, $p[$j][$i];
+	}
+	print join "\t", @line;
+}
+' -- -line=3 RNASeq.count.txt
+
+else
+	usage "XXX line[3]"
+fi

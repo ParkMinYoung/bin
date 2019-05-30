@@ -1,0 +1,15 @@
+# strawberry perl installation
+
+# typing below command in the cmd 
+cpan Win32::GuiTest
+
+
+# convert pl to exe
+cpan ExtUtils::Embed Getopt::ArgvFile IPC::Run3 Module::ScanDeps PAR PAR::Dist
+cpan PAR::Packer
+cpan pp
+pp -x -o outputexename yourscriptname.pl
+
+
+
+

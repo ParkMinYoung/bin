@@ -1,0 +1,122 @@
+---
+output: pdf_document
+---
+
+<br>
+
+# **Distribution of Methylated Cytosines**
+
+<br>
+
+```{r, include=FALSE}
+genebody<-read_tsv("GeneBody/Genebody.table")
+genebody$value = genebody$value*100
+head(genebody)
+```
+
+DNA methylation patterns of genomic regions are associated with gene transcription, development, aging and tumorigenesis. Especially, DNA methylation at CGI, Promoter(UP1K), TFBS(Transcript Factor Binding Site) regions is well-known to affect gene transcription by regulating trans-regulatory elements.   
+
+This represents density distribution of cytosine site on each genomic region    
+
+<br>
+
+ * UP1K : Upstream 1Kb - TSS(Transcription Start Site)
+ * GENE : TSS(Transcription Start Site) - TSS(Transcript Termination Site), gene body
+ * DW1K : TTS(Transcription Termination Site) - Dwonstream 1Kb
+ * 5UTR : UnTranslated Region at 5'
+ * CDS  : CoDing Sequence
+ * INTRON : Any nucleotide sequence within a gene that is removed by RNA splicing during maturation of the final RAN product
+ * 5UTR : UnTranslated Region at 3'
+ * CGI  : CpG Island
+ * HCP  : High CG site Promoter
+ * ICP  : Intermediate CG site Promoter
+ * LCP  : Low CG site Promoter 
+ * TE   : Transposable Element
+ 
+ 
+```{r, results='asis', eval=(knitr::opts_knit$get('rmarkdown.pandoc.to') == 'latex')}
+cat('\\pagebreak')
+```
+
+
+## Intra genomic region
+
+
+
+density distribution of cytosine site on each genomic regions    
+UP1K - UTR5 - CDS - INTRON - UTR3 - DW1K  
+
+<br>
+
+```{r, fig.width=8, fig.align=8}
+genebody %>% 
+  filter( Analysis == "UP1K.UTR5.CDS.INTRON.UTR3.DW1K") %>% 
+  ggplot( aes( index, value)) + 
+  geom_line(col="lightblue") + 
+  facet_wrap( ~ID, ncol=3) + 
+  labs(x="", y="") + 
+  theme(axis.text.x = element_blank(), 
+        legend.position = "bottom") + 
+  ylim(c(0,100))
+
+```
+
+
+```{r, results='asis', eval=(knitr::opts_knit$get('rmarkdown.pandoc.to') == 'latex')}
+cat('\\pagebreak')
+```
+
+
+
+## CGI and TE
+
+
+density distribution of cytosine site on the CpG island region or TE (Transposnal Element) region  
+
+<br>
+
+```{r, fig.width=8, fig.align=8}
+genebody %>% 
+  filter( Analysis == "CGI.TE") %>% 
+  ggplot( aes( index, value, col=type)) + 
+  geom_line() + 
+  facet_wrap( ~ID, ncol=3) + 
+  labs(x="", y="") + 
+  theme(axis.text.x = element_blank(), 
+        legend.position = "bottom") + 
+  ylim(c(0,100))
+
+```
+
+
+```{r, results='asis', eval=(knitr::opts_knit$get('rmarkdown.pandoc.to') == 'latex')}
+cat('\\pagebreak')
+```
+
+
+## HCP, ICP, LCP
+
+
+Promoter regions classified by their CG density levels(High, Intermediate, Low)  
+density distribution of cytosine site on promoter regions    
+
+<br>
+
+```{r, fig.width=8, fig.align=8}
+genebody %>% 
+  filter( Analysis == "HCP.ICP.LCP") %>% 
+  ggplot( aes( index, value, col=type)) + 
+  geom_line() + 
+  facet_wrap( ~ID, ncol=3) + 
+  labs(x="", y="") + 
+  theme(axis.text.x = element_blank(),
+        legend.position = "bottom") + 
+  ylim(c(0,100))
+
+```
+
+
+```{r, results='asis', eval=(knitr::opts_knit$get('rmarkdown.pandoc.to') == 'latex')}
+cat('\\pagebreak')
+```
+

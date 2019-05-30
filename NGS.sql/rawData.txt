@@ -1,0 +1,5 @@
+sampleID	platform	Application	machineID	Read_order	Species	specific_species	index_seq	lane	cycle	service_ID	service_ID_E	yield	read_count	Q30	Mean_quality	md5sum	merge_info	key	timestamp
+Cm	Hiseq2500	WGS	2T-V4-B80	1	Plant	È«Á¶·ù	TGACCA	3	101+7+101	20180410_¼º±Õ°ü´ëÇÐ±³_À±È¯¼ö	20180410_SKKU_YoonHwansoo	629984066	6237466	82.04	33.43	e11dd0be47ee5d43ce78d22d97fbaf26	NA	2T-V4-B80 Cm e11dd0be47ee5d43ce78d22d97fbaf26
+Cm	Hiseq2500	WGS	2T-V4-B80	2	Plant	È«Á¶·ù	TGACCA	3	101+7+101	20180410_¼º±Õ°ü´ëÇÐ±³_À±È¯¼ö	20180410_SKKU_YoonHwansoo	629984066	6237466	62.89	28.4	cb4ad1474422a497543a5ec8b693bac3	NA	2T-V4-B80 Cm cb4ad1474422a497543a5ec8b693bac3
+Cm	Hiseq2500	WGS	2T-V4-B80	1	Plant	È«Á¶·ù	TGACCA	5	101+7+101	20180410_¼º±Õ°ü´ëÇÐ±³_À±È¯¼ö	20180410_SKKU_YoonHwansoo	463403453	4588153	80	32.96	50d67334474db6e99ae62adbc4a9a23e	NA	2T-V4-B80 Cm 50d67334474db6e99ae62adbc4a9a23e
+Cm	Hiseq2500	WGS	2T-V4-B80	2	Plant	È«Á¶·ù	TGACCA	5	101+7+101	20180410_¼º±Õ°ü´ëÇÐ±³_À±È¯¼ö	20180410_SKKU_YoonHwansoo	463403453	4588153	60.67	27.85	5f7e80a6abd1b901c867ae0d06fc5d90	NA	2T-V4-B80 Cm 5f7e80a6abd1b901c867ae0d06fc5d90

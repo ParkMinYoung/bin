@@ -1,0 +1,6 @@
+
+KNIH1=/home/adminrig/workspace.min/AFFX/Axiom_KORV1.1
+echo -ne "CEL Count in Analysis : "$(ls $KNIH1/Analysis/003*/CEL/*.CEL  | wc -l)"/"$(find $KNIH1/Analysis -maxdepth 1 -type d | grep -c "Analysis/003")
+echo
+echo -ne "CEL Count in KORV1_1  : "$(ls $KNIH1/Axiom_KORV1_1_003*.CEL | wc -l)"/"$( ls $KNIH1/Axiom_KORV1_1_003*.CEL | CELName.stdin.sh | cut -f1 | sort | uniq | wc -l)
+echo 

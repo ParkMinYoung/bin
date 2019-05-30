@@ -1,0 +1,20 @@
+
+
+library(pacman)
+p_load(rmarkdown, rmdformats, tinytex)
+
+tinytex::install_tinytex(force=TRUE)
+
+
+
+
+pandoc_available()
+
+create.doc()
+render("new-doc.Rmd")
+render("new-doc.Rmd", "pdf_document")
+
+
+/usr/share/texlive/texmf-dist/tex/latex/
+
+

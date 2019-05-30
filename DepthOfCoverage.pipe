@@ -1,0 +1,11 @@
+
+# excute time : 2018-04-13 10:13:01 : run GATK3.sample_interval_summary2bed.sh
+ls *sample_interval_summary | xargs -P5 -n 1 -i GATK3.sample_interval_summary2bed.sh {}  
+
+
+# excute time : 2018-04-13 10:14:15 : make DepthOfCoverage file
+
+AddRow.w.sh  DepthOfCoverage '(.+).mergelane' ID *.sample_interval_summary.bed  | grep AddRow | sh 
+
+
+

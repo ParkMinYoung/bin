@@ -1,0 +1,464 @@
+chrOrder = c(1:22, "X", "Y")
+df$chromosome <- factor(df$chromosome, levels = chrOrder, ordered = TRUE)
+
+
+unique(df$Group) %>% 
+  as.list %>% 
+  purrr::map( ~ log2ratio_plot2(df, .x) )
+
+
+
+funs_list <- list(mean, median, sd)
+
+df<- 
+map(funs_list, ~ mtcars %>% map_dbl(.x)) %>% 
+  as.data.frame() 
+  
+names(df) <- c("mean", "median", "sd")
+df
+
+
+
+
+#If you simply want to catch the print statements, you can use capture.output(.):
+ok <- capture.output(oneExperimentGameFn(pRogerPoint))
+
+
+dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
+setwd(file.path(mainDir, subDir))
+
+
+
+
+
+Gbp <- unit_format(unit = "Gbp", scale = 1e-9, digits = 2)
+Pct <- unit_format(unit = "%", scale = 100, digits = 4)
+
+Gbp(Raw)
+Pct(Aligned.Percent )
+
+
+
+
+addmargins(ByLen_range, 1) #row
+addmargins(ByLen_range, 2) #col
+addmargins(ByLen_range) #all
+
+
+
+library(gridExtra)
+#https://cran.r-project.org/web/packages/gridExtra/vignettes/arrangeGrob.html
+grid.arrange(p1,p2,p3,p4, layout_matrix = rbind(c(1,1,1),c(2,3,4)))
+
+
+library(RColorBrewer)
+cols = colorRampPalette( RColorBrewer::brewer.pal(11,"RdYlBu") )( 30 )
+cols = rainbow(100)
+
+scale_fill_manual( values = cols ) 
+scale_fill_gradientn( colours= cols )  
+
+
+
+
+cols = colorRampPalette( RColorBrewer::brewer.pal(9,"YlOrRd") )( 30 )
+
+ggplot( nDP_step1, aes( Len, nDP )) + 
+  stat_density2d( aes(fill=..density..), geom="tile", contour = FALSE) + 
+  scale_fill_gradientn(colours=cols) + 
+  facet_grid(ID ~ Group)
+
+
+fun_mean <- function(x){
+  return( data.frame(y=mean(x), label=round(mean(x, na.rm=T),2) ) )
+}
+
+fun_count <- function(x){
+  return( data.frame(y=mean(x), label=length(x) ) )
+}
+
+# http://stackoverflow.com/questions/15660829/how-to-add-a-number-of-observations-per-group-and-use-group-mean-in-ggplot2-boxp
+
+
+ggplot( df, aes( Project, Concordance, fill=Project)) + geom_boxplot() + 
+  stat_summary(fun.y = mean, geom="point", colour="darkred", size=2) + 
+  stat_summary(fun.data = fun_mean, geom="text", vjust=-.7, colour="red")
+
+
+
+
+nDP_step1 <- 
+df %>% 
+  #head %>% 
+  mutate( mDP = mean(mean_dp, na.rm=TRUE),
+    nDP = round( mean_dp / mDP, 2), 
+    Len = end - start + 1, 
+    Type = case_when(
+      # mean_dp <= 1 ~ "NotOK", 
+      # mean_dp >  1 ~ "OK", 
+      # TRUE  ~ "No"
+      nDP  == 0  ~  "0",
+      nDP <= 0.1 ~ "0.1",
+      nDP <= 0.2 ~ "0.2",
+      nDP <= 0.3 ~ "0.3",
+      nDP <= 0.5 ~ "0.5",
+      nDP <= 0.8 ~ "0.8",
+      nDP <= 0.9 ~ "0.9",
+      nDP <= 1   ~ "1",
+      nDP <= 2   ~ "2",
+      nDP <= 3   ~ "3",
+      nDP <= 5   ~ "5",
+      nDP <= 10  ~ "10",
+      nDP > 10  ~ ">10",
+      TRUE ~ "#" 
+      ) )
+
+
+breaks = c(seq(0,1000, 100), 3000, 5000, 10000, 20000, 30000)
+table( ByLen$Group, cut(ByLen$Len, breaks =breaks, label = breaks[-1]) ) %>% 
+  t() %>% 
+  as.data.frame.matrix() -> ByLen_step1
+
+addmargins(ByLen_range, 1)
+
+ByLen_step1$range = rownames(ByLen_step1)
+
+ByLen_step1 %>% 
+  select( range, Twist, V5) %>% 
+  gather( Group, Count, 2:3) -> ByLen_step2
+  
+ByLen_step2$range <- factor( ByLen_step2$range, levels =  breaks, ordered = TRUE )
+
+
+
+
+dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
+
+
+list.files(path = "FastqcZip", pattern = "fastqc.zip$", recursive = TRUE, full.names = TRUE)
+
+
+ggplot(df, aes( ID, Norm_By_Mean)) + 
+  geom_boxplot(aes(fill=Group), position=position_dodge(.9)) + 
+  stat_summary(fun.y = mean, geom="point", aes(group=Group), position=position_dodge(.9), color = "green", size=2) +
+  geom_hline( yintercept = 1, col="red") + 
+  #facet_grid(chr~.) + 
+  ylim( c(0,5) ) + 
+  theme( axis.text.x =  element_text(angle=45), legend.position = "top")
+
+
+
+df_step1 %>% 
+  group_by(gene, PM, Type ) %>% 
+  summarise( TotalMeth = sum( NumOfMeth),
+             Block_n = max(n), 
+             MaxIntervals = max(interval, na.rm=T ), 
+             NumOfMeth_list = paste( NumOfMeth, collapse = ","),
+             Block_Len_list = paste( Len, collapse = ","), 
+             Intervals_Len_list = paste( interval, collapse = ",")
+             ) %>% 
+  arrange( desc( MaxIntervals)) -> df_step2
+
+
+
+
+
+log2ratio_plot2 <- function(df, sample){
+  
+df %>% 
+  filter( Group == sample ) -> df1
+
+
+df1$log2[df1$log2 < -3]=-3
+df1$log2[df1$log2 > 3] = 3
+range <- c(-3, 0, 3)
+
+ggplot(df1, aes(xmin = start , xmax = end, ymin = 0, ymax = log2)) +
+  theme_bw() + 
+  geom_rect(aes(fill = log2), colour = "grey50") +
+  geom_hline(yintercept = 1, col="purple") + 
+  geom_hline(yintercept = -1, col="purple") + 
+  facet_grid(.~chromosome, scales="free", space = "free" ,switch = "x") + 
+  ylim(c(range[1], range[3])) + 
+  scale_fill_gradientn(
+    name = "log2ratio", 
+    limits = c(range[1],range[3]),
+    #colours=c("navyblue", "darkmagenta", "darkorange1"),
+    colours=c("blue", "green", "red"),
+    breaks=range, 
+    labels=format(range)) + 
+  labs(subtitle=sample ,
+       x="Chromosome", 
+       y="Log2Ratio") + 
+  theme(
+    axis.text.x = element_blank(), 
+    axis.title = element_text(face = "bold"),
+    axis.title.x = element_blank(), 
+    plot.title = element_text(face = "bold", size = 10, colour = "black"),
+    plot.subtitle = element_text(face = "bold", size = 10, colour = "black"), 
+    strip.placement = "outside",  
+    strip.background = element_blank(), 
+    strip.text = element_text( size = 10 , colour = "blue"),
+    legend.position = "bottom"
+    ) 
+gg_format = "png"
+filename <- paste( sample, gg_format, sep =".")
+ggsave(filename, device=gg_format,  width = 26, height = 11, units = "cm")
+
+# https://stackoverflow.com/questions/13888222/ggplot-scale-color-gradient-to-range-outside-of-data-range
+}
+
+# FunctionDump("log2ratio_plot2")
+
+
+
+```{r, fig.width=10, fig.height=4, include=FALSE}
+unique(df$Group) %>% 
+  as.list %>% 
+  purrr::map( ~ log2ratio_plot2(df, .x) )
+
+```
+
+
+
+http://www.cookbook-r.com/Graphs/Axes_(ggplot2)/
+
+
+Get_Gene <- function(df,gene){
+  df %>% 
+  filter(gene == "THEM6") %>% 
+  group_by(end, gene) %>% 
+  { mutate(ungroup(.), GG = group_indices(.)) } %>% 
+  select(13,7:12) %>% 
+  gather("ID","Meth", 5:7)
+  
+  
+}
+
+
+Line types in R
+
+The different line types available in R software are : “blank”, “solid”, “dashed”, “dotted”, “dotdash”, “longdash”, “twodash”.
+
+
+ggplot(dat2, aes(wt, mpg, label = car)) +
+  geom_point(color = ifelse(dat2$car == "", "grey50", "red")) +
+  geom_text_repel()
+
+
+
+for(probe in unique(as.character(CS$marker)) ) {
+  
+  target_dir =  "Cluster"
+  dir.create(file.path("./", target_dir), showWarnings = FALSE)
+  
+  sample_f <- paste( target_dir, probe, sep = "/")
+  gg_format = "png"
+  filename <- paste( sample_f, gg_format, sep =".")
+  
+  title=paste0("\n### Marker : ", probe )
+  cat(title)
+  cat("\n")
+  #link<-paste0("http://211.174.205.93/DNALink/Project/KORV1.0.LD/",f)
+  #cat("![",link,"](",link,")", sep="")
+  cat("![](",filename,")", sep="")  
+  cat("\n")
+}
+
+
+
+    scale_color_manual(
+      name="genotype", 
+      values=c("blue", "green", "red", "grey"), 
+      limits=c("0", "1", "2", "-1" ), 
+      labels=c("AA", "AB", "BB", "NC")) +
+    theme(legend.position = "bottom")
+
+
+
+theme(legend.position = "none") 
+
+
+filename_dt="summary"
+datatable(seq,
+          extensions = c('Scroller', 'Buttons'),
+          options = list(
+          #autoWidth = TRUE,
+          deferRender = TRUE,
+          scrollX = TRUE,
+          scrollY = 200,
+          scroller = TRUE,
+          dom = 'Bfrtip',
+          buttons = list('copy',
+                     list(extend='excel',filename=filename_dt),
+                     list(extend='csv',filename=filename_dt)),
+          lengthMenu = c( 10, 15, 20, 100),
+          columnDefs = list(list(width = '1000px', targets = "_all", className = 'dt-center')
+            )
+
+          )
+)
+
+
+p + theme(
+  panel.background = element_rect(fill = "lightblue",
+                                colour = "lightblue",
+                                size = 0.5, linetype = "solid"),
+  panel.grid.major = element_line(size = 0.5, linetype = 'solid',
+                                colour = "white"), 
+  panel.grid.minor = element_line(size = 0.25, linetype = 'solid',
+                                colour = "white")
+  )
+
+vars=c("cyl", "gear", "carb")
+
+library(purrr)
+df<-
+  map(vars, ~ mtcars %>% select(.x) %>% distinct()  %>% pull(.x))
+names(df)<-vars
+df
+
+
+
+dots <- list(~sum(mpg), ~sum(hp))
+group_by_(mtcars, ~cyl) %>% summarise_(.dots = dots)
+group_by_(mtcars, ~cyl) %>% summarise_(.dots = setNames(dots, c("mpg_sum", "hp_sum")))
+
+
+
+
+cols = c("mpg", "hp")
+
+dots<-
+  paste0("sum(", cols, ")") %>% as.list 
+#dots <- list(~sum(mpg), ~sum(hp))
+nms<-
+  paste0(cols,"_sum") %>% as.list 
+
+
+group_by_(mtcars, ~cyl) %>% summarise_(.dots = setNames(dots, nms))
+
+
+
+
+f <- function(col1, col2, new_col_name) {
+    #mutate_call <- lazyeval::interp(~ a + b, a = as.name(col1), b = as.name(col2))
+    mutate_call <- paste0(col1, "+", col2)
+    mtcars %>% mutate_(.dots = setNames(list(mutate_call), new_col_name))
+}
+
+
+
+f("vs", "vs", "vs2")
+
+
+
+# remove multiple objects
+rm(temp1, temp2)
+rm(list=ls(pattern="temp"))
+rm(list = ls(all = TRUE))
+
+
+
+# Save multiple objects
+save(data1, data2, file = "data.RData")
+# To load the data again
+load("data.RData")
+
+
+
+# Save your entire workspace
+save.image(file = "my_work_space.RData")
+load("my_work_space.RData")
+
+
+
+# Save a single object to a file
+saveRDS(mtcars, "mtcars.rds")
+# Restore it under a different name
+my_data <- readRDS("mtcars.rds")
+
+
+
+table( model_table_3$status, model_table_3$Group ) %>% 
+  addmargins() %>% 
+  as.data.frame.matrix() %>% 
+  rownames_to_column() -> model_table_3_1
+
+
+
+
+
+write.table(top10_LD, file=out_file, quote=FALSE, sep="\t", row.names = FALSE, col.names=TRUE)
+
+
+
+args <- commandArgs(TRUE)
+
+library(pacman)
+p_load(ggplot2, tidyr, dplyr, DT, readr, tibble, scales, ggrepel, gridExtra)
+
+df <- read_tsv(args[1])
+
+df %>% 
+  select(-Allele) %>% 
+  gather(Gene, Type, -1) %>% 
+  filter( !is.na(Type) ) -> df1
+
+write.table(df1, file="step1", quote=FALSE, sep="\t", row.names=FALSE, na=".")
+
+
+R CMD BATCH --no-save --no-restore '--args overview_4digit_bestmatch.txt' OmixonResult2tab.R
+
+
+
+
+
+          Tools = case_when(
+            grepl("CEO", ID)  ~ "HLAminer", 
+            grepl("DPNT", ID)  ~ "HLAminer", 
+            TRUE ~ "HLA Analysis Suite" ) 
+
+
+
+scale_y_continuous(labels = scales::percent) 
+
+regex_build <- function(list){
+    reduce(list, ~ paste(.x, .y, sep = "|"))
+}
+
+regex_build(letters[1:5])
+
+
+
+lookups <- map(files, read.csv, stringsAsFactors = FALSE)
+real_data <- reduce(lookups, left_join, by=c("num"))
+
+colnames(real_data)[2:ncol(real_data)] <- LETTERS[1: ncol(real_data) - 1 ]
+real_data
+
+
+set.seed(1234)
+sample(x = 1:6, size =  50, replace = TRUE) %>%
+  table %>% 
+  sort %>%
+  names
+
+
+set.seed(1234)
+dice1 <- function(n) sample(size = n, x = 1:6, replace = TRUE)
+dice_rank <- compose(names, sort, table, dice1)
+dice_rank(50)
+
+
+
+
+plots <- mtcars %>% 
+  split(.$cyl) %>% 
+  map(~ggplot(., aes(mpg, wt)) + geom_point())
+names(plots)
+paths <- stringr::str_c(names(plots), ".pdf")
+
+pwalk(list(paths, plots), ggsave, path = tempdir())
+#map2( paths, plots, ggsave, path = tempdir() )
+

@@ -1,0 +1,59 @@
+#!/bin/sh
+
+. ~/.bash_function 
+
+if [ $# -gt 1 ];then
+
+#TARGET_BED=/home/adminrig/Genome/IonAmpliSeq/SNU.430/SNU.BangYoungJu.430k.bed
+TARGET_BED=$2
+
+perl -F'\t' -MMin -asne'
+chomp@F;
+if($ARGV =~ /bed$/ ){
+        $s = $F[1]+1;
+        $k = "$F[0]:$s-$F[2]";
+		$h{$k} = $F[5];
+}else{
+    if(/^Target/){
+        $id = $F[3];
+        $id =~ s/_total_cvg//;
+	
+		for $i ( 0 .. $#F ){
+			
+			if ( $F[$i] =~ /_(\d+)$/ && $1 == $DP){
+				$col = $i; 
+				print "$ARGV\n";
+				last;
+			}
+		}
+
+	}else{
+		$F[0] =~ /(.+):(\d+)-(\d+)/;
+		($chr,$s,$e) = ($1,$2,$3);
+		$Gene = $h{$F[0]};
+
+		$len = $e - $s +1;
+		$m{$Gene}{$id}{Total} += $len;
+		$m{$Gene}{$id}{Exp} += $len * $F[$col] / 100;
+	}
+}
+
+}{
+
+for $gene ( keys %m ){
+	@id = keys %{$m{$gene}};
+	
+	map { $out{$gene}{$_} = 
+			$m{$gene}{$_}{Exp} ? sprintf "%.2f", $m{$gene}{$_}{Exp}/$m{$gene}{$_}{Total} * 100 : 0 
+		} @id;
+}
+
+mmfss("GeneCoverge.DP$DP", %out)
+' -- -DP=$1 $TARGET_BED `find | grep interval_summary$`
+
+
+else
+		usage "DP[1,50,100,200] [XXX.bed]"
+fi
+
+

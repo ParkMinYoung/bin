@@ -1,0 +1,3 @@
+
+sudo du -ckx | sort -n > ~/workspace.min/duck &
+

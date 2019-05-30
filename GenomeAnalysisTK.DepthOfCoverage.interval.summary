@@ -1,0 +1,37 @@
+#!/bin/sh
+
+. ~/.bash_function
+. ~/.GATKrc
+
+if [ -f "$1" ] & [ -f "$2" ];then
+
+
+#P1=/home/adminrig/Genome/IonAmpliSeq/SNU.430/SNU.BangYoungJu.430k.pool_1.bed
+#P2=/home/adminrig/Genome/IonAmpliSeq/SNU.430/SNU.BangYoungJu.430k.pool_2.bed
+
+P1=$1
+P2=$2
+
+perl -F'\t' -MMin -ane'
+chomp@F;
+if($ARGV =~ /bed$/ ){
+	$s = $F[1]+1;
+	$k = "$F[0]:$s-$F[2]";
+	$h{$k}{Gene} = $F[5];
+	$h{$k}{Amplicon} = $F[3];
+	$h{$k}{Pool} = "$ARGV";
+}else{
+	if(/^Target/){
+		$id = $F[3];
+		$id =~ s/_total_cvg//;
+	}else{
+		$h{$F[0]}{$id} = $F[2];
+	}
+}
+
+}{ mmfss("interval_summary", %h)' $P1 $P2 `find | grep interval_summary$`
+
+else
+	usage "XXX.bed YYY.bed"
+fi
+

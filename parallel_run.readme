@@ -1,0 +1,95 @@
+find $PWD -type f | p -j 2 echo job_number :{#}, slot :{%}, filename :{/.} :::: -
+
+
+## file exist test
+ls *bam  | parallel '[[ ! -f {.}.pileup.gz ]] && echo {}' | less -NS
+
+
+
+Chastity filter raw Illumina data (grep reads containing :N:, append (-A) the three lines after the match containing the sequence and quality info, and write a new filtered fastq file):
+
+find *fq | parallel "cat {} | grep -A 3 '^@.*[^:]*:N:[^:]*:' | grep -v '^\-\-$' > {}.filt.fq"
+Run FASTQC in parallel 12 jobs at a time:
+
+find *.fq | parallel -j 12 "fastqc {} --outdir ."
+Index your bam files in parallel, but only echo the commands (--dry-run) rather than actually running them:
+
+find *.bam | parallel --dry-run 'samtools index {}'
+
+
+
+# execute time : 2018-12-05 20:22:56 : BAM link test
+p ln -s  $( dirname $(readlink -f $(dirname $summary)/samples.aligned.data) )/Sample_{1}/{1}.*reheader.bai BAM/{2}.bai ::: $(cut -f1 step2) :::+ $(cut -f2 step2)  
+
+
+# execute time : 2018-12-05 21:21:14 : inserting method args list using tab delim col
+p --progress --header : --colsep '\t' -j 10 -k "run_sequenza.sh BAM/{NT}.bam BAM/{TT}.bam /home/adminrig/workspace.min/DNALink.PDX/sequencza/FASTA/human_g1k_v37.fasta &> BAM/{TT}.log" :::: step3.txt
+p --halt now,fail=1 --bar --header : --colsep '\t' -j 10 -k "run_sequenza.sh BAM/{NT}.bam BAM/{TT}.bam /home/adminrig/workspace.min/DNALink.PDX/sequencza/FASTA/human_g1k_v37.fasta &> BAM/{TT}.log" :::: step3.txt
+
+
+
+
+parallel gzip ::: *.log
+parallel -a input.txt wget
+find . -name \*.tar.xz | parallel tar xvf
+
+p --colsep '\t'  echo {=3 'if( ! -d $_ ) { skip() }'   =} {1} {2} {3} :::: step3.txt
+
+
+p "mkdir {} &&  echo "{= '$_=$_+2' =} ">" {}/{= '$_=$_+1' =}  ::: {1..10}
+
+
+p  "./montage.pngmerge.2x3.sh chr{} " '$( find 32*/ Control SPX0_100 | grep \\.{}.png)' ::: {1..22} X Y
+
+
+
+# execute time : 2018-12-13 13:48:00 : odd even test
+p -j 2 --joblog odd_even.log --bar --tag '[[ $(( {} % 2 )) -eq 0 ]] && exit 0 || exit 1 ; sleep 1' ::: {1..100} 
+
+
+# execute time : 2018-12-13 13:48:52 : restart failed
+p -j 2 --resume-failed --joblog odd_even.log --bar --tag '[[ $(( {} % 2 )) -eq 0 ]] && exit 0 || exit 1 ; sleep 1' ::: {1..100} 
+
+
+# execute time : 2018-12-13 13:49:40 : --retry-failed
+p --retry-failed --joblog odd_even.log 
+
+
+
+
+
+
+
+
+parallel --bar -j0 --joblog .Analysis_mv2tmp.log \
+	"cd {} && " \
+	'[[ $(ls | egrep -v ".(log|bim|fam|bed)|plinkMerge$" | wc -l) -eq 0 ]]'  \
+	"&&" \
+	'[[ $(find plinkMerge -type f | egrep -v "(MergePlink|merge_list)" | wc -l) -eq 0 ]]' \
+	"&& cd .. && mv {} trash || exit 1" \
+	::: $(find ./ -maxdepth 1 -type d | grep Analysis.\\d+ -P | grep -v CEL_Info)
+
+
+
+p -j0 --bar --joblog .Analysis.CEL_Info.log \ 
+	{= 's/.+\.(\d+)/$1/; $d=(`date +%Y%m`); chomp($d); $date=($d-1)*100; if( $_ < $date ){ skip() } ' =} \
+	mv {} trash \
+	::: $(find ./ -maxdepth 1 -type d | grep Analysis.CEL_Info)
+
+
+
+p --plus --bar 
+	"[[ {#.\/Analysis.CEL_Info.} -lt  $(( (($(date +%Y%m) - 1)) * 100 )) ]] && mv {} trash" \
+	::: $(find ./ -maxdepth 1 -type d | grep Analysis.CEL_Info )
+
+
+parallel echo -e {/.} {= ' $_=~s/.+\/(.+).readme/$1/; $_= length $_ ' =} {}  ::: $src/*.readme | sort -n -k2,2 | less
+
+
+
+parallel --bar -j 1 -k --joblog err.log Methylseq.DMR.pipeline.sh {= '$d=$_; $d=~s/.cov//; if( -d $d ) { skip() }'  =} ::: *.cov
+
+
+(wget -O - pi.dk/3 || curl pi.dk/3/ || fetch -o - pi.dk/3) | bash
+
+

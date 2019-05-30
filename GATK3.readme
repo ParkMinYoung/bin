@@ -1,0 +1,22 @@
+
+
+$NGS_ANALYSIS_DIR/modules/variant/gatk3.varianteval.sh /home/wes/src/GATK/resource_bundle/latest/b37/human_g1k_v37.fasta Human "-D /home/adminrig/src/GATK.2.0/resource.bundle/2.8/b37/dbsnp_138.b37.vcf -l INFO -ST Sample -noEV -EV CountVariants" Human.vcf
+
+
+
+ngs.pipe.haplotypecaller.analysisready.ge.gatk3.sh HomAlt_check B3x $B3x_SURESELECT_BED *bam
+
+
+
+# excute time : 2017-08-18 11:18:58 :
+qsub_wrapper.sh G491 utl.q 72 none n $NGS_ANALYSIS_DIR/modules/variant/gatk3.genotypeGVCFs.sh /home/wes/src/GATK/resource_bundle/latest/b37/human_g1k_v37.fasta "--dbsnp /home/wes/src/GATK/resource_bundle/latest/b37/dbsnp_138.b37.vcf -L $B3x_SURESELECT_BED" 491 *HC.raw.variants.g.vcf
+
+
+
+
+python_ngs.sh summarize_mapping_data.py dedup_metrics Sample_*/*dedup.bam.metrics -o samples.dedup_metrics
+
+
+## CaseControl Analysis
+/wes/2017/20170626_EWU_KwakHyesun.WES.V5UTR.4Samples/Alignment/CaseControl
+

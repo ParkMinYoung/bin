@@ -1,0 +1,48 @@
+# execute time : 2018-11-13 10:50:57 : extraction of bam
+samtools view -o chrY_20M_22M.bam 1606_817_8.mergelanes.Y.bam  chrY:20000000-22000000 
+
+
+# execute time : 2018-11-13 11:17:39 : index
+samtools index 1606_817_8.mergelanes.Y.bam 
+
+
+# execute time : 2018-11-13 11:18:08 : extract intervals
+samtools view -o chrY_20M_22M.bam 1606_817_8.mergelanes.Y.bam  Y:20000000-22000000
+
+
+# execute time : 2018-11-13 11:19:59 : merge
+bedtools bamtobed -i chrY_20M_22M.bam | bedtools sort -i stdin | bedtools merge -i stdin > chrY_20M_22M.bam.bed
+
+
+# execute time : 2018-11-13 11:23:01 : index
+samtools index chrY_20M_22M.bam
+
+
+# execute time : 2018-11-13 11:33:15 : make genome
+head -25 /home/adminrig/src/GATK/GenomeAnalysisTK-1.6-11-g3b2fab9/resource.bundle/1.5/b37/human_g1k_v37.fasta.fai | perl -F'\t' -anle' if($.<26){ $F[0]=~/^(\w+) /; print join "\t", $1, $F[1] }' > human.genome
+
+
+# execute time : 2018-11-13 11:34:08 : 
+head -25 /home/adminrig/src/GATK/GenomeAnalysisTK-1.6-11-g3b2fab9/resource.bundle/1.5/b37/human_g1k_v37.fasta.fai | perl -F'\t' -anle' if($.<26){ $F[0]=~/^(\w+) /; print join "\t", $1, $F[1] }' | grep Y > humanY.genome
+
+
+# execute time : 2018-11-13 11:34:25 : 
+bedtools makewindows -g humanY.genome -w 1000 > human.genome.1Mb.bed
+
+
+# execute time : 2018-11-13 11:37:35 : step1
+bedtools coverage -a human.genome.1Mb.bed -b 1606_817_8.mergelanes.Y.bam > step1.bed &
+
+
+# execute time : 2018-11-13 11:43:19 : 
+bedtools intersect -a step1.bed -b Target.bed -wa -wb | awk '{if($7>=1) print}' | lesss 
+
+
+# execute time : 2018-12-17 16:41:49 : make target2 bed
+bedtools intersect -a step1.bed -b Target2.bed -wa -wb | sed 's/^/chr/' | cut -f1-4 > target2.bed
+
+
+# execute time : 2018-12-17 17:04:12 : 
+/home/adminrig/src/short_read_assembly/bin/Bam2BigWig.GATK.sh  chrY_20M_22M.bam
+
+

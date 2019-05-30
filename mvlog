@@ -1,0 +1,8 @@
+#!/bin/sh
+if [ -e log ]
+then
+	mv `lslog` log
+else
+	mkdir log && mv `lslog` log
+fi
+

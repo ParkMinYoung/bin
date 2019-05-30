@@ -1,0 +1,7 @@
+stat -c "%z" *
+
+stat -c '%A %a %n' *
+-rw-r--r-- 644 adduser.conf
+-rw-r--r-- 644 adjtime
+
+# http://www.thegeekstuff.com/2009/07/unix-stat-command-how-to-identify-file-attributes/

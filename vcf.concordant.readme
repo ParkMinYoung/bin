@@ -1,0 +1,20 @@
+/home/adminrig/src/short_read_assembly/bin/vcf.pair.v2.sh new/20203098.vcf old/20203098.vcf
+
+VCF concordant Rate : 4 method
+
+snpsift
+snpsift='java -Xmx32g -jar  /home/adminrig/src/SNPEFF/snpEff_4_3/SnpSift.jar'
+$snpsift concordance -v 35671484.H.vcf 35671484.P.vcf
+
+vcftools
+/home/adminrig/src/short_read_assembly/bin/vcf.pair.v2.sh
+
+GATK
+GATK3.genotypeconcordance.sh
+
+plink
+PairwiseCalcConcordantRateFromVCF.sh
+
+
+
+

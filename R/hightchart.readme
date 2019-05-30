@@ -1,0 +1,15 @@
+
+  
+ library(highcharter)
+  hc <- highchart()
+  for (p in unique(df$pop)) {
+    hc <- 
+      hc %>% 
+      hc_add_serie_scatter(df$Eigenvector1[df$pop == p],
+                            df$Eigenvector2[df$pop == p],
+                            name = sprintf("%s", p),
+                           showInLegend = TRUE)
+  }
+  
+  hc
+  

@@ -1,0 +1,42 @@
+
+https://zetawiki.com/wiki/CentOS_JDK_%EC%84%A4%EC%B9%98
+
+yum list java*jdk-devel
+yum install java-1.8.0-openjdk-devel.x86_64
+
+
+ rpm -qa java*jdk-devel
+
+
+R CMD javareconf -ed
+
+
+# current setting reference
+https://tecadmin.net/install-java-8-on-centos-rhel-and-fedora/
+
+
+https://tecadmin.net/install-java-8-on-centos-rhel-and-fedora/
+
+cd /opt/
+wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u191-b13/96a7b8442fe848ef90c96a2fad6ed6d1/jdk-8u191-linux-x64.tar.gz"
+tar xzf jdk-8u191-linux-x64.tar.gz
+
+cd /opt/jdk1.8.0_191/
+alternatives --install /usr/bin/java java /opt/jdk1.8.0_191/bin/java 2
+alternatives --config java
+
+
+alternatives --install /usr/bin/jar jar /opt/jdk1.8.0_191/bin/jar 2
+alternatives --install /usr/bin/javac javac /opt/jdk1.8.0_191/bin/javac 2
+alternatives --set jar /opt/jdk1.8.0_191/bin/jar
+alternatives --set javac /opt/jdk1.8.0_191/bin/javac
+
+
+# add below lines in the /etc/bashrc
+
+export JAVA_HOME=/opt/jdk1.8.0_181
+export JRE_HOME=/opt/jdk1.8.0_181/jre
+export PATH=$PATH:/opt/jdk1.8.0_181/bin:/opt/jdk1.8.0_181/jre/bin
+
+
+

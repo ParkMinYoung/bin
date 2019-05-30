@@ -1,0 +1,19 @@
+
+@string = qw/A B C D E/;
+
+# 1 dim list hash
+%h=()
+@h{@string}=(1)x@string
+x \%h
+
+
+# 2 dim list hash
+%h=()
+@{$h{test}}{@string}=(1)x@string
+x \%h
+
+
+
+## od -bc
+perl -nle'print ' cancer.variant_summary.txt  | head -1 | od -bc | less
+

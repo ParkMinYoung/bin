@@ -1,0 +1,83 @@
+---
+output: pdf_document
+---
+
+
+# **Sequencing Summary**
+
+<br>
+
+The table below shows the analyzed sample's information.  
+
+<br>
+
+
+```{r, include=FALSE}
+
+# Demo QC directory containing zipped FASTQC reports
+#qc.dir <- system.file("fastqc_results", package = "fastqcr")
+qc.dir<-"FastqcZip/"
+qc <- qc_aggregate(qc.dir)
+
+fastqc_stat<-
+qc %>% 
+  filter(module == "Basic Statistics") %>% 
+  #mutate( tot.seq = comma(as.numeric(tot.seq) ) ) %>% 
+  select(-module, -status)
+
+```
+
+
+
+```{r seq_table}
+
+seq_table <-
+fastqc_stat %>% 
+  select(sample, tot.seq, seq.length) %>% 
+  mutate_at( vars(tot.seq, seq.length), funs( as.numeric) ) %>% 
+  mutate( Bases = tot.seq * seq.length, ID=gsub("(.+)_(\\w{6,8})_(L\\d+)_(R\\d).+", "\\1 \\2 \\3 \\4", sample, perl=TRUE) ) %>% 
+  separate(ID, c("ID", "Index", "Lane", "Read"), sep = " ") %>% 
+  group_by(ID, Index, Lane) %>% 
+  summarise( Bases= sum(Bases) ) %>% 
+  mutate( Bases = sprintf("%.1f Gbp", Bases/1000000000))
+
+```
+
+
+
+
+```{r, results='asis', eval=(knitr::opts_knit$get('rmarkdown.pandoc.to') == 'latex')}
+
+
+kable(seq_table, 
+      format = "latex", 
+      longtable = T, 
+      booktabs = T, 
+      caption = "Sequencing Summary") %>%
+  kable_styling(latex_options = c("striped", "scale_down"))
+
+    
+```
+
+
+```{r, results='asis', eval=(knitr::opts_knit$get('rmarkdown.pandoc.to') != 'latex')}
+
+filename_dt="seq_table"
+datatable(seq_table, filter = "bottom",
+          extensions = c('Scroller', 'Buttons'),
+          options = list(pageLength = 10,
+                         deferRender = TRUE,
+                         scrollX = TRUE,
+                         scrollY = 200,
+                         scroller = TRUE,
+                         dom = 'Bfrtip',
+                         buttons = list('copy',
+                                        list(extend='excel',filename=filename_dt),
+                                        list(extend='csv',filename=filename_dt)),
+                         columnDefs = list(list(width = '1000px', targets = "_all", className = 'dt-center')
+                         )
+          )
+)
+
+```
+

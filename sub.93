@@ -1,0 +1,16 @@
+#!/bin/sh
+
+#$ -v path
+#$ -cwd
+#$ -pe make 1
+#$ -S /bin/bash
+#$ -q high.q
+#$ -j y
+#$ -e TMP
+#$ -o TMP
+
+source /home/adminrig/.bashrc
+
+$@
+
+

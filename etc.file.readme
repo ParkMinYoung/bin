@@ -1,0 +1,17 @@
+/etc/inputrc
+# for Ctrl+l clear screen
+"\C-l":'clear\n'
+
+
+
+/etc/shells
+
+/etc/rsyslog.conf
+
+/etc/bashrc
+/etc/profile
+
+/etc/passwd
+
+
+/etc/*-release # linux info

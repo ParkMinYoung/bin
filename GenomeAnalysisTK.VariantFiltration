@@ -1,0 +1,45 @@
+#!/bin/sh
+
+# GenomeAnalysisTK.sh 
+# $6 must be [XXX.bam]
+# output      
+#             
+#             
+
+source ~/.GATKrc
+source ~/.bash_function
+GATK_param
+
+EGATK=/home/adminrig/src/GATK/GenomeAnalysisTK-1.2-60-g585a45b/GenomeAnalysisTK.jar
+
+
+if [ $# -eq 0 ];then
+	echo "usage : `basename $0` XXXX.vcf"
+	java $JMEM -jar $EGATK -T VariantFiltration --help	
+	exit 1
+fi
+
+# T=$(date '+%Y%m%d%H%M')
+# READGROUP=$2
+# RG=${READGROUP:=$T}
+
+
+TMPDIR=$PWD
+
+# MAX_INSERT_SIZE=1000[default:100000]
+java $JMEMMAX -Djava.io.tmpdir=$TMPDIR -jar $EGATK   \
+-T VariantFiltration \
+-l INFO \
+-R $REF \
+--variant $1 							\
+--clusterSize 3 --clusterWindowSize 10  \
+--filterExpression "QUAL < 50.0 || AB < 0.01 || AB > 0.99 && DP < 40 || QD < 5.0 || HRun > 5 || SB > -0.10 || MQ0 > 40 || MQ < 25.0" \
+--filterName "StandardFilters" \
+-o $1.VariantFiltration.vcf 			\
+>& $1.VariantFiltration.log
+ 
+# --filterExpression "MQ0 >= 4 && ((MQ0 / (1.0 * DP)) > 0.1)" \
+# --filterName "HARD_TO_VALIDATE"			\
+
+#  || D < 8.0 || HRun > 2 || MQ < 50.0 || MQ0 > 20.0 || SB > -100.0
+

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+#$ -v path
+#$ -cwd
+#$ -S /bin/sh
+#$ -pe make 1
+#$ -S /bin/bash
+#$ -q all.q
+
+source /home/adminrig/.bashrc
+
+$@
+
+

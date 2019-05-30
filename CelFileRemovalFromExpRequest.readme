@@ -1,0 +1,10 @@
+[ ! -d "/microarray_CEL/" ] && mkdir /microarray_CEL/trash 
+
+mv /microarray_CEL/KORV1.1.v2/Axiom_KORV1_1_020169* /microarray_CEL/trash
+mv /microarray_CEL/KORV1.1.v2/Axiom_KORV1_1_020175* /microarray_CEL/trash
+
+
+rm -rf $KNIH1/Axiom_KORV1_1_020169*.CEL $KNIH1/Axiom_KORV1_1_020175*.CEL
+rm -rf $KNIH1/Analysis/{020169,020175}
+
+

@@ -1,0 +1,11 @@
+data()                         # list all available data sets
+try(data(package = "rpart") )  # list the data sets in the rpart package
+try(data(package = "sunburstR") ) 
+try(data(package = "dplyr") ) 
+
+data(USArrests, "VADeaths")    # load the data sets 'USArrests' and 'VADeaths'
+## Not run: ## Alternatively
+ds <- c("USArrests", "VADeaths"); data(list = ds)
+## End(Not run)
+help(USArrests)                # give information on data set 'USArrests'
+

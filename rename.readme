@@ -1,0 +1,7 @@
+
+rename ' ' '_' Axiom_KORV1_1_003418_A08_Blind\ 057.*
+
+rename 's/ /_/g' *
+
+for f in *\ *; do mv "$f" "${f// /_}"; done
+

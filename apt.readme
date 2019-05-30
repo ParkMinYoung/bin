@@ -1,0 +1,8 @@
+sudo add-apt-repository --remove ppa:whatever/ppa
+# http://askubuntu.com/questions/307/how-can-ppas-be-removed
+
+sudo apt-add-repository ppa:ubuntu-x-swat/x-updates
+sudo apt-get update
+sudo apt-get install nvidia-current nvidia-settings
+# http://www.howopensource.com/2012/10/install-nvidia-geforce-driver-in-ubuntu-12-10-12-04-using-ppa/
+

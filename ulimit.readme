@@ -1,0 +1,27 @@
+
+# list ulimit -a
+
+sudo ulimit -n 655350
+sudo ulimit -u 655350
+
+# or 
+
+vi /etc/security/limits.conf
+
+adminrig    soft    nofile  655350
+adminrig    hard    nofile  655350
+
+adminrig    soft    nproc   655350
+adminrig    hard    nproc   655350
+
+
+
+최대 open file 갯수 조회 방법
+#cat /proc/sys/fs/file-max
+#sysctl fs.file-max
+
+
+출처: https://jsyang12.tistory.com/57 [.bashrc]
+
+
+

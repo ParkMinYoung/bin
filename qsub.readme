@@ -1,0 +1,23 @@
+
+
+
+rm -rf TMP
+TMP=TMP
+[ ! -d $TMP ] && mkdir $TMP
+
+JID=$(qsub -N APT-geno -j y -e $TMP -o $TMP -t 1-6 -terse ./SGE.taskarray.sh Target_Dir_List $Config)
+
+JID=$(echo $JID | cut -d. -f1)
+qsub -N log -hold_jid $JID $LOG_SCRIT "APT" "genotyping using SGE" $JID "Extra Comment ....."
+
+# https://stackoverflow.com/questions/24436410/sge-whats-the-difference-between-hold-jid-ad-and-hold-jid
+
+-sync y
+
+# example where each of three jobs just sleeps for some time:
+job_ids=$(qsub -terse -b y sleep 10)
+job_ids=$job_ids,$(qsub -terse -b y sleep 20)
+job_ids=$job_ids,$(qsub -terse -b y sleep 30)
+qsub -hold_jid ${job_ids} -sync y -b y echo "DONE" 
+
+

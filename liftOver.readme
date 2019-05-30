@@ -1,0 +1,2 @@
+liftOver step1.bed /home/adminrig/src/SNPEFF/snpEff_4_1/MouseLiftOver/mm9ToMm10.over.chain  step2.bed  step2.unmapped.bed
+

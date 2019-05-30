@@ -1,0 +1,20 @@
+
+# excute time : 2017-11-03 10:49:16 : 
+split -l 1000 CELFileList -d -a 3 
+
+
+# excute time : 2017-11-03 10:50:10 : split
+split -l 1000 CELFileList -d -a 2
+
+
+
+ls x?? | xargs -n 1 -P 5 -i tar -cv -T {} -zf {}.tgz 
+
+
+
+
+ split tuxlap.txt split_file_
+
+
+https://www.linuxtechi.com/split-command-examples-for-linux-unix/
+

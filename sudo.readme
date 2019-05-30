@@ -1,0 +1,17 @@
+http://thinkpro.tistory.com/16
+
+sudo adduser adminrig
+sudo visudo                         // /etc/sudoers access
+
+....
+
+# User privilege specification
+
+root ALL=(ALL:ALL) ALL
+adminrig ALL=(ALL:ALL) ALL
+
+
+adminrig   ALL=/bin/mount, /bin/umount
+adminrig    ALL=(ALL)   NOPASSWD: ALL
+
+

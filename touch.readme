@@ -1,0 +1,6 @@
+ # http://unix.stackexchange.com/questions/118577/changing-a-files-date-created-and-last-modified-attributes-to-another-file
+ touch -d 20150613  goldenfile
+ touch -a -m -t 201512180130.09 fileName.ext
+
+
+ touch -r reference_file_date apply_newfile

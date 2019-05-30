@@ -1,0 +1,77 @@
+## master node
+
+sudo yum update
+curl -sSL https://get.docker.com/  | sh 
+# wget -O docker_install.sh https://get.docker.com/
+## curl -fsSL https://get.docker.com -o get-docker.sh
+# sh docker_install.sh
+# scp node_docker.sh cp05-01:/root
+# ssh cp05-01 "sh node_docker.sh"
+
+usermod -aG docker adminrig
+systemctl start docker
+systemctl enable docker # to start docker deamon after booting
+
+
+
+## compute node
+
+#scp node_docker.sh cp05-02:/root
+#ssh cp05-02 "sh node_docker.sh"
+
+# 1. create installation script for compute node
+
+sh node_docker.sh # in
+
+sudo yum install epel-release
+sudo yum update
+# 1. container-selinux-2.9-4.el7.noarch RPM DOWNLOAD 
+wget https://buildlogs.centos.org/c7-extras.x86_64/container-selinux/20170307000722/2.9-4.el7.x86_64/container-selinux-2.9-4.el7.noarch.rpm
+# 2. container-selinux rpm install ( rpm Dependency skip option --nodeps ) 
+rpm -ivh --nodeps container-selinux-2.9-4.el7.noarch.rpm
+#systemctl stop firewalld
+
+curl -sSL https://get.docker.com/  | sh 
+
+
+usermod -aG docker adminrig
+systemctl start docker
+systemctl enable docker # to start docker deamon after booting
+
+
+# 2. installation using parallel command
+
+#parallel -S cp05-01 echo running on ::: cp05-02
+
+# 2.1 create node file
+qhost | perl -nle'print $& if /cp\d{2}-\d{2}/' > nodefile
+#parallel --sshloginfile nodefile --transferfile {} --cleanup echo ::: node_docker.sh
+
+# 2.2 install rsync to copy node_docker.sh file to compute nodes. It was used inside the parallel command.
+parallel --sshloginfile nodefile "yum -y install " ::: $(printf 'rsync %.0s' {1..15})
+
+# 2.3 installation docker by parallel
+parallel -k -j1 --tag --sshloginfile nodefile --basefile node_docker.sh sh node_docker.sh ::: $(cat nodefile)
+
+
+
+
+
+## problem 
+docker: Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Post http://%2Fvar%2Frun%2Fdocker.sock/v1.26/containers/create: dial unix /var/run/docker.sock: connect: permission denied.
+
+sudo usermod -a -G docker $USER
+
+## log out & re-login
+
+
+
+I got this error:
+
+Failed to start docker.service: Unit docker.service is masked.
+Thanks to Yannick Lizzi on this thread I found this fix:
+
+systemctl unmask docker.service
+systemctl unmask docker.socket
+systemctl start docker.service
+

@@ -1,0 +1,3 @@
+bgzip $1
+tabix -p vcf $1.gz
+zcat $1.gz > $1

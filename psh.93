@@ -1,0 +1,24 @@
+#!/bin/sh
+
+HOSTLISTFILE="/export/home/adminrig/src/short_read_assembly/bin/host_dir/host.min"
+
+#Error display function
+Error_Show() {
+   case "$1" in
+      1) echo 'Usage : psh node[,node] command';;
+      2) echo "psh:Hostlist file not exist";;
+      *) echo 'psh:Unknow Error';;
+   esac
+   exit 1
+}
+
+[ "$#" -lt "2" ]&&Error_Show 1
+[ ! -f "$HOSTLISTFILE" ]&&Error_Show 2
+
+NODELIST=$(cat "$HOSTLISTFILE" | egrep $(echo $1 |sed "s/,/|/g") | awk '{print $1}')
+shift
+for NAME in $NODELIST
+do
+#       rsh "$NAME" $* >&1 2>&1|sed "s/^/"`echo $NAME|cut -f 1 -d '.'|cut -c -10`:"     /g"
+        ssh -q -x "$NAME" $* >&1 2>&1| sed "s/^/"`echo $NAME|cut -f 1 -d ' '`:"       /g"
+done

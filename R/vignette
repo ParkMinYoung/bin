@@ -1,0 +1,6 @@
+vignette(all = FALSE)
+vignette(package = "grid")
+vignette("rotated", package = "grid")
+vignette(package = "dplyr")
+vignette("introduction",package = "dplyr")
+

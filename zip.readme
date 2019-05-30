@@ -1,0 +1,5 @@
+zip -P Rs3ccW}7QXPenS chr_9.zip chr_9
+unzip -P Rs3ccW}7QXPenS chr_9.zip
+
+# extract to specific directory : Cov dir
+unzip -d Cov Cov.zip

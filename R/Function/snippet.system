@@ -1,0 +1,12 @@
+
+
+if (length(.libPaths()) > 1) {
+  message("Using libraries at paths:\n",
+          paste("-", .libPaths(), collapse = "\n"),
+          sep = "")
+} else {
+  message("Using library at path:\n",
+          paste("-", .libPaths(), collapse = "\n"),
+          sep = "")
+}
+

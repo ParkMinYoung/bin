@@ -1,0 +1,68 @@
+
+library(plotly)
+
+ df<-read.table("Ps.performance.txt", header=T)
+#df<-read.table("example.txt", header=T)
+
+
+df$MAF<-df$nMinorAllele/(df$n_AA+df$n_AB+df$n_BB)
+# NA handle
+df$MAF[is.na(df$MAF)]<-0
+df$MAF[ df$MAF > 0.5 ] <- 1 - df$MAF[df$MAF > 0.5]
+
+MAF_df<-as.data.frame( table( cut(df$MAF, breaks=c(-1,0,0.001, 0.005, 0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5 )) ) )
+colnames(MAF_df)<-c("bin", "count")
+# g9<-
+#   ggplot(MAF_df, aes(bin, count, fill=bin)) + 
+#   geom_bar(stat="identity") +  
+#   ylab("count") + 
+#   xlab("MAF Interval") + 
+#   theme(axis.text.x = element_text(angle=45, hjust=1, vjust=.5))
+
+g9<-
+  ggplot(MAF_df, aes(bin, count, fill=bin)) + 
+  geom_bar(stat="identity") +  
+  geom_text(aes(y=count, label=comma(sprintf("%1.2f%%", count / sum(count) * 100 ))), vjust=-.5, colour="blue", position=position_dodge(0), size=4) + 
+  scale_y_continuous(labels=comma) + 
+  ylab("count") + 
+  xlab("MAF Interval") + 
+  geom_text(aes(y=0, label=comma(count)), vjust=1.5, colour="darkorange", size=3)  + 
+  theme(axis.text.x = element_text(angle=45, hjust=1, vjust=.5))
+
+# p <- ggplot(data = diamonds, aes(x = cut, fill = clarity)) +geom_bar(position = "dodge")
+
+ggplotly(g9)
+
+
+
+
+library(plotly)
+#install.packages("highcharter")
+library(highcharter)
+#library(dplyr)
+# 
+setwd("/home/minmin/Dropbox/R/Example/PCA")
+df <- read.table("data", header=T ,sep="\t")
+#str(df)
+
+g1<-
+  ggplot(df, aes(Eigenvector1, Eigenvector2, color=pop)) +
+  geom_point()
+
+ ggplotly(g1)
+ 
+ 
+g2<-
+  ggplot(df, aes(Eigenvector1, Eigenvector2, color=super_pop)) +
+  geom_point()
+
+ ggplotly(g2)
+
+g3<-
+  ggplot(df, aes(Eigenvector1, Eigenvector2, color=super_pop)) +
+  geom_point() + 
+  facet_grid( gender ~ super_pop )
+
+ ggplotly(g3)
+
+ 

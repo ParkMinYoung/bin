@@ -1,0 +1,13 @@
+# https://www.cyberciti.biz/faq/ubuntu-linux-start-restart-stop-apache-web-server/
+
+
+sudo /etc/init.d/apache2 start
+
+sudo service apache2 start
+
+sudo start apache2
+
+sudo apache2ctl start
+
+sudo systemctl start apache2.service
+

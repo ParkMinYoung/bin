@@ -1,0 +1,27 @@
+#!/bin/bash
+
+. ~/.bash_function
+
+
+if [ -f "$1" ] & [ -f "$2" ];then
+
+# excute time : 2017-01-17 16:06:43 : step 1
+dos2unix $1 $2
+#dos2unix DNAGPS_128_20170117_20170117_104827_Results.txt SampleMarker 
+
+
+# excute time : 2017-01-17 16:10:09 : step 2
+perl -F'\t' -MMin -ane'chomp@F; $h{$F[2]}{$F[3]}=$F[4] if $F[2] =~ /^rs/ }{ mmfss("matrix", %h)' $1 
+
+
+# excute time : 2017-01-17 16:13:34 : step 3
+perl -F'\t' -MMin -asnle'BEGIN{ %m = read_matrix($file); print join "\t", qw/Sample Marker Genotype/ } print join "\t", @F[0,1], $m{$F[0]}{$F[1]}' -- -file=matrix.txt $2 > $2.Geno
+
+
+TAB2XLSX.sh $2.Geno
+
+
+else
+	usage "output_file sample_marker"
+fi
+

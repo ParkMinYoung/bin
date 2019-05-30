@@ -1,0 +1,337 @@
+---
+params:
+    dynamictitle: "DMR Analysis"
+    reportdate: !r Sys.Date()
+output: 
+        html_notebook:
+          depth: 3
+          highlight: tango
+          theme: united
+          toc: yes
+          toc_float: yes
+#        html_document:
+        toc: true
+        toc_float: true
+        depth: 3
+#         number_section: true
+#         theme: readable
+        theme: united
+        highlight: tango
+#         fig_caption: true
+#         df_print: paged
+#         df_print: tibble
+#         df_print: kable
+#         fig_caption: yes 
+#         fig_retina: 1 
+#         code_download: false
+title: "`r params$dynamictitle`"
+#date: "`r params$reportdate`"
+author: Park MinYoung(minmin@dnalink.com) in BI, DNA Link
+---
+
+***
+
+
+```{r setting, echo=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, fig.width=7)
+options(DT.options = list(pageLength = 10, language = list(search = 'Filter:')))
+#setwd("/home/adminrig/workspace.min/DNALink.PDX/LOH")
+```
+
+```{r library, include=FALSE}
+library(pacman)
+p_load(ggplot2, tidyr, dplyr, DT, readr, tibble, scales, ggrepel, gridExtra)
+
+source("/home/adminrig/src/short_read_assembly/bin/R/Min.R")
+
+library(knitr)
+library(kableExtra)
+options(knitr.table.format = "html")
+
+library(ggpubr)
+# data_status()
+# pkg_clean()
+# rm(list=ls())
+# http://rstudio.github.io/DT/extensions.html
+```
+
+
+
+
+```{r}
+df <- read.table("DMRs", header=T, sep="\t", na.strings = "NA", skip = 0, stringsAsFactors = default.stringsAsFactors())  
+```
+
+<br>
+
+# DMRs Summary
+
+<br>
+
+[BiSeq R Package](http://bioconductor.org/packages/release/bioc/html/BiSeq.html) [^1] 로 분석된 각 그룹 별 예측된 DMRs 결과  
+
+[^1]: Hebestreit K, Klein H (2018). BiSeq: Processing and analyzing bisulfite sequencing data.
+
+
+```{r}
+df %>% 
+  select( Chromo,Start,End,Pairs) %>% 
+  distinct() %>% 
+  group_by(Pairs) %>% 
+  summarise(Num_Of_DMRs=n()) %>% 
+  kable() %>%
+  #kable_styling(bootstrap_options = c("striped", "hover"))
+  kable_styling(bootstrap_options = c("striped", "hover"),  full_width = F,  position = "left") #%>% 
+  # row_spec(0, bold = T) %>% 
+  # column_spec(1,  width = "20em", bold = T, border_right = F) %>% 
+  # column_spec(2,  width = "10em", bold = T, border_right = F) 
+
+  
+```
+
+<br>
+
+## Number of DMRs by Region
+
+<br>
+
+[SNPeff](http://snpeff.sourceforge.net/index.html) [^2] 를 이용해서 DMRs 에 대한 Annotation 을 진행  
+이 때 하나의 DMR 은 한 개 이상의 유전자의 splicing variants 에 따라 여러개의 annotation 포함 가능  
+그래서 기존 DMRs 의 수보다 더 많게 표기됨  
+
+[^2]: Cingolani P, Platts A, Wang le L, Coon M, Nguyen T, Wang L, Land SJ, Lu X, Ruden DM. Fly (Austin). (2012), A program for annotating and predicting the effects of single nucleotide polymorphisms, SnpEff: SNPs in the genome of Drosophila melanogaster strain w1118; iso-2; iso-3."
+
+
+```{r}
+df %>%
+  group_by( Region) %>%
+  count(Pairs) %>%
+  ungroup()-> cnt_by_region
+
+r_order <- c("Intergenic","Downstream", "Upstream", "Exon","Intron","Utr3prime","Utr5prime", "SpliceSiteAcceptor","SpliceSiteDonor","SpliceSiteRegion")
+cnt_by_region %>%
+  mutate( Region = factor(Region, levels = r_order, ordered = T)) %>%
+  spread(Pairs, n) %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover"),  full_width = F,  position = "left")
+
+```
+
+<br>
+
+## DMRs barplot by Region
+
+<br>
+
+
+```{r, include=FALSE}
+
+cnt_by_region %>%
+  ggplot(aes(Pairs, n, fill=Region)) +
+  geom_bar(stat="identity") +
+  coord_flip() +
+  labs(x="") ->g1
+
+cnt_by_region %>%
+  ggplot(aes(Pairs, n, fill=Region)) +
+  geom_bar(stat="identity", position = "fill") +
+  coord_flip() +
+  scale_y_continuous(labels = scales::percent) +
+  labs(y="Percent", x="") ->g2
+
+
+png("barplot_byRegion.png", width = 600, height = 800)
+ggarrange(g1, g2, ncol=1, nrow=2, common.legend = TRUE, legend="top")
+dev.off()
+
+# ggsave("barplot_byRegion.png", plot=g3, width = 6, height = 6)
+
+
+
+```
+![](barplot_byRegion.png)
+
+<br>
+
+# Data Review
+
+<br>
+
+각 DMR 별 포함된 methylation site 수와 Length,   
+그에 따른 Ctrl, Case 간의 methylation level 에 대한 내용을 포함   
+
+
+<br>
+
+## Methylation Sites
+
+<br>
+
+예측된 DMR 마다 포함된 Methylation site 수에 대한 분포   
+
+<br>
+
+```{r, fig.height=8}
+df %>%
+  ggplot( aes(NumOfMethSites, fill=Pairs) ) +
+  geom_histogram(bins=30, alpha=.7) +
+  facet_wrap(Pairs~., ncol=1)
+
+```
+
+<br>
+
+## DMR Length
+
+<br>
+
+DMR 길이에 대한 분포  
+
+<br>
+
+```{r, fig.height=8}
+df %>%
+  ggplot( aes(Width, fill=Pairs) ) +
+  geom_histogram(bins=30, alpha=.7) +
+  facet_wrap(Pairs~., ncol=1)
+
+```
+
+<br>
+
+##  Methylation sites vs. Length
+
+<br>
+
+DMR 에 대한 Methylation sites 와 길이에 대한 분포  
+
+<br>
+
+
+```{r, fig.height=6}
+df %>%
+  ggplot( aes( NumOfMethSites, Width)) +
+  geom_hex() +
+  facet_wrap(Pairs~.)
+```
+
+
+<br>
+
+## methylation level difference by group
+
+<br>
+
+비교된 그룹 별 DMR 의 methylation level 차이에 대한 분포를 나타내며,  
+그룹에 있는 그룹 샘플 순서대로 methylation level에 대한 차를 표기(median.meth.diff value)  
+기본적으로 median.meth.diff value >= 0.2 로 적용  
+
+<br>
+
+```{r, fig.height=8}
+
+df %>%
+  select(starts_with("medi"), Pairs) %>%
+  distinct() %>%
+
+  ggplot(aes(median.meth.diff, fill=Pairs)) +
+  geom_histogram(bins=30, alpha=.7) +
+  facet_wrap(Pairs~., ncol=1)
+```
+
+
+
+<br>
+
+## methylation level distribution
+
+<br>
+
+각 분석 조합의 예측된 DMR 의 각 그룹 별 methylation level 에 대한 scatter plot 이며,  
+point size 와 color 를 통해서 DMR 의 길이의 장단과 포함된 methylation sites 수를 파악 가능  
+
+<br>
+
+
+```{r, fig.height=8}
+
+df %>%
+  select(starts_with("medi"), NumOfMethSites, Width, Pairs) %>%
+  distinct() -> df1
+
+df1 %>%
+  ggplot(aes(median.meth.group1, median.meth.group2)) +
+  geom_point(aes(col=NumOfMethSites, size=Width))+
+  facet_grid(Pairs~.) +
+  scale_colour_gradient2(low = "white", high = "red", mid = 125)
+  #scale_colour_gradient2(colours = terrain.colors(10))
+
+
+```
+
+
+
+<br>
+
+# Result Description
+
+<br>
+
+각 분석 조합에 따른 첨부된 엑셀 파일에 대해 각 명칭 및 내용 이해를 위한 설명  
+
+<br>
+
+## DMRs 시트
+
+<br>
+
+예측된 DMRs 에 대한 결과를 포함하고 있고,  
+어떤 chromosome 의 어디서부터(start) 어디까지(end)와 길이(Width),  
+그 안에 몇개의 methylation site(NumOfMethSites)가 있는 지를 표기   
+또한, 비교 분석이 된 그룹의 Control과 Case 의 median methylation percent 와 그 차이(median.meth.diff)를 포함  
+
+이 후, 이 구간이 어떤 유전자(Gene) 구간인지 아니면 Down or UpStream 인지와 관련 refid 를 포함하며,   
+annotation 은 한 DMR 이 여러개를 가질 수 있기 때문에  
+동일한 DMR 이 여러 번에 걸쳐서 다른 annotation 을 포함하여 표기될 수 있음.  
+만약 없을 경우 gene 은 ".", refid 는 "-1"로 표기됨.   
+
+
+ * Chrom : chromosome of the predicted DMR
+ * Start : start position of the predicted DMR
+ * End : end position of the predicted DMR
+ * NumOfMethSites : number of methylation sites in the predicted DMR
+ * Width : length of DMR
+ * median.meth.Ctrl : median methylation percent of Control Group
+ * median.meth.Case : median methylation percent of Control Case
+ * median.meth.diff : difference between Control and Case methylation percent
+ * Gene region :  Gene symbols and region
+ * Ref ID : NM ID
+
+
+<br>
+
+## Methylations 시트
+
+<br>
+
+
+예측된 DMRs 에 대한 정보(DMR_chr, DMR_start, DMR_end) 와  
+그 안에 포함된 methylation site 의 위치 정보(M_chr, M_start, M_end) 를 나타내며,  
+각 샘플 별 methylation percent를 포함  
+
+
+두 시트의 DMR 위치의 chr, start, end 가 키가 되어 연결 지어 데이터를 확인할 수 있음.  
+
+
+ * DMR_chr : chromosome of the predicted DMR
+ * DMR_start : start position of the predicted DMR
+ * DMR_end : end position of the predicted DMR
+ * M_chr : chromosome of methylation site
+ * M_start : start position of methylation site
+ * M_end : end position of methylation site
+ * Ctrl Sample1 : methylation percent
+ * Ctrl Sample2 : methylation percent...
+ * Case Sample1 : methylation percent
+ * Case Sample2 : methylation percent...
+
+

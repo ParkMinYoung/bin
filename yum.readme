@@ -1,0 +1,43 @@
+
+사용법
+아래는 몇 가지 유용한 명령어입니다.
+1) 패키지 설치:
+yum install package
+Example:
+yum install httpd
+2) 패키지 삭제:
+yum remove package
+Example:
+yum remove httpd
+3) 패키지 업데이트:
+yum update package
+Example:
+yum update httpd
+4) 패키지 검색:
+yum search package
+Example:
+yum search httpd
+5) 패키지 정보:
+yum info package
+Example:
+yum info httpd
+6) 특정단어가 포함 된 패키지 리스트:
+yum list term
+Example:
+yum list httpd
+7) 특정 파일을 제공한 패키지 검색:
+yum whatprovides filename
+Example:
+yum whatprovides httpd.conf
+8) 커널 패키지에 설치된 모든 패키지를 업데이트:
+yum -y update
+Example:
+yum -y update
+
+
+https://access.redhat.com/ko/node/82093
+
+
+yum clean all
+sudo yum whatprovides */libfftw3.so.3
+

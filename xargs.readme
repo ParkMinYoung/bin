@@ -1,0 +1,16 @@
+cat KHU.Fix.8314 | xargs -n 100 -i mv {} KHU
+
+cat $F | xargs -n 100 -i ln {} Axiom_KORV1.0.2015.v9.KHU.8314-KNIH.3197
+
+
+ls *bed | xargs -n 1 -i -P333 bed2gztbi.sh {}
+
+ls ../combine.PC* | egrep "PC(28|8|20|5|25|6|33|34)" | xargs -i ln -s {} ./
+
+
+ls *.c | xargs -i sh -c 'grep 5 {} > {}.out'
+ls *.c | xargs -i sh -c 'grep 5 "{}" > "{}".out'
+ls '*.c' | xargs -i sh -c 'grep ABC "{}" | sort | head -1'
+
+ ls *csv | xargs -P 5 -i sh -c 'HLAminer.CSVParser.sh {} > {}.table  '
+

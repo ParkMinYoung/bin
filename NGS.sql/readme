@@ -1,0 +1,36 @@
+# execute time : 2018-07-05 16:08:14 : step 1 : add key & timestamp column
+perl -F'\t' -anle'if($.==1){print join "\t",@F,qw/key timestamp/}else{ print join "\t",@F, "$F[0] $F[3]" }' /wes/TEST/20170412_SNUH_GuJarok/Alignment/summary.table > summary.txt
+
+
+# execute time : 2018-07-05 16:20:01 : make DB and create table 
+./sqlite3.createTable.sh NextGenerationSeq.db NGS.sql 
+
+
+# execute time : 2018-07-05 17:26:06 : insert record to the table 
+./sqlite3.insert.sh summary.txt NGS.sql NGS | sqlite3 NextGenerationSeq.db 
+
+
+# execute time : 2018-07-05 17:44:48 : show list  
+./sqlite3.show.sh key 201 NextGenerationSeq.db NGS
+
+
+# execute time : 2018-07-09 16:13:04 : make rawdata
+sed 's/ \+//g'  /hiseq_ds2/hiseq_2/180503_D00574_0343_BCCFNCANXX/Data/Intensities/BaseCalls/final.txt | perl -F'\t' -anle'if($.==1){print join "\t",@F,qw/key timestamp/}else{ print join "\t",@F, "$F[3] $F[0] $F[16]" }' > rawData.txt
+
+
+# execute time : 2018-07-09 16:17:10 : 
+head -2 rawData.txt | vv | grep  "^\\$" | cut -f2 | sed 's/ \+//g' | sed -e 's/^/"/g' -e 's/$/"/g' > tmp.sql
+
+
+# execute time : 2018-07-09 16:25:32 : 
+sqlite3.createTable.sh Machine.db MACHINE.sql 
+
+
+# execute time : 2018-07-09 16:26:19 : 
+sqlite3.insert.sh rawData.txt MACHINE.sql MACHINE | sqlite3 Machine.db 
+
+
+# execute time : 2018-07-09 16:27:08 : 
+sqlite3.show.sh key 2T-V4-B80 Machine.db MACHINE
+
+

@@ -1,0 +1,32 @@
+#!/bin/sh
+
+# GenomeAnalysisTK.sh 
+# $6 must be [XXX.bam]
+# output      
+#             
+#             
+
+source ~/.GATKrc
+source ~/.bash_function
+GATK_param
+
+if [ $# -eq 0 ];then
+	echo "usage : `basename $0` intervals_path XXXX.bam yyyy.bam zzz.bam ..."
+	echo "usage : `basename $0` /home/adminrig/Genome/SureSelect/Interval2EachChr.SureSelect36MB *.bam"
+	exit 1
+else
+	
+	declare -a INTERVAL
+	INTERVAL=$(find $1 | grep intervals | sort -r)
+	shift
+	
+
+	for i in $INTERVAL; 
+		do echo "`date` $i" >> GenomeAnalysisTK.UnifiedGenotyper.EachInterval.log 
+		   GenomeAnalysisTK.UnifiedGenotyper.EachInterval $i $@ 
+	done
+
+fi
+
+  
+

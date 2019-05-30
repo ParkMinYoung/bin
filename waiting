@@ -1,0 +1,3 @@
+#!/bin/sh
+#perl -sle'while($l=`qstat -u adminrig`){ $l=~/$pattern/ ? sleep 60 : print localtime()." " & exit}' -- -pattern="$1"
+perl -sle'while($l=`qstat`){ $l=~/$pattern/ ? sleep 60 : print localtime()." " & exit}' -- -pattern="$1"

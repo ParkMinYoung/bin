@@ -1,0 +1,45 @@
+
+
+ngs.pipe.haplotypecaller.analysisready.ge.gatk3.sh 
+
+
+# Variant Call
+      $NGS_ANALYSIS_DIR/modules/variant/gatk3.haplotypecaller.sh       \
+
+# Genotype GVCF
+      $NGS_ANALYSIS_DIR/modules/variant/gatk3.genotypegvcfs.sh         \
+
+# snp.model <- BuildErrorModelWithVQSR(raw.vcf, SNP)
+      $NGS_ANALYSIS_DIR/modules/variant/gatk3.variantrecalibrator.sh   \
+
+# indel.model <- BuildErrorModelWithVQSR(raw.vcf, INDEL)
+      $NGS_ANALYSIS_DIR/modules/variant/gatk3.variantrecalibrator.sh   \
+
+# recalibratedSNPs.rawIndels.vcf <- ApplyRecalibration(raw.vcf, snp.model, SNP)
+      $NGS_ANALYSIS_DIR/modules/variant/gatk3.applyrecalibration.sh   \
+
+
+# Dummy processes to make sure both indel_recal and snp_applyrecal finishes before indel_applyrecal
+      $NGS_ANALYSIS_DIR/modules/util/hello_world.sh
+      $NGS_ANALYSIS_DIR/modules/util/hello_world.sh
+
+# analysisReady.vcf <- ApplyRecalibration(recalibratedSNPs.rawIndels.vcf, indel.model, INDEL)
+      $NGS_ANALYSIS_DIR/modules/variant/gatk3.applyrecalibration.sh   \
+
+# Rename vcf file
+      $NGS_ANALYSIS_DIR/modules/util/bash_wrapper.sh                  \
+
+# Quality filter
+      $PYTHON_NGS $NGS_ANALYSIS_DIR/modules/variant/vcf_filter.py     \
+
+
+
+
+qsub_wrapper.sh HC_bymin utl.q 36 none n $src/bymin.ngs.pipe.haplotypecaller.analysisready.ge.gatk3.sh 420.HC.genotypeGVCF $B3x $B3x_SURESELECT_BED samplist samplist
+qsub_wrapper.sh EFF_bymin utl.q 4 none n $NGS_ANALYSIS_DIR/pipelines/ngs.pipe.snpeff.snpsift.sh 491.HC.genotypeGVCF.analysisready.pass.vcf 
+
+
+
+# gvcf -> vcf
+ $NGS_ANALYSIS_DIR/modules/variant/gatk3.genotypegvcfs.sh
+

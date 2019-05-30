@@ -1,0 +1,64 @@
+SIFT=/home/adminrig/src/SNPEFF/snpEff_4_2/SnpSift.jar
+HV=/home/adminrig/Genome/MT/HyperVariableRegion_I_II.bed
+ 
+(grep ^# $1; bedtools intersect -a $1 -b $HV) > $1.HV.vcf
+java -jar $SIFT varType  $1.HV.vcf > $1.HV.vcf.Type.vcf
+java -Xmx32g -jar $SIFT extractFields  $1.HV.vcf.Type.vcf "CHROM" "POS" "ID" "REF" "ALT" AF TYPE HOM HET DP RO AO GT SAF SAR SRF SRR > $1.HV.vcf.Type.vcf.tab
+
+apt-format-result --calls-file AxiomGT1.calls.txt --annotation-file $LIB/Axiom_KORV1_0.na34.annot.db --export-vcf-file output.vcf
+apt-format-result --calls-file AxiomGT1.calls.txt --annotation-file $LIB/Axiom_KORV1_0.na34.annot.db --export-vcf-file output.vcf --snp-list-file /home/adminrig/workspace.min/AFFX/untested_library_files/KORV1_0.HLA/HLA.probeset --snp-identifier-column Affy_SNP_ID
+
+java -Xmx32g -jar /home/adminrig/src/SNPEFF/snpEff_4_2/SnpSift.jar filter --set /home/adminrig/workspace.min/AFFX/untested_library_files/KORV1_0.HLA/HLA.probeset "ID in SET[0]" output.vcf > HLA.vcf
+ 
+ java -Xmx32g -jar  /home/adminrig/src/SNPEFF/snpEff_4_2/SnpSift.jar extractFields NA12878.vcf GEN[0].GT | sort | uniq -c
+
+
+
+
+
+java -Xmx32g -jar  /home/adminrig/src/SNPEFF/snpEff_4_2/SnpSift.jar filter "(isHom( GEN[0] )) & ( isRef( GEN[0]))" 20161020_SNUH_JangInjin_1.selectsample.target.vcf.novel.vcf > ~/A.vcf
+java -Xmx32g -jar  /home/adminrig/src/SNPEFF/snpEff_4_2/SnpSift.jar extractFields ~/A.vcf CHROM POS GEN[*].GT  | cut -f4,5 | sort | uniq -c
+
+java -Xmx32g -jar  /home/adminrig/src/SNPEFF/snpEff_4_2/SnpSift.jar filter "(isHom( GEN[0] )) & ( isRef( GEN[0]))" 20161020_SNUH_JangInjin_1.selectsample.target.vcf.novel.vcf | \
+java -Xmx32g -jar  /home/adminrig/src/SNPEFF/snpEff_4_2/SnpSift.jar extractFields - CHROM POS GEN[*].GT  | cut -f4,5 | sort | uniq -c
+
+
+## CLINVAR ##
+## DIR : /home/adminrig/workspace.min/BRCA/VCF.Annotation
+
+## extract overlap ID btw BRCAI_II.InKORV1_1 adn sample.alt.vcf
+java -jar /home/adminrig/src/SNPEFF/snpEff_4_1/SnpSift.jar filter --set ../BRCAI_II.InKORV1_1 "ID in SET[0]" sample.alt.vcf > BRCA.vcf
+
+
+##curl -v -L http://sourceforge.net/projects/snpeff/files/protocols.zip > protocols.zip
+##unzip protocols.zip
+
+
+java -Xmx16G -jar /home/adminrig/src/SNPEFF/snpEff_4_1/snpEff.jar eff GRCh37.75 BRCA.vcf > BRCA.eff.vcf
+java -jar /home/adminrig/src/SNPEFF/snpEff_4_1/SnpSift.jar annotate -v /home/adminrig/Genome/Clinvar/clinvar_20161003.vcf BRCA.eff.vcf > BRCA.Clinvar.vcf
+
+
+# excute time : 2016-11-03 14:47:19 : get pathogenic
+perl -nle'print if /^#/; if(/CLNSIG=(.+?);/){$sig=$1; $sig=~s/255//; print if $sig=~/5/ }' BRCA.Clinvar.vcf > BRCA.Clinvar.CLNSIG_Pathogenic.vcf 
+
+
+# excute time : 2016-11-03 14:51:56 : grep AX marker list
+grep -o "AX-\d+" -P BRCA.Clinvar.CLNSIG_Pathogenic.vcf > CLNISIG.Marker.InBRCAI_II 
+
+
+
+java -Xmx32g -jar  /home/adminrig/src/SNPEFF/snpEff_4_2/SnpSift.jar extractFields BRCA2-02.vcf.eff.clinvar.CLNSIG_Pathogenic.vcf CHROM POS CLNSIG
+
+java -Xmx32g -jar  /home/adminrig/src/SNPEFF/snpEff_4_2/SnpSift.jar extractFields BRCA2-02.vcf.eff.clinvar.vcf CHROM POS ID REF ALT AF DP RO AO SRF SRR SAF SAR TYPE CLNACC CLNDBN OM SAO MUT CLNDSDB CLNHGVS CLNORIGIN CLNSIG GENEINFO > BRCA2-02.vcf.eff.clinvar.vcf.tab
+
+# java -Xmx32g -jar  /home/adminrig/src/SNPEFF/snpEff_4_2/SnpSift.jar extractFields -s "," -e "." BRCA2-02.vcf.eff.clinvar.vcf CHROM POS ID REF ALT AF DP RO AO "ANN[*].EFFECT" "ANN[*].HGVS_C" "ANN[*].HGVS_P" "ANN[*].CDNA_POS" "ANN[*].CDS_POS" "ANN[*].CDNA_LEN" "ANN[*].CDS_LEN" "ANN[*].AA_LEN" SRF SRR SAF SAR TYPE CLNACC CLNDBN OM SAO MUT CLNDSDB CLNHGVS CLNORIGIN CLNSIG GENEINFO > BRCA2-02.vcf.eff.clinvar.vcf.tab 
+
+alias snpsift='java -Xmx32g -jar  /home/adminrig/src/SNPEFF/snpEff_4_3/SnpSift.jar'
+
+
+
+
+cat 420.HC.genotypeGVCF.vcf | snpsift filter " isHet(GEN[DPBL_005]) " - | snpsift extractFields - CHROM POS ID GEN[DPBL_005].GT | perl -F"\t" -anle'print join "\t", $F[0], $F[1]-1, $F[1]' | head
+
+
+

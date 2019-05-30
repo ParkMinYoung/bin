@@ -1,0 +1,27 @@
+
+lsb_release -a 
+timedatectl
+sudo ntpdate  kr.pool.ntp.org
+
+# http://frody.tistory.com/106
+
+## using time server
+rdate -s time.bora.net
+
+
+## manual 
+
+date -s "28 OCT 2013 18:32:40"
+date -s "2013-10-28 18:32:40"
+date -s "20131028 18:32:40"
+
+### only time 
+
+date -s "18:32:40"
+
+
+
+
+## setting cluster sever time
+
+/home/adminrig/src/short_read_assembly/bin/psh.93 all 'date -s "20171227 17:30:10"'

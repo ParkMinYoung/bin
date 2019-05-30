@@ -1,0 +1,7 @@
+http://www.thegeekstuff.com/tag/bash-tutorial/
+
+
+./arraymanip.sh
+# To access an element from an array use curly brackets like ${name[index]}.
+
+

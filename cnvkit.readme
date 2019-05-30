@@ -1,0 +1,9 @@
+# WGS
+/root/miniconda2/bin/cnvkit.py batch BAM/BLD_7_*.bam --normal BAM/BLD_7.me*.bam --annotate Reference/refFlat.txt --fasta Reference/ucsc.hg19.fasta --access access-5kb-mappable.hg19.bed --output-reference Reference.cnn/NT.cnn --output-dir Output --diagram --scatter -p 5 -m wgs &> BLD_7.log 
+
+# WES
+/root/miniconda2/bin/cnvkit.py batch BAM/BLD_7_*.bam --normal BAM/BLD_7.me*.bam --annotate Reference/refFlat.txt --fasta Reference/ucsc.hg19.fasta --access access-5kb-mappable.hg19.bed --output-reference Reference.cnn/NT.cnn --output-dir Output --diagram --scatter -p 5 -target WES.bed &> BLD_7.log 
+
+# WES Amplicon
+/root/miniconda2/bin/cnvkit.py batch -m amplicon BAM/BLD_7_*.bam --normal BAM/BLD_7.me*.bam --annotate Reference/refFlat.txt --fasta Reference/ucsc.hg19.fasta --access access-5kb-mappable.hg19.bed --output-reference Reference.cnn/NT.cnn --output-dir Output --diagram --scatter -p 5 -target WES.bed &> BLD_7.log 
+

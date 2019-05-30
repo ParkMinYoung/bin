@@ -1,0 +1,97 @@
+---
+title: "pass-a-data-frame-column-name-to-a-function"
+output: html_notebook
+---
+
+***
+
+***pass-a-data-frame-column-name-to-a-function***  
+http://stackoverflow.com/questions/2641653/pass-a-data-frame-column-name-to-a-function
+```{r}
+knitr::opts_chunk$set(echo=TRUE)
+```
+
+```{r, echo=T}
+df <- data.frame(A=1:10, B=2:11, C=3:12)
+df
+```
+```{r}
+
+fun1 <- function(x, column){
+  max(x[,column])
+}
+fun1(df, "B")
+fun1(df, c("B","A"))
+
+```
+```{r}
+
+fun1 <- function(x, column, fn) {
+  fn(x[,column])
+}
+fun1(df, "B", max)
+
+
+```
+```{r}
+
+df <- data.frame(A=1:10, B=2:11, C=3:12)
+fun1 <- function(x, column){
+  max(x[[column]])
+}
+fun1(df, "B")
+
+```
+```{r}
+dat <- data.frame(x = 1:4,
+                  y = 5:8)
+dat
+```
+
+```{r}
+
+new_column1 <- function(df,col_name,col1,col2){
+    #Create new column col_name as sum of col1 and col2
+    df[[col_name]] <- df[[col1]] + df[[col2]]
+    df
+}
+
+new_column1(dat,"z","x","y")
+
+
+```
+
+
+```{r}
+
+new_column2 <- function(df,col_name,col1,col2){
+    col_name <- deparse(substitute(col_name))
+    col1 <- deparse(substitute(col1))
+    col2 <- deparse(substitute(col2))
+
+    df[[col_name]] <- df[[col1]] + df[[col2]]
+    df
+}
+
+new_column2(dat,z,x,y)
+
+```
+
+```{r, collapse=TRUE}
+
+
+
+
+new_column3 <- function(df,col_name,expr){
+    col_name <- deparse(substitute(col_name))
+    df[[col_name]] <- eval(substitute(expr),df,parent.frame())
+    df
+}
+
+new_column3(dat,z,x+y)
+new_column3(dat,z,x-y)
+new_column3(dat,z,x*y)
+
+
+
+```

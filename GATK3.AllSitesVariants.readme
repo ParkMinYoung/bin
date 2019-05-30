@@ -1,0 +1,13 @@
+
+TGT=/wes/TEST/20110125_GA28/Alignment/genelist/list.bed
+REF=/home/wes/src/GATK/resource_bundle/latest/b37/human_g1k_v37.fasta
+
+bam1=/wes/TEST/20110125_GA28/Alignment/Sample_SangerSangerNoIndexL7/NoIndexL7.mergelanes.dedup.realign.recal.bam
+bam2=/wes/TEST/20110125_GA28/Alignment/Sample_SangerSangerNoIndexL8/NoIndexL8.mergelanes.dedup.realign.recal.bam
+
+`javajar 64g` /home/wes/src/GATK/latest/GenomeAnalysisTK.jar -T UnifiedGenotyper -R $REF -glm BOTH -I $bam1 -I $bam2 -o all_sites.vcf --output_mode EMIT_ALL_SITES -dcov 200 -nct 4 -nt 1 -L $TGT
+
+
+
+/home/wes/src/JAVA/latest/bin/java -Xmx64g -Djava.io.tmpdir=/state/partition1/tmp -jar
+

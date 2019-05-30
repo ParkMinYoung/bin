@@ -1,0 +1,24 @@
+
+#!/bin/sh
+
+#$ -v path
+#$ -cwd
+#$ -S /bin/sh
+#$ -pe make 1
+#$# -S /bin/bash
+
+source /home/adminrig/.bashrc
+source /home/adminrig/.bash_function
+REF=~/Genome/hg19.bwa/hg19.fasta
+
+
+if [ $# -eq 2 ] && [ -f "$2" ];then
+
+	CHR=$1
+	BAMLIST=$2
+	samtools mpileup -D -Q 20 -q 20 -d 5000 -C 50 -o 50 -r $CHR -ugf $REF -b $BAMLIST 2>tmp.dir/$CHR.log > tmp.dir/$CHR
+
+else
+	usage "CHR1 BAM.LIST"
+fi
+

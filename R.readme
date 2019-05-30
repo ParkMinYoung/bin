@@ -1,0 +1,55 @@
+yum update
+yum install R-base R-devel curllib-devel
+
+
+# Rmd2md
+R -e 'library(knitr);knit("BlindTest.Rmd")'
+
+# Rmd2html
+R -e 'library(knitr);library(markdown);rmarkdown::render("Axiom_KORV1_1.Rmd");' &> log
+
+
+
+R CMD BATCH --no-save --no-restore '--args Analysis2.biseq 2.early.vs.HM.HS.HR.US.cov' BiseqAnalysis.R
+
+
+source("https://bioconductor.org/biocLite.R")
+biocLite("ggtree")
+
+
+
+R -e "shiny::runApp('/home/adminrig/workspace.min/R.shiny/tutorial/04.HowToBuildShinyApp')"
+https://shiny.rstudio.com/reference/shiny/latest/
+
+
+runApp("~/workspace.min/R.shiny/tutorial/05.layout-guide/layout.R")
+
+
+
+
+## main.R
+args <- commandArgs(trailingOnly=T);
+#id<-"SPX0_410";
+id<-args[1];  
+rmarkdown::render('WES.Xeno.v1.Rmd');
+
+
+## run
+
+R CMD BATCH --no-save --no-restore '--args SPX0_410' main.R && mv WES.Xeno.v1.pdf SPX0_410.pdf
+
+R CMD BATCH --no-save --no-restore '--args SPX0_100' main.R && mv WES.Xeno.v1.pdf SPX0_100.pdf
+
+
+
+
+qhost | tail -n +4 |  awk '{print $3}'  |  R --slave -e 'x <- scan(file="stdin", quiet=TRUE); sum(x)'
+
+
+ echo 'sqrt(3)' | R --slave 
+
+
+R --vanilla --silent --slave -e "sqrt(4)"
+
+echo "sqrt(4)" | R --vanilla --silent --slave 
+

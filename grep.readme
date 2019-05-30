@@ -1,0 +1,10 @@
+# only exactly matched word 
+who am i | grep -ohP "pts.\d+"
+
+# only file name
+grep PATTERN -l *files
+grep -l Request *
+
+
+grep -o "AX-\d+" -P  BRCA.Clinvar.CLNSIG_Pathogenic.vcf
+

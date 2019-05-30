@@ -1,0 +1,13 @@
+
+
+#grid.draw(g)
+#ggsave("HOX3-1.eps", width = 20, height = 20, units = "cm")
+
+setEPS()
+postscript("HOX3-1.eps")
+grid.draw(g)
+dev.off()
+
+
+https://stackoverflow.com/questions/5142842/export-a-graph-to-eps-file-with-r
+

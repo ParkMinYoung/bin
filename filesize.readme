@@ -1,0 +1,15 @@
+## byte size check 
+ stat -c%s "Pairs"
+
+
+## using find + while 
+ find -type f -size -2G | grep $ID | while read file; do echo $NORMAL; done 
+
+
+## using find + if
+normal_pile=$(find -type f -size -2G -name "*pileup.gz" | grep $N_ID)
+if [ -f "$normal_pile" ];then
+	cmd
+fi
+
+

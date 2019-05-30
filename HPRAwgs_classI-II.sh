@@ -1,0 +1,1 @@
+/home/adminrig/src/HLAminer/HLAminer_v1.3.1/bin/HPRAwgs_classI-II.sh

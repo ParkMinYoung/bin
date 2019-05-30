@@ -1,0 +1,304 @@
+ibrary(tidyr)
+library(dplyr)
+
+# https://rpubs.com/bradleyboehmke/data_wrangling
+
+mtcars$name<-rownames(mtcars)
+
+
+############
+## gather ##
+############
+
+gather_mtcars=
+  mtcars %>%
+    gather(type, value, mpg:carb)
+    # or gather(type, value, 1:11)
+    # or gather(type, value, -name)
+head(gather_mtcars)
+
+
+############
+## spread ##
+############
+
+spread_mtcars =
+  gather_mtcars %>% spread(type, value)
+
+## mtcars 는 최초 mtcars 와 같지않다. 이유는  첫컬럼 이 name 이기 때문이다. 
+
+
+mtcars$new =
+  paste( sample(LETTERS, nrow(mtcars), replace=T ), 1, sep="." )
+
+##############
+## separate ##
+##############
+
+separate_mtcars =
+  mtcars %>%
+    separate(new, c("LETTER","NUM"))
+head(separate_mtcars)
+
+
+###########
+## unite ##
+###########
+
+unite_mtcars =
+  separate_mtcars %>%
+    unite(new, LETTER, NUM, sep=".")  # default sep "_"
+head(unite_mtcars)
+
+
+## tidyr
+## gater vs. spread
+## separate vs. unite
+
+
+############
+## select ## 
+############
+
+str(iris)
+iris %>%
+  select(Species, Sepal.Length, Petal.Width) %>%
+  head()
+
+iris %>%
+  select(Species, starts_with("P")) %>%
+  head()
+
+
+############
+## filter ## 
+############
+
+iris %>%
+  filter( Species == "setosa", Petal.Width > 0.4) %>%
+  select( starts_with("S"), Petal.Width) %>%
+  head()
+
+# <   Less than                    !=      Not equal to
+# >   Greater than                 %in%    Group membership
+# ==  Equal to                     is.na   is NA
+# <=  Less than or equal to        !is.na  is not NA
+# >=  Greater than or equal to     &,|,!   Boolean operators
+
+
+############################
+## group_by and summaries ## 
+############################
+
+iris %>%
+  group_by(Species) %>%
+  summarise( Petal.Width.mean=  mean(Petal.Width) )
+
+
+iris %>%
+  group_by(Species) %>%
+  summarise( Petal.Width.mean=  mean(Petal.Width) )
+
+iris %>%
+  group_by(Species) %>%
+  summarise( Petal.Width.mean=    mean(Petal.Width, na.rm=T),
+             Petal.Width.median=  median(Petal.Width, na.rm=T),
+             Petal.Width.min=     min(Petal.Width, na.rm=T),
+             Petal.Width.var=     var(Petal.Width, na.rm=T),
+             Petal.Width.max=     max(Petal.Width, na.rm=T),
+             Petal.Width.n=       n()
+             )
+
+iris %>%
+  group_by(Species) %>%
+  summarise( Petal.Width.mean=    mean(Petal.Width, na.rm=T),
+             Sepal.Width.mean=  mean(Sepal.Width, na.rm=T),
+             n=       n()
+  )
+
+#############
+## arrange ##
+#############
+
+iris %>%
+  group_by(Species) %>%
+  summarise( Petal.Width.mean=    mean(Petal.Width, na.rm=T),
+             Sepal.Width.mean=  mean(Sepal.Width, na.rm=T),
+             n=       n()
+  ) %>%
+  arrange( Sepal.Width.mean)
+
+iris %>%
+  group_by(Species) %>%
+  summarise( Petal.Width.mean=    mean(Petal.Width, na.rm=T),
+             Sepal.Width.mean=  mean(Sepal.Width, na.rm=T),
+             n=       n()
+  ) %>%
+  arrange( desc(Sepal.Width.mean))
+
+
+# to see dataset list
+# https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/00Index.html
+
+# http://www.ats.ucla.edu/stat/r/faq/data_sets_avaiable_R.htm
+# https://vincentarelbundock.github.io/Rdatasets/datasets.html
+# data(package = .packages(all.available = TRUE))
+
+
+
+install.packages("nycflights13", repos='http://cran.us.r-project.org')
+library(nycflights13)
+
+# > str(flights)
+# Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	336776 obs. of  16 variables:
+# $ year     : int  2013 2013 2013 2013 2013 2013 2013 2013 2013 2013 ...
+# $ month    : int  1 1 1 1 1 1 1 1 1 1 ...
+# $ day      : int  1 1 1 1 1 1 1 1 1 1 ...
+# $ dep_time : int  517 533 542 544 554 554 555 557 557 558 ...
+# $ dep_delay: num  2 4 2 -1 -6 -4 -5 -3 -3 -2 ...
+# $ arr_time : int  830 850 923 1004 812 740 913 709 838 753 ...
+# $ arr_delay: num  11 20 33 -18 -25 12 19 -14 -8 8 ...
+# $ carrier  : chr  "UA" "UA" "AA" "B6" ...
+# $ tailnum  : chr  "N14228" "N24211" "N619AA" "N804JB" ...
+# $ flight   : int  1545 1714 1141 725 461 1696 507 5708 79 301 ...
+# $ origin   : chr  "EWR" "LGA" "JFK" "JFK" ...
+# $ dest     : chr  "IAH" "IAH" "MIA" "BQN" ...
+# $ air_time : num  227 227 160 183 116 150 158 53 140 138 ...
+# $ distance : num  1400 1416 1089 1576 762 ...
+# $ hour     : num  5 5 5 5 5 5 5 5 5 5 ...
+# $ minute   : num  17 33 42 44 54 54 55 57 57 58 ...
+
+dest2air_time = 
+  flights %>%
+    group_by( dest ) %>%
+    summarise( mean.air_time = mean( air_time, na.rm=T), n = n())
+
+dest2dep_time = 
+  flights %>%
+  group_by( dest ) %>%
+  summarise( mean.dep_time = mean( dep_time, na.rm=T), sum.flight = sum(flight))
+
+###############
+## left join ##
+###############
+
+dest2air_time %>% left_join(dest2dep_time)
+
+
+################
+## inner join ##
+################
+
+x<-data.frame(name=c("John","Paul", "George", "Ringo","Stuart", "Pete"), instrument=c("guitar","bass","guitar","drums","bass","drums"), stringsAsFactors=F)
+y<-data.frame(name=c("John","Paul", "George", "Ringo","Brian"), band=c(T,T,T,T,F), stringsAsFactors=F)
+#str(x)
+#str(y)
+
+
+inner_join(x, y)
+
+###############
+## left join ##
+###############
+
+left_join(x,y)
+
+###############
+## semi join ##
+###############
+
+semi_join(x,y) # same as inner_join but, only diplay x value
+
+
+###############
+## anti join ##
+###############
+
+anti_join(x,y) # only diplay x value
+
+
+############
+## mutate ##
+############
+
+dest2mut = 
+  dest2air_time %>% 
+    left_join(dest2dep_time) %>%
+    mutate( mean.ari_dep = mean.air_time/mean.dep_time)
+#head( dest2mut )
+
+dest2mutrank = 
+  dest2air_time %>% 
+  left_join(dest2dep_time) %>%
+  mutate( mean.ari_dep = mean.air_time/mean.dep_time) %>%
+  arrange( desc( mean.ari_dep ) ) %>%
+  mutate( Rank = 1:length( mean.ari_dep ) )
+
+#View( dest2mutrank )
+
+perc.of.whole <- inflation_adj %>%
+  filter(Year == 2011) %>%
+  arrange(desc(Adj_Exp)) %>%
+  mutate(Perc_of_Total = Adj_Exp/sum(Adj_Exp),
+         Cum_Perc = cumsum(Perc_of_Total)) %>%
+  select(-Expenditure, -Annual, -Inflation)
+
+head(perc.of.whole, 8)
+
+# todo read
+# https://cran.r-project.org/web/packages/magrittr/vignettes/magrittr.html
+
+
+# _each series
+# http://wsyang.com/r/2015/08/02/How_to_use_the_summarise_each_function/
+
+## 반복되는 변수 설정일 경우, easy like below
+iris %>% 
+  group_by(Species) %>% 
+  summarise(
+    min.sl=min(Sepal.Length),
+    mean.sl=mean(Sepal.Length),
+    median.sl=median(Sepal.Length),
+    max.sl=max(Sepal.Length) 
+  )
+
+## but, below example is hard to coding
+iris %>% 
+  group_by(Species) %>% 
+  summarise(
+    min.sl=min(Sepal.Length),
+    mean.sl=mean(Sepal.Length),
+    median.sl=median(Sepal.Length),
+    max.sl=max(Sepal.Length),
+    min.sw=min(Sepal.Width),
+    mean.sw=mean(Sepal.Width),
+    median.sw=median(Sepal.Width),
+    max.sw=max(Sepal.Width)
+  )
+
+## same as,
+
+iris %>% 
+  group_by(Species) %>% 
+  summarise_each(
+    funs(min, mean, median, max), Sepal.Length, Sepal.Width
+  )
+
+
+iris_rank = 
+iris %>% 
+  group_by(Species) %>% 
+  mutate_each(
+    funs(min_rank, cume_dist),  Sepal.Length, Sepal.Width
+  )
+View(iris_rank)
+
+
+## window function 
+# https://cran.r-project.org/web/packages/dplyr/vignettes/window-functions.html
+
+
+
+
+
+

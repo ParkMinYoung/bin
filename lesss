@@ -1,0 +1,5 @@
+FILE=$(ls -t  | head -$1 | tail -n 1)
+
+echo -e "$(date) read file number : $1 -> $FILE\n"
+
+less -S $(ls -t  | head -$1 | tail -n 1)

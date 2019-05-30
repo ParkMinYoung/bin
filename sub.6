@@ -1,0 +1,13 @@
+#!/bin/sh
+
+#$ -v path
+#$ -cwd
+#$ -S /bin/sh
+#$ -pe orte 6 
+#$ -S /bin/bash
+
+source /home/adminrig/.bashrc
+
+$@
+
+

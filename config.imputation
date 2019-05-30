@@ -1,0 +1,28 @@
+# EXCUTABLE FILE
+BIN=/home/adminrig/src/short_read_assembly/bin
+PLINK_SPLIT=$BIN/plink.SplitByChr.SGE.sh
+SHAPEIT_SCRIPT=$BIN/shapeit.SGE.sh
+IMPUTE2_SCRIPT=$BIN/impute2.SGE.sh
+IMPUTE2_SUBSCRIPT=$BIN/impute2.analysis.SGE.sh
+LOG_SCRIT=$BIN/date.SGE.sh
+
+# FILE
+RM_DupMarker=/home/adminrig/workspace.min/AFFX/untested_library_files/KOR.RemoveMarker
+
+# setting DIR
+PLINK_DIR=Plink
+CHECK_DIR=check
+TENKG_DIR=/home/adminrig/Genome/1000Genomes/20130502
+SHAPEIT_DIR=shapeit
+IMPUTE_DIR=imputation
+REF_DIR=$TENKG_DIR/1000GP_Phase3/1000GP_Phase3
+TMP_DIR=/home/adminrig/workspace.min/AFFX/Axiom_KORV1.0/Axiom_KORV1.0.2015.GSK.v3/Analysis/Analysis.9850.20150331/batch/Imputation/SGE_TMP
+BED_DIR=TARGET_BED
+WD_DIR=/home/adminrig/workspace.min/AFFX/Axiom_KORV1.0/Axiom_KORV1.0.2015.GSK.v3/Analysis/Analysis.9850.20150331/batch/Imputation
+
+# threads
+THREADS=32
+
+# excutable binary file
+IMPUTE2=$TENKG_DIR/impute/impute_v2.3.2_x86_64_static/impute2
+SHAPEIT=$TENKG_DIR/shapeit/shapeit

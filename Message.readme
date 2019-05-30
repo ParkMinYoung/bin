@@ -1,0 +1,3 @@
+wall -n "moni.sh JOBNAME_PATTERN. ex) moni.sh impute.  U moniter SGE status"
+w 
+echo "hi min"  > /dev/pts/38

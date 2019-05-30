@@ -1,0 +1,3 @@
+#!/bin/sh
+find s_? -size +1000M | grep -v bam$ | sort | xargs rm
+

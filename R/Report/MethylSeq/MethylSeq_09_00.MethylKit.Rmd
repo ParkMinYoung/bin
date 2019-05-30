@@ -1,0 +1,325 @@
+---
+output: pdf_document
+---
+
+<br>
+
+# **Methylation Statistics**
+
+<br>
+
+This Analysis can check the basic stats about the methylation data such as coverage and percent methylation.   
+
+<br>
+
+```{r}
+## read bam bismark file and make meth object
+
+library(methylKit)
+
+destfile="methylKit.RDS"
+
+if( ! file.exists(destfile) ){
+    source("/home/adminrig/src/short_read_assembly/bin/R/MethylKit.makeRDS.R")
+}
+
+# files<-as.list( list.files(path = "DMR/BAM", pattern = "sort.bam$", recursive = FALSE, full.names = TRUE) )
+# samples<-as.list( gsub( ".+\\/(.+)_\\w{6,8}_L.+", "\\1", files ) )
+# 
+# objs<-processBismarkAln(location=files, sample.id=samples, assembly="hg19", save.folder=NULL, save.context=NULL, read.context="CpG", nolap=FALSE, mincov=10, minqual=20, phred64=FALSE, treatment=rep(0, length(samples)))
+# 
+# saveRDS(objs, "methylKit.RDS")
+
+
+objs <- readRDS("methylKit.RDS")
+
+myobj<-objs
+meth=methylKit::unite(myobj, destrand=FALSE)
+
+sample_ids <- getSampleID(meth)
+
+getTreatment(meth) <- 1:length(sample_ids)
+
+#help(package="methylKit")
+#load("/home/adminrig/workspace.min/MethylSeq/KNIH.IncurableDisease/DMR/BAM/meth.RDS")
+
+```
+
+
+<br>
+
+## Histogram of % CpG methylation
+
+<br>
+
+The following result show the histogram for percent methylation distribution. The figure below is the histogram and numbers on bars denote what percentage of locations are contained in that bin.
+Typically, percent methylation histogram should have two peaks on both ends. In any given cell, any given base are either methylated or not. Therefore, looking at many cells should yield a similar pattern where we see lots of locations with high methylation and lots of locations with low methylation.   
+
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<!-- ```{r, fig.width=12, fig.height=12} -->
+```{r}
+
+n_col = 3
+n_row = ceiling ( length( sample_ids ) / n_col )
+
+
+# par(mfrow=c(n_row,n_col))
+
+par(mfrow=c(2,1))
+for( i in 1:length(sample_ids) )
+{
+  #print(samples[i])
+  
+  #getMethylationStats( myobj[[i]], plot=TRUE, both.strands=FALSE)
+  A<-myobj[[i]]
+  
+  h = hist( (A@.Data[[6]] )/( A@.Data[[5]] ) * 100, plot=FALSE, breaks = 10)
+  h$density = round( h$counts/sum(h$counts)*100, 1)
+  plot(h,freq=FALSE, label=TRUE, main= A@sample.id, col="cornflowerblue", xlab= "% methylation per base", ylab="Percent (%)")
+
+}
+
+
+
+```
+
+\clearpage
+
+<br>
+
+## Histogram of % CpG Coverage
+
+<br>
+
+The following result can also plot the read coverage per base information in a similar way, again numbers on bars denote what percentage of locations are contained in that bin.
+Experiments that are highly suffering from PCR duplication bias will have a secondary peak towards the right hand side of the histogram.   
+
+<br>
+
+
+```{r, fig.width=12, fig.height=12}
+
+
+# par(mfrow=c(n_row,n_col))
+par(mfrow=c(2,1))
+#par(mfg=c(1,1))
+# layout(matrix(c(1,2,3,4), nrow = 2, ncol = 2, byrow = TRUE))
+
+for( i in 1:length(sample_ids) )
+
+{
+  #print(samples[i])
+  
+  #getMethylationStats( myobj[[i]], plot=TRUE, both.strands=FALSE)
+  A<-myobj[[i]]
+  
+  #getCoverageStats(A, plot=TRUE, both.strands = FALSE, label =FALSE, breaks = 20, main="")
+  h = hist(  log10(  A@.Data[[5]]  ) , plot=FALSE, breaks = 20)
+  h$density = round( h$counts/sum(h$counts)*100, 1)
+  plot(h,freq=FALSE, label=TRUE, main= A@sample.id, col="chartreuse4", xlab= "log10 of read coverage per base", ylab="Percent (%)")
+
+}
+
+
+#plot.new()
+
+```
+
+\clearpage
+
+
+
+<br>
+
+# **Comparative Analysis**
+
+<br>
+
+
+<br>
+
+## Sample Correlation
+
+<br>
+
+This analysis can check the correlation between samples using methylation data and plot scatter plot.  
+
+<br>
+
+```{r, fig.width=12, fig.height=12}
+#pdf("Correlation.pdf", width=8, height=9)
+aa<- capture.output( getCorrelation(meth, plot=TRUE) )
+#dev.off()
+
+```
+
+\clearpage
+
+
+<!-- <br> -->
+
+<!-- ## Clustering Samples -->
+
+<!-- <br> -->
+
+<!-- ```{r, warning=FALSE} -->
+<!-- #pdf("HC.pdf", width=5, height=5 ) -->
+<!-- hc<-clusterSamples(meth, dist="correlation", method="ward", plot=TRUE) -->
+<!-- #dev.off() -->
+
+<!-- ``` -->
+
+<!-- \clearpage -->
+
+<br>
+
+## CpG methylation PCA
+
+<br>
+
+PCA analysis plot PC1 and PC2 axis and a scatter plot of your samples on those asix which will reveal how they cluster.   
+ 
+<br> 
+
+```{r, include=FALSE}
+
+#pdf("PCA.v1.pdf", width=5, height=5 )
+#PCASamples(meth)
+#dev.off()
+
+library(ggfortify)
+library(ggplot2)
+library(ggrepel)
+
+#pdf("tmp.pdf", width=5, height=5 )
+PCA_out<-PCASamples(meth,obj.return=TRUE)
+#dev.off()
+
+df_out_r <- as.data.frame( PCA_out$x )
+df_out_r$feature <- row.names(df_out_r)
+
+```
+
+
+```{r}
+# http://rfriend.tistory.com/61
+# print(PCA_out)
+
+PC1_Proportion <- round( (summary(PCA_out)$importance[2, ])[1]*100, 2)
+PC2_Proportion <- round( (summary(PCA_out)$importance[2, ])[2]*100, 2)
+```
+
+
+
+```{r, fig.width=6, fig.height=6}
+#pdf("PCA.v2.pdf", width=4, height=4)
+ggplot(df_out_r,aes(x=PC1,y=PC2,label=feature,color=feature )) +
+  theme_bw() +
+  #theme_classic() +
+  geom_point() +
+  geom_text_repel(aes(label=feature), size=3) +
+  theme(legend.position="none") + 
+  labs(x = paste0("PC1 (", PC1_Proportion, "% explained var.)"), y = paste0("PC2 (", PC2_Proportion, "% explained var.)"))
+
+
+
+
+#dev.off()
+
+
+```
+
+
+\clearpage
+
+<!-- <div style="width:1000px; height:1000px"> -->
+<!-- ![PCA](/home/adminrig/workspace.min/MethylSeq/KNIH.IncurableDisease/DMR/BAM/PCA.v2.pdf){} -->
+<!-- </div> -->
+
+
+
+
+```{r}
+# head( objs )
+# head( myobj )
+
+# objs<-processBismarkAln(location=files, sample.id=samples, assembly="hg19", save.folder=NULL, save.context=NULL, read.context="CpG", nolap=FALSE, mincov=10, minqual=20, phred64=FALSE, treatment=rep(0, length(samples)))
+# 
+# 
+# 
+# myobj<-objs
+# meth=unite(myobj, destrand=FALSE)
+# getTreatment(meth) <- 1:length(samples)
+
+```
+
+
+
+<!-- <br> -->
+
+<!-- # DMR Analysis Result  -->
+
+<!-- <br> -->
+
+<!-- ```{r, include=FALSE} -->
+<!-- df<-read_tsv("DMRs") -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- #head(df) -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- df %>%  -->
+<!--   group_by(Analysis) %>%  -->
+<!--   summarise(Count=n()) -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- df %>%  -->
+<!--   group_by(Analysis, Region) %>%  -->
+<!--   summarise(Count=n()) %>%  -->
+<!--   spread( Region, Count) -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- breaks <-c(0,1,5,10,20,30,50,100,200,300,500,5000) -->
+
+<!-- width_table<- -->
+<!--   table( list(df$Analysis, cut(df$Width, breaks=breaks)) ) %>%  -->
+<!--   as.data.frame() -->
+
+<!-- colnames(width_table)<-c("Analysis", "Range", "Count") -->
+
+<!-- dplyr::select(width_table, Range, Analysis, Count) %>%  -->
+<!--   spread(Analysis, Count) -->
+
+
+<!-- ``` -->
+
+<!-- ```{r, fig.width=9, fig.height=8} -->
+<!-- ggplot(width_table,  aes(Range, Count, fill=Analysis)) + geom_col() + facet_grid(Analysis~.) -->
+<!-- ``` -->
+
+
+<!-- ```{r} -->
+<!-- head(df) -->
+<!-- ``` -->
+
+
+
+
+
+
+
+
+
+
+
+
+

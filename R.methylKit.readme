@@ -1,0 +1,57 @@
+
+library(methylKit)
+
+files<-as.list( list.files(path = ".", pattern = "sort.bam$", recursive = FALSE, full.names = FALSE) )
+samples<-as.list( gsub( "(.+)_\\w{6,8}_L.+", "\\1", files ) )
+
+objs<-processBismarkAln(location=files, sample.id=samples, assembly="hg19", save.folder=NULL, save.context=NULL, read.context="CpG", nolap=FALSE, mincov=10, minqual=20, phred64=FALSE, treatment=rep(0, length(samples)))
+
+
+
+myobj<-objs
+meth=unite(myobj, destrand=FALSE)
+getTreatment(meth) <- 1:length(samples)
+
+pdf("Correlation.pdf", width=8, height=9)
+getCorrelation(meth, plot=TRUE)
+dev.off()
+
+pdf("HC.pdf", width=5, height=5 )
+clusterSamples(meth, dist="correlation", method="ward", plot=TRUE)
+dev.off()
+
+pdf("PCA.v1.pdf", width=5, height=5 )
+PCASamples(meth)
+dev.off()
+
+library(ggfortify)
+library(ggplot2)
+library(ggrepel)
+
+
+
+
+pdf("PCA.v2.pdf", width=5, height=5 )
+PCA_out<-PCASamples(meth,obj.return=TRUE)
+dev.off()
+
+
+df_out_r <- as.data.frame( PCA_out$x )
+df_out_r$feature <- row.names(df_out_r)
+
+pdf("PCA.v2.pdf", width=4, height=4)
+ggplot(df_out_r,aes(x=PC1,y=PC2,label=feature,color=feature )) + 
+#theme_bw() +
+geom_point() + 
+geom_text_repel(aes(label=feature), size=1.5) + 
+theme(legend.position="none")
+
+dev.off()
+
+
+
+
+
+
+
+

@@ -1,0 +1,46 @@
+apt-probeset-genotype \
+--analysis-files-path apt \
+--xml-file apt/Axiom_SoyaSNP.v1.apt-probeset-genotype.AxiomGT1.xml \
+--write-models \
+--out-dir genotype/ \
+--cel-files cel.txt \
+--summaries \
+--no-gender-force \
+--read-inbred inbred.txt
+
+
+
+working_dir1 <- paste(.path.package("SNPolisher"), "/extdata/testdata1/", sep = "")
+working_dir2 <- paste(.path.package("SNPolisher"), "/extdata/testdata2/", sep = "")
+output_dir1 <- paste(.path.package("SNPolisher"),  "/extdata/testdata1/Output/", sep = "")
+ouput_dir2 <- paste(.path.package("SNPolisher"), "/extdata/testdata2/Output/", sep = "")
+
+# library load
+library("SNPolisher")
+
+# cwd setting
+working_dir <- "/home/adminrig/workspace.min/CHIP/SNPpolisher/SOYA20131014/"
+output_dir <-"/home/adminrig/workspace.min/CHIP/SNPpolisher/SOYA20131014/Output/"
+
+# QC metrics
+ps.metrics <- Ps_Metrics(posteriorFile=file.path(working_dir, "AxiomGT1.snp-posteriors.txt"), callFile=file.path(working_dir,"AxiomGT1.calls.txt"), output.metricsFile=file.path(output_dir,"metrics.txt"))
+
+# probeset/SNP classification 
+Ps_Classification(file.path(output_dir,"metrics.txt"), ps2snp.file=NULL, output.dir=output_dir,SpeciesType="Diploid", CR.cut=97,FLD.cut=3.6, HetSO.cut=-0.1, HetSO.OTV.cut=-0.3, HomRO2.cut=0.3, HomRO3.cut=-0.9, HomRO.flag=TRUE, nMinorAllele.cut=2)
+
+# read QC metrics
+ps.performance <- read.delim(file.path(output_dir,"Ps.performance.txt"))
+
+# visulization [default]
+# max.num.SNP.draw=6 
+# create only 6 cluster image
+Ps_Visualization(pidFile=file.path(output_dir,"PolyHighResolution.ps"), sampFile=file.path(working_dir,"sampFile.Het4"), output.pdfFile="Cluster_PolyHighResolution1.pdf", summaryFile=file.path(working_dir, "AxiomGT1.summary.txt"), callFile=file.path(working_dir,"AxiomGT1.calls.txt"), confidenceFile=file.path(working_dir,"AxiomGT1.confidences.txt"), posteriorFile=file.path(working_dir,"AxiomGT1.snp-posteriors.txt"), temp.dir=paste(working_dir,"Temp/",sep=""), keep.temp.dir=FALSE, refFile=NULL, plot.prior=T,priorFile=NULL, match.cel.file.name=TRUE, max.num.SNP.draw=6, geno.col=c("red","gold","blue","gray","cyan","green", "darkgreen","purple"),nclus=3) 
+
+# OffTarget Variant call(OTV calling)
+OTV_Caller(summaryFile=file.path(working_dir,"AxiomGT1.summary.txt"),posteriorFile=file.path(working_dir,"AxiomGT1.snp-posteriors.txt"),pidFile=file.path(output_dir,"OffTargetVariant.ps"),output.dir=paste(working_dir,"OTV/",sep=""))
+Ps_Visualization(pidFile=file.path(output_dir,"OTV/OTV.list.ps"),sampFile=file.path(working_dir,"sampFile.Het4"),output.pdfFile="Cluster_OTV_OTVgenotyped.pdf",summaryFile=file.path(output_dir,"OTV/OTV.summary.txt"), callFile=file.path(output_dir,"OTV/OTV.calls.txt"),confidenceFile=file.path(output_dir,"OTV/OTV.confidences.txt"),posteriorFile=file.path(output_dir,"OTV/OTV.snp-posteriors.txt"),temp.dir=paste(working_dir,"/Temp/",sep=""),refFile=NULL,plot.prior=F,priorFile=NULL, match.cel.file.name=TRUE,max.num.SNP.draw=6)
+
+
+tt<-read.delim("Y:\\workspace.min\\CHIP\\SNPpolisher\\SOYA20131014\\Output\\Ps.performance.txt", header=T, sep="\t")
+ggplot(tt, aes(factor(ConversionType), colour=ConversionType, fill=ConversionType)) + geom_bar()
+

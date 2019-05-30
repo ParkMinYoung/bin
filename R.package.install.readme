@@ -1,0 +1,9 @@
+
+packageurl <- "http://cran.r-project.org/src/contrib/Archive/ggplot2/ggplot2_0.9.1.tar.gz"
+install.packages(packageurl, repos=NULL, type="source")
+If you know the URL, you can also install from source via the command line outside of R. For instance:
+
+wget http://cran.r-project.org/src/contrib/Archive/ggplot2/ggplot2_0.9.1.tar.gz
+R CMD INSTALL ggplot2_0.9.1.tar.gz
+
+

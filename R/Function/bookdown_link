@@ -1,0 +1,115 @@
+
+
+
+#### quality control {#QC}
+
+link is [quality control](#QC) --> link is quality control
+
+
+
+#### Quality Control
+
+Answer : \@ref(quality-control)   --> Answer : (1.1)
+Answer : [Quality Control](#quality-control)   --> Answer : Quality Control
+!! must use lower case
+
+
+#!# Figure 
+
+```{r ResultSAV, out.width = "200%", out.height="200%", echo=FALSE, fig.align='center', fig.cap= "Result of SAV" }
+knitr::include_graphics("/home/adminrig/workspace.min/KoreanInstituteOfGeneticTestingEvaluation_KIGTE/WES.Doc.image/")
+```
+
+(Figure. \@ref(fig:ResultSAV))
+
+
+#!# Table
+
+
+|Metrics|Value|
+|:-----|:-----|
+|Per base sequence quality |>= PASS|
+
+Table: (#tab:OptimalSequencingOutput) Optimal sequencing output by Capture size
+
+(Table. \@ref(tab:OptimalSequencingOutput))
+
+
+
+--- 
+title: An Introduction to R
+author: ㈜디엔에이링크 박민영(minmin@dnalink.com)
+tags: [R, Basic, Intro]
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+output: 
+    bookdown::gitbook
+	documentclass: book
+	bibliography: [book.bib, packages.bib]
+	biblio-style: apalike
+	link-citations: yes
+	github-repo: rstudio/bookdown-demo
+	description: "R에 대한 소개 및 기본 사용법에 대한 기술서"
+	---
+
+
+```{r, include=FALSE}
+automatically create a bib database for R packages
+knitr::write_bib(c(
+  .packages(), 'bookdown', 'knitr', 'rmarkdown'
+  ), 'packages.bib')
+```
+
+
+
+```{r, include=FALSE}
+library(pacman)
+
+p_load(readr, ggplot2, tidyr, dplyr, scales, ggpubr, ggstatsplot, cowplot, DataExplorer, DT, ggrepel, purrr, broom)
+
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, fig.width=7)
+options(DT.options = list(pageLength = 10, language = list(search = 'Filter:')))
+
+library(knitr)
+library(kableExtra)
+options(knitr.table.format = "html") 
+
+source("/home/adminrig/src/short_read_assembly/bin/R/Min.R")
+
+```
+
+
+
+# 본 기술서의 목적 {-}
+
+
+[바이오 빅데이터 및 정밀의료 전문인력 집중 교육훈련](http://bdpm.snubi.org/) 양성과정에 따른 R 에 대한 소개 및 기본 사용법에 대한 강의 자료   
+
+
+
+# A {#applicable-range}
+
+abc
+
+
+# B {#goal}
+
+abc
+
+
+# C {#reponsibility}
+
+abc
+
+
+# (APPENDIX) Appendix {-} 
+
+
+# AAAA
+
+# BBBB
+
+
+
+https://bookdown.org/lyzhang10/lzhang_r_tips_book/how-to-plot-data.html#creating-pareto-charts
+

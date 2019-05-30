@@ -1,0 +1,20 @@
+#!/bin/sh
+
+#
+#$ -cwd 
+#$ -v PATH 
+#$ -pe make 3 
+#$ -j y 
+#$ -S /bin/bash 
+##$ -N SOLEXA 
+#$
+# 
+
+## We use this with the Illumina pipeline to distribute 
+## the make commands across the SGE grid rather than deal 
+## with the standard non-distributed Unix make program. 
+##
+
+# qmake -cwd -pe orte 8-16 -v PATH -inherit -- recursive 
+# qmake -cwd -pe make 20 -v PATH -- recursive 
+ qmake -cwd -v PATH -inherit -- recursive 

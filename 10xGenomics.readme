@@ -1,0 +1,44 @@
+/home/wes/src/10X/longranger/latest
+/home/wes/src/10X/longranger/refdata-*
+/home/wes/src/10X/longranger/refdata-b37-2.1.0
+
+
+# 10x index
+https://support.10xgenomics.com/genome-exome/index/doc/specifications-sample-index-sets-for-genome-and-exome
+
+
+# pre step
+/home/casava/src/bcl2fastq2.v2.20/bin/bcl2fastq
+ln -s /home/casava/src/bcl2fastq2.v2.20/bin/bcl2fastq ~/bin
+
+
+# csv file 
+# Lane,Sample,Index
+# 2,NA12878_1,SI-GA-F1
+
+
+# mkfastq
+/home/wes/src/10X/longranger/latest/longranger mkfastq --run=/hiseq_ds2/novaseq/190125_A00547_0033_BH5GFVDRXX --csv=/hiseq_ds2/novaseq/190125_A00547_0033_BH5GFVDRXX/X10.csv --ignore-dual-index 
+
+
+# other options
+# --jobmode sge 
+# --localcores=10
+# --jobmode=sge
+# --id=NA12878_1 
+
+
+mkdir Alignment Fastq
+
+
+cd Alignment
+/home/wes/src/10X/longranger/latest/longranger wgs --id=CSP_NA12878_1  --reference=/home/wes/src/10X/longranger/refdata-b37-2.1.0 --fastqs=/hiseq_ds2/10xGenomics/H5GFVDRXX/outs/fastq_path --sex=female --indices=SI-GA-F1 --vcmode=gatk:/home/adminrig/src/GATK.3/GATK3.5/GenomeAnalysisTK.jar --uiport=3600
+# --localcores=16
+# --sex=m,f,male,female
+
+
+
+# setting loupe server
+local_start_loupe.sh outs/loupe.loupe 
+
+

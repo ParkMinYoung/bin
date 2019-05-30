@@ -1,0 +1,26 @@
+# http://stackoverflow.com/questions/5076181/how-to-compress-a-symbolic-link
+
+tar cvzfh XXX.tgz symbolic_link_file
+
+tar -C
+
+# http://originalchoi.tistory.com/50
+
+# see file content
+#tar xvtf def.tar.gz
+tar vtf def.tar.gz
+
+# decompress specific file from tgz
+# http://hyperv.tistory.com/entry/%ED%8A%B9%EC%A0%95-%ED%8F%B4%EB%8D%94-%EB%98%90%EB%8A%94-%ED%8C%8C%EC%9D%BC%EB%A7%8C-%EC%95%95%EC%B6%95%ED%92%80%EA%B8%B0
+tar xvzfp 20160412.bin.tgz bin/impute2.analysis.SGE.sh
+
+
+# see disk space of def file
+du -sh def
+
+## uncom specific file 
+tar xvzfp ./Result.v1/Output/CNVKit.WES.tgz ./Y/TN1408D2160/TN1408D1991.cns
+
+
+ls x?? | xargs -n 1 -P 5 -i tar -cv -T {} -zf {}.tgz
+

@@ -1,0 +1,67 @@
+# installation of multiple R version 
+
+# install and example
+# http://zaiste.net/2014/08/mashing_data_at_cli_with_datamash/
+# https://www.gnu.org/software/datamash/examples/
+
+# ubuntu
+wget http://files.housegordon.org/datamash/bin/datamash_1.0.6-1_amd64.deb
+sudo dpkg -i datamash_1.0.6-1_amd64.deb
+
+
+# 
+wget http://files.housegordon.org/datamash/bin/datamash-1.0.6-1.el6.x86_64.rpm
+sudo rpm -i datamash-1.0.6-1.el6.x86_64.rpm
+
+
+
+[adminrig@dlfrontend examples]$ head /home/adminrig/src/tblutils/datamash-1.1.0/examples/scores.txt 
+Shawn Arts      65
+Marques Arts    58
+Fernando        Arts  78
+Paul  Arts      63
+Walter  Arts    75
+Derek Arts      60
+Nathaniel       Arts  88
+Tyreque Arts    74
+Trevon  Arts    74
+Nathan  Arts    71
+[adminrig@dlfrontend examples]$ datamash -g 2 min 3 max 3 < $PWD/scores.txt 
+Arts  46        88
+Business        79    94
+Health-Medicine 72    100
+Social-Sciences 27    90
+Life-Sciences   14    91
+Engineering     39    99
+
+[adminrig@dlfrontend examples]$ datamash --header-out -g 2 count 3 mean 3 pstdev 3 < scores.txt
+GroupBy(field-2)      count(field-3)    mean(field-3)   pstdev(field-3)
+Arts  19        68.947368421053 10.143567752966
+Business        11    87.363636363636   4.9409739060732
+Health-Medicine 13    90.615384615385   8.8625266543026
+Social-Sciences 15    60.266666666667   16.643183456165
+Life-Sciences   12    55.333333333333   19.728715675944
+Engineering     13    66.538461538462   19.10141108205
+[adminrig@dlfrontend examples]$ head /home/adminrig/src/tblutils/datamash-1.1.0/examples/scores_h.txt  
+Name  Major     Score
+Shawn Arts      65
+Marques Arts    58
+Fernando        Arts  78
+Paul  Arts      63
+Walter  Arts    75
+Derek Arts      60
+Nathaniel       Arts  88
+Tyreque Arts    74
+Trevon  Arts    74
+[adminrig@dlfrontend examples]$  datamash -H -g 2 count 3 mean 3 pstdev 3 < scores_h.txt
+GroupBy(Major)  count(Score)  mean(Score)       pstdev(Score)
+Arts  19        68.947368421053 10.143567752966
+Business        11    87.363636363636   4.9409739060732
+Health-Medicine 13    90.615384615385   8.8625266543026
+Social-Sciences 15    60.266666666667   16.643183456165
+Life-Sciences   12    55.333333333333   19.728715675944
+Engineering     13    66.538461538462   19.10141108205
+
+
+ datamash -s -H -g 4 count 4 < NA12878_100M_L3---NA12878_100M_L4
+

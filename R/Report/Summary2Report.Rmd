@@ -1,0 +1,435 @@
+---
+title: "Axiom Summary2Report"
+author: "Park Min Young"
+## mail_address : minmin@dnalink.com
+date: "2016 11 09"
+output: html_document
+---
+
+
+
+
+***
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.height=8, fig.width=14}
+
+library(pacman)
+p_load(plyr, dplyr, tidyr, ggplot2, scales, printr, xtable, knitr, plotly, gridExtra, reshape2)
+
+#release<- read.table("/home/adminrig/workspace.min/AFFX/Axiom_KORV1.1/ClinicalInfo", header=T, sep="\t")
+#str(release)
+
+df <- read.table("Summary.txt", header=T)
+
+df <- mutate(df, CR_PASS = ifelse(call_rate >= 98, "Y", "N") )
+df <- mutate(df, DQC_PASS = ifelse(axiom_dishqc_DQC >= 0.82, "Y", "N") )
+
+df <- mutate(df, CR_PASS_ = ifelse(call_rate >= 98, 1, 0) )
+df <- mutate(df, DQC_PASS_ = ifelse(axiom_dishqc_DQC >= 0.82, 1, 0) )
+
+
+PASS_num<-
+df %>%
+  filter( CR_PASS_ + DQC_PASS_ > 1) %>%
+  count()
+
+
+CR_Pass_pct=sprintf( "%1.2f%%", as.numeric(PASS_num[1,1]) / length( unique(df$id)) * 100 )
+#str(df)
+#summary(df$apt_probeset_genotype_gender)
+
+
+```
+
+
+## Analysis Statistics
+***  
+Number of                       |Count                      
+--------------------------------|-------------------------------------
+***Processed Plate***           | `r comma( length( unique(df$set)) )`  
+***Processed CEL File***        | `r comma(nrow(df))`  
+***Processed Total Sample***    | `r comma( length( df$id) )`  
+***Redundant Sample***          | `r comma( length( df$id ) - length( unique(df$id) ) )`  
+***Processed Unique Sample***   | `r comma( length( unique(df$id)) )`  
+ - *Pass(DQC>=0.82 & CR>=98)*   | `r comma( as.numeric(PASS_num[1,1]) )`(`r CR_Pass_pct `)  
+ - *Fail*                       | `r comma(length( unique(df$id)) - as.numeric(PASS_num[1,1])) `  
+ - *Average Call Rate in Pass*  | `r round(mean(df$call_rate), 2)`  
+ - *Average Dish QC in Pass*    | `r round(mean(df$axiom_dishqc_DQC), 2)`  
+ - *Average Hetero Rate in Pass*| `r round(mean(df$het_rate), 2)`  
+
+
+
+***
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+df %>%
+#  filter( grepl('DL001|DL001', set) ) %>%
+  summarise( Total=comma( n() ), 
+             CR_Pass=comma( sum(CR_PASS_) ),
+             CR_Fail=comma( n()-sum(CR_PASS_) ), 
+             CR_Pass_pct=sprintf( "%1.2f", sum(CR_PASS_)/n()*100 ),
+             DQC_Pass=comma( sum(DQC_PASS_) ), 
+             DQC_Fail=comma( n()-sum(DQC_PASS_) ),
+             DQC_Pass_pct=sprintf( "%1.2f", sum(DQC_PASS_)/n()*100 ) )%>%
+  as.data.frame() %>%
+  kable(caption = '샘플 현황')
+
+
+
+```
+
+
+***
+#### Experiment Sample Status by Gender  
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.height=8, fig.width=14}
+## bar plot per gender 
+#cat("Experiment Sample Status by Gender")
+
+gender_t<-as.data.frame(table(df$apt_probeset_genotype_gender))
+colnames(gender_t)<-c("Gender", "Count")
+
+g1<-
+  ggplot(gender_t , aes(Gender, Count, fill=Gender)) + 
+  geom_bar(stat="identity") + 
+  geom_text(aes(y=0, label=comma(Count)), size=4, vjust=-.5, col="black") +
+  xlab("Gender") + 
+  ylab("Number of Sample") + 
+  scale_fill_discrete(name="Gender")
+g1
+```
+
+
+#### Experiment Sample Status by Plate  
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.height=8, fig.width=14}
+
+#cat("Experiment Sample Status by Plate")
+g2<-ggplot(df , aes(set, fill=apt_probeset_genotype_gender)) + 
+  geom_bar(size=1) + 
+  #stat_bin(geom="text", aes(label=..count..), size=3, vjust=1.5, colour="white") + 
+  annotate("text", x=-Inf, y=Inf, label=paste("Total Exp Sample Count", length(df$id), length( unique(df$set) ), sep=":"), size=5 , hjust=-.2, vjust=2, colour="black") + 
+  ylim(c(0,120)) + 
+  ylab("Number of Sample") +
+  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.5)) + 
+  theme(legend.position="bottom") +
+  scale_fill_discrete(name="Gender")
+g2
+```
+
+#### DQC  
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.height=8, fig.width=14}
+
+DQC1<-
+  ggplot(df, aes(set, axiom_dishqc_DQC, fill=set)) + 
+  geom_boxplot() + 
+  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.5)) + 
+  theme(legend.position="none") +
+  ylab("DQC value") + 
+  geom_hline(yintercept = 0.82, colour="blue", linetype="dashed")  + 
+  annotate("text", x=-Inf, y=0.83, label="DQC Pass Cutoff Value : 0.82", size=4, hjust=-0.1, vjust=0, colour="red")
+
+DQC2<-
+  ggplot(df, aes(set, axiom_dishqc_DQC, fill=set)) + 
+  geom_boxplot() + 
+  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.5)) + 
+  facet_grid(apt_probeset_genotype_gender~.)+ 
+  theme(legend.position="none") + 
+  ylab("DQC value") 
+
+DQC_df<-as.data.frame( table( cut(df$axiom_dishqc_DQC, breaks=c(0, 0.82, 0.88, 0.92, 0.96,  1 )) ) )
+colnames(DQC_df)<-c("bin", "count")
+DQC3<-
+  ggplot(DQC_df, aes(bin, count, fill=bin)) + 
+  geom_bar(stat="identity") +  
+  geom_text(aes(y=count, label=comma(sprintf("%1.2f%%", count / sum(count) * 100 ))), vjust=-.5, colour="blue", position=position_dodge(0), size=5) + 
+  scale_y_continuous(labels=comma) + 
+  ylab("Number of Sample") + 
+  xlab("DQC Interval") + 
+  geom_text(aes(y=0, label=comma(count)), vjust=1.5, colour="darkorange", size=4) + 
+  theme(legend.position=c(.1,.8))
+
+
+Mean_df<-ddply(df, "set", summarise, DQC_mean=mean(axiom_dishqc_DQC))
+DQC4<-
+  ggplot(Mean_df, aes(reorder(set,DQC_mean), DQC_mean)) + 
+  geom_point(size=4,colour="darkorange", shape=18) + 
+  coord_flip() + 
+  ylab("Mean DQC per Plate") + 
+  xlab("Plate Number") + 
+  ylim(c(0.5, 1))
+
+grid.arrange(DQC1,DQC2, ncol=1)
+grid.arrange(DQC3,DQC4, ncol=2)
+
+```
+
+#### Call rate 
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.height=8, fig.width=14}
+
+CR1<-
+  ggplot(df, aes(set, call_rate, fill=set)) + 
+  geom_boxplot() + 
+  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.5), legend.position="none") + 
+  ylim(c(90,100)) + 
+  ylab("Call rate (%)") + 
+  geom_hline(yintercept = 95, colour="red", linetype="dashed")  + 
+  annotate("text", x=-Inf, y=Inf, label="CR : 99%", size=3, hjust=-0.2, vjust=2, colour="red") 
+
+CR2<-
+  ggplot(df, aes(set, call_rate, fill=set)) + 
+  geom_boxplot() + 
+  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.5)) + 
+  facet_grid(apt_probeset_genotype_gender~.) + 
+  theme(legend.position="none") + 
+  ylab("Call rate (%)")
+
+CR_df<-as.data.frame( table( cut(df$call_rate, breaks=c(0,50,80,90,95,96,97,98,99,100)) ) )
+colnames(CR_df)<-c("bin", "count")
+Below99<-sum( CR_df[-NROW(CR_df),2])
+CR3<-
+  ggplot(CR_df, aes(bin, count, fill=bin)) +
+  geom_bar(stat="identity") + 
+  geom_text(aes(y=count, label=comma(sprintf("%1.2f%%", count / sum(count) * 100 ))), vjust=-.5, colour="blue", position=position_dodge(0), size=5) + 
+  scale_y_continuous(labels=comma) + 
+  geom_text(aes(y=0, label=comma(count)), vjust=1.5, colour="darkorange", size=4) +
+  geom_text(x=-Inf, y=Inf, hjust=-.2, vjust=2, label=paste( "# < 99% :",Below99, " "), col="darkorange") + 
+  ylab("Number of Sample") +
+  xlab("Call Rate Interval") + 
+  theme(legend.position=c(.1,.78))
+  
+
+Mean_df<-ddply(df, "set", summarise, CR_mean=mean(call_rate))
+CR4<-
+  ggplot(Mean_df, aes(reorder(set,CR_mean), CR_mean)) + 
+  geom_point(size=4,colour="darkorange", shape=18) + 
+  coord_flip() + 
+  ylab("Mean CR per Plate") + 
+  xlab("Plate Number")  + 
+  ylim(c(90, 100))
+
+grid.arrange(CR1,CR2, ncol=1)
+grid.arrange(CR3,CR4, ncol=2)
+
+```
+
+
+#### Hetero rate
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.height=8, fig.width=14}
+HR1<-
+  ggplot(df, aes(set, het_rate, fill=set)) + 
+  geom_boxplot() + 
+  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.5)) + 
+  theme(legend.position="none") + 
+  ylab("Hetero Rate (%)")
+
+HR2<-
+  ggplot(df, aes(set, het_rate, fill=set)) + 
+  geom_boxplot() + 
+  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.5)) + 
+  facet_grid(apt_probeset_genotype_gender~.) + 
+  theme(legend.position="none") + 
+  ylab("Hetero Rate (%)")
+
+
+Het_df<-as.data.frame( table( cut(df$het_rate, breaks=c(0, 10, 13, 14, 15, 16, 17, 18, 20, 50, 100 )) ) )
+colnames(Het_df)<-c("bin", "count")
+HR3<-
+  ggplot(Het_df, aes(bin, count, fill=bin)) + 
+  geom_bar(stat="identity") + 
+  geom_text(aes(y=count, label=comma(sprintf("%1.2f%%", count / sum(count) * 100 ))), vjust=-.5, colour="blue", position=position_dodge(0), size=5) + 
+  scale_y_continuous(labels=comma) + 
+  ylab("Number of Sample") + 
+  xlab("Het Rate Interval") + 
+  geom_text(aes(y=0, label=comma(count)), vjust=1.5, colour="darkorange", size=4)
+
+Mean_df<-ddply(df, "set", summarise, Het_mean=mean(het_rate))
+
+HR4<-
+  ggplot(Mean_df, aes(reorder(set,Het_mean), Het_mean)) + 
+  geom_point(size=4,colour="darkorange", shape=18) + 
+  coord_flip() + 
+  ylab("Mean Het Rate per Plate") + 
+  xlab("Plate Number") + 
+  ylim(c(0, 20))
+
+grid.arrange(HR1,HR2, ncol=1)
+grid.arrange(HR3,HR4, ncol=2)
+
+
+```
+
+
+#### x call rate, y het_rate scatter plot
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.height=8, fig.width=14}
+CRvsHet<-
+  ggplot(df, aes(call_rate, het_rate, col=set)) + 
+  geom_point(alpha=1) + 
+  theme(legend.position="none") + 
+  xlab("Call rate (%)") + 
+  ylab("Hetero rate (%)")
+
+CRvsHet
+```
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results="hide"}
+ncol<-5
+Mean_df<-ddply(df, "set", summarise, CR_mean=mean(call_rate))
+nRow<- ceiling( NROW(Mean_df)/ncol )
+Below99<-ddply( subset(df, call_rate<99), "set", summarise, count=length(call_rate))
+CR_per_set_df<-as.data.frame( table( list( df$set, cut(df$call_rate, breaks=c(0,90,95,96,97,98,99,100)) )  ) )
+colnames(CR_per_set_df)<-c("set", "bin", "count")
+
+CR<- merge(Mean_df, Below99, all=T)
+CR$count[ is.na( CR$count ) ] <- 0
+CR_per_set_df$set<-factor( CR_per_set_df$set, levels=CR[rev(order(CR$count)), "set"])
+
+CR_per_set_df[CR_per_set_df$count==0, "count"]<-NA
+
+png("CR.histogram.png", width=1500, height=120*nRow)
+
+ggplot(CR_per_set_df, aes(factor(set), count, fill=bin)) + geom_bar(stat="identity", position="dodge") + geom_text(aes(x=set, y=0, label=count),position=position_dodge(width=0.9), vjust=-1, colour="darkorange", size=4) + facet_wrap(~set, ncol=5, scale="free") + scale_y_continuous(labels=comma) + ylab("count") + xlab("Call Rate Interval")
+
+dev.off()
+```
+#### Call rate Histogram per Plate
+![](CR.histogram.png)
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results="hide"}
+
+ncol<-6
+nRow<- ceiling( NROW(Mean_df)/ncol ) 
+
+mean_CR_sorted_df <- df[, c("set", "call_rate")]
+mean_CR_sorted_df$set<- factor(mean_CR_sorted_df$set, levels=Mean_df[order(Mean_df$CR_mean),1])
+
+png("CR.Boxplot.png", height=nRow*140, width=900)
+ggplot(mean_CR_sorted_df, aes(set, call_rate)) + geom_rect(data = subset(mean_CR_sorted_df, set %in% Mean_df[ Mean_df$CR_mean < 99, 1] ) , aes(fill=set), xmin= -Inf, xmax= Inf, ymin = -Inf, ymax = Inf, alpha =0.01) + geom_boxplot(width=.5) + facet_wrap(~set, ncol=6, scale="free") + geom_text(data=Mean_df, aes(label=comma(sprintf("%1.2f%%",CR_mean))), x=Inf, y=-Inf, vjust=-1, hjust=1, col="red" )
+dev.off()
+
+
+df$set<-factor(mean_CR_sorted_df$set, levels=Mean_df[order(Mean_df$CR_mean),1])
+png("CR_vs_HetRate.ScatterPlot.png", height=nRow*110, width=1500)
+#ggplot(df, aes(call_rate, axiom_dishqc_DQC)) + geom_rect(data = subset(df, set %in% Mean_df[ Mean_df$CR_mean < 99, 1] ) , aes(fill=set), xmin= -Inf, xmax= Inf, ymin = -Inf, ymax = Inf, alpha =0.1) + geom_point(shape=1) + stat_density2d(colour="yellow") + facet_wrap(~set, ncol=6) + xlim(c(95,100)) + ylim(c(0.8, 1)) + geom_vline(xintercept=99, colour="red") +  geom_hline(yintercept=0.9, colour="red")
+ggplot(df, aes(call_rate, axiom_dishqc_DQC)) + geom_rect(data = subset(df, set %in% Mean_df[ Mean_df$CR_mean < 99, 1] ) , aes(fill=set), xmin= -Inf, xmax= Inf, ymin = -Inf, ymax = Inf, alpha =0.01) + geom_point(shape=1) + stat_density2d(colour="yellow") + facet_wrap(~set, ncol=6, scale="free") + geom_vline(xintercept=99, colour="red") +  geom_hline(yintercept=0.9, colour="red") + geom_text(data=Mean_df, aes(label=comma(sprintf("%1.2f%%",CR_mean))), x=Inf, y=-Inf, vjust=-1, hjust=1, col="red" )
+dev.off()
+```
+
+#### Call rate Boxplot
+![](CR.Boxplot.png)
+
+#### Call rate vs Het rate
+![](CR_vs_HetRate.ScatterPlot.png)
+
+
+
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results="hide"}
+
+df$well<-as.character(df$well)
+idx<-nchar( df$well ) == 2
+df$well[idx]<-sub( "(\\d$)", "0\\1", df$well[idx], perl=T )
+df$well<-factor(df$well, level= sort( unique(df$well) ) )
+
+
+
+df$wellnum<-as.numeric( sub("^\\w", "", df$well, perl=T) )
+df$wellA<-sub("\\d+$", "", df$well, perl=T) 
+
+#DL000063<-subset(df, set=="DL000063")
+
+ncols<-6
+nrows<-ceiling( length( unique(df$set) ) / ncols )
+
+g1<-
+  ggplot(df, aes(as.factor(wellnum), wellA, fill=call_rate)) + 
+  geom_raster() + 
+  scale_fill_gradient2(low = muted("red"), high =muted("blue"), mid="green", midpoint=95, limits=c(90,100)) + 
+  ylab("Well Letters") + 
+  xlab("Well Nums") + 
+  facet_wrap( ~ set, ncol=ncols)
+
+#ggplot(df, aes(wellA, as.factor(wellnum), fill=call_rate)) + geom_raster() + scale_fill_gradient2(low = muted("red"), high = muted("blue"), mid="green", midpoint=95, limits=c(90,100)) + xlab("Well Letters") + ylab("Well Nums") + facet_wrap( ~ set, ncol=10)
+#ggplot(df, aes(wellA, as.factor(wellnum), fill=call_rate)) + geom_raster() + scale_fill_gradient2(low = "red", high = "blue", mid="green", midpoint=95, limits=c(90,100)) + xlab("Well Letters") + ylab("Well Nums") + facet_wrap( ~ set, ncol=10)
+
+
+png("Well.png", width=1600, height=120*nrows)
+g1
+dev.off()
+
+
+attach(df)
+
+meanCR_per_well<-as.data.frame( tapply(call_rate, list(wellA, wellnum), mean, na.rm=T ) )
+meanCR_per_well$WELL<-rownames(meanCR_per_well)
+
+melt_CR <- melt( meanCR_per_well, id=length(meanCR_per_well) )
+
+colnames(melt_CR) <- c("well", "num", "call_rate")
+
+s<-range(melt_CR$call_rate)[1]
+e<-range(melt_CR$call_rate)[2]
+midpoint_value<-e-(e-s)/2
+
+
+g2<-
+  ggplot(melt_CR, aes(num, well, fill=call_rate)) + 
+  geom_raster()+ 
+  ylab("Well Letters") + 
+  xlab("Well Nums") + 
+  scale_fill_gradient2(low = muted("red"), high = muted("blue"), mid="green", midpoint=midpoint_value, limits=c(s,e)) 
+
+png("Well.meanCR.png", width=620, height=330)
+g2
+dev.off()
+
+detach(df)
+## Mean Call rate Heatmap 
+## ![](Well.meanCR.png)
+
+```
+
+#### Call rate Heatmap 
+![](Well.png)
+
+
+
+
+
+#### Gender Match Grid
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results="hide"}
+
+cat("Gender Match Grid : darkgreen=match, green=mismatch, white=unknown")
+df$well<-as.character(df$well)
+idx<-nchar( df$well ) == 2
+df$well[idx]<-sub( "(\\d$)", "0\\1", df$well[idx], perl=T )
+df$well<-factor(df$well, level= sort( unique(df$well) ) )
+
+
+
+df$wellnum<-as.numeric( sub("^\\w", "", df$well, perl=T) )
+df$wellA<-sub("\\d+$", "", df$well, perl=T) 
+
+
+ ncols<-10
+ nrows<-ceiling( length( unique(df$set) ) / ncols )
+ 
+ gender_grid<-ggplot(df, aes(as.factor(wellnum), wellA, fill=gender_match)) + geom_raster() + scale_fill_gradient2(low = muted("yellow"), high = muted("red"), mid="green", midpoint=2.5, limits=c(1,4)) + ylab("Well Letters") + xlab("Well Nums") + facet_wrap( ~ set, ncol=6,  scale="free")
+ 
+ png("GenderMatch.Well.png", width=1600, height=200*nrows)
+ gender_grid
+ dev.off()
+
+```
+-- Match    : darkgreen
+-- Mismatch : green
+-- Unknown  : white or red
+
+![](GenderMatch.Well.png)
+
+

@@ -1,0 +1,490 @@
+#!/bin/bash
+
+. ~/.bash_r_file
+. ~/.bash_color
+. ~/.bash_minyoung
+
+
+unset FF
+
+f() {
+        MAX=100
+        NUM=$(( $MAX - 1 ))
+
+        FF=($F "${FF[@]}" )
+        FF=("${FF[@]:0:$NUM}")
+
+        F=$(ls -t | tail -n +$1 | head -1 | xargs -i readlink -f {})
+        
+        export FF
+        export F
+
+}
+
+fl() {
+	  for i in $(seq ${#FF[@]}) 
+	      do echo $i ${FF[$i-1]}
+      done
+}
+
+
+ff() {
+      F=${FF[$1-1]}
+}
+
+
+LINE() {
+	perl -sle'print "#"x$num' -- -num=$1
+}
+
+L=$(LINE 80)
+
+function usage (){
+    cat << HELP
+
+${BLUE}$L${NORM}
+${GREEN}$L${NORM}
+
+${RED}Usage : `basename $0` $@${NORM}
+
+written date : 2016-11-15
+current date : `date`
+
+${GREEN}$L${NORM}
+${BLUE}$L${NORM}
+
+HELP
+exit 0;
+}
+
+function inserted_list (){
+	cat << CONT
+
+`perl -le'print "#"x60'`
+
+`date` Argument : cnt-> $# : list-> $@
+
+`perl -le'print "#"x60'`
+
+
+CONT
+}
+
+function fchk (){
+    if [ -f $1 ];then
+	echo "$1 exist"
+    else
+        usage "$1 not exist"
+    fi
+}
+
+ #function today (){
+ #	date +%Y%m%d
+ #}
+ #
+ #function mkdirtoday (){
+ #	mkdircd $(today)
+ #}
+
+function pinfo (){
+    env | grep ^PATH | sed 's/:/\n/g' | sort -u
+}
+
+function mkdircd (){
+    mkdir -p "$@" && eval cd "\"\$$#\"";
+}
+
+function cdd (){
+	cd $(dirname $1)
+}
+
+function hc (){
+    head -1 $1 | sed s/\\t/\\n/g | cat -n;
+}
+
+function hc_2 (){
+	perl -F'\t' -anle'map { push @{$list[$_]}, $F[$_] } 0..$#F; if($. == 2){ map { print join "\t",$_,@{$list[$_]} } 0 .. $#F;last;}' $1
+}
+
+function hc_3 (){
+	perl -F'\t' -anle'BEGIN{$d="#" x 80} map { push @{$list[$_]}, $F[$_] } 0..$#F; if($. > 1){ system("clear"); map { print join "\t",$_,$list[$_]->[0],$list[$_]->[-1] } 0.. $#F;print "[$.] : $d\n[$.] : $d\nFile : [$ARGV]" ;  <STDIN>;}' $1
+}
+
+function totalfilesize (){
+	for filesize in $(ls -l . | grep "^-" | awk '{print $5}')
+	do
+	  let totalsize=$totalsize+$filesize
+      done
+	  echo -n "$totalsize"
+}
+
+function fcnt (){
+	find $1 | perl -nle'$h{$1}++ if /\.(\w+)$/ }{ map { print "$_\t$h{$_}"  } sort keys %h'
+}
+
+function readinfo (){
+	awk '{print $2,"\t",$3,"\t",$3+$14-1}' $1 | sed 's/ //g' > $1.ReadInfo
+}
+
+function GetSeqPerTile (){
+	ls *_qseq.txt | perl -nle'push @{$h{$1."_".$2}}, $_ if /(s_\d+)_\d+_(\d{4})/; }{ map { print join "\t", $_, @{$h{$_}} } sort keys %h' | perl -F'\t' -anle'print localtime()."\t$_"; `MakeLaneSequence.pl --pair1 $F[1] --pair2 $F[3] --pair-index $F[2] --output-dir Sequence`'
+	cd Sequnece
+	 perl -le'map { push @{$h{$1.".".$2}}, $_ if /(s_\d+)_\d{4}\.(\d+)/  } @ARGV;END{map {print localtime()."\t$_"; `cat @{$h{$_}} > $_.fastq`} sort keys %h} ' *.fastq
+}
+
+function cat_o () {
+	OUT=$1
+	shift
+	cat $@ > $OUT 	
+}
+
+function SignalMeanSum () {
+	 perl -F'\t' -MMin -MList::Util=sum -ane'chomp $F[-1]; next unless /^\d+/; push @{$h{$F[0]}{$F[1]}}, $F[-1] }{ for $l ( sort {$a<=>$b} keys %h){ map { $sum=sum @{$h{$l}{$_}}; $c{$_}{$l}=$sum;$p{$_}{$l}=sprintf "%0.2f",$sum/120} 1..156 }; mmfsn("count",%c); mmfsn("average",%p)' *all.txt
+}
+
+
+function random (){
+	# min max 
+	FLOOR=$1
+	RANGE=$2
+	number=0
+	while [ "$number" -lt $FLOOR ]
+		do
+		number=$RANDOM
+		let "number %= $RANGE"
+	done
+	#echo "$FLOOR and $RANGE number $number"
+	echo $number
+}
+
+function fullpath(){
+	abs=$(cd "$(dirname "$1")"; echo `pwd`/$(basename $1))
+	echo $abs
+}
+
+
+function symbol_link(){
+	# $1 file
+	# $2 dir
+
+	CWD=$PWD
+	AbsFile=$(fullpath $1)
+	if [ ! -d "$2" ];then 
+		mkdir $2
+	fi
+
+	cd $2 && ln -s $AbsFile ./
+	cd $CWD
+}
+
+
+function GetSeqFromFastq (){
+	EXT=$(perl -sle'$f=~/\.(\w+)?$/;print $1' -- -f=$1)
+
+	if [ $EXT == "gz" ];then
+    	SEQ=$(zcat $1 | sed -n 2~4p | awk '{s+=length}END{print s}')
+	else
+    	SEQ=$(sed -n 2~4p $1 | awk '{s+=length}END{print s}')
+	fi
+
+	echo $SEQ
+}
+
+
+function FileCheck() {
+	for i in $@
+		do
+		if [ ! -f "$i" ];then
+			FLAG=1
+			FILE="$FILE $i"	
+		fi
+	done
+
+	if [ $FLAG ];then
+		echo -e "check system is failed"
+		echo "$FILE not exist"
+		exit 0
+	fi
+}
+
+function GATK_param(){
+	
+	GATKrc=.GATKrc
+	source ~/$GATKrc
+
+	if [ -f "$PWD/$GATKrc" ];then
+		source $PWD/$GATKrc
+	fi
+}
+
+function lll(){
+	ls -t | head -30 | perl -nle'print ++$c,"\t$_"'
+}
+
+function llll(){
+	ls -tlh | tail -n +2 | less -N
+}
+
+
+function cdc(){
+	DIR=$(dirname $1)
+	echo "go to $DIR"
+	cd $DIR
+}
+## null test : not null
+# if [ -n "$1" ] $1 is not null
+# must be quoated....
+
+## string is null or length 0
+# if [ -z "$1" ] 
+
+extract () {
+   if [ -f $1 ] ; then
+       case $1 in
+	*.tar.bz2)	tar xvjf $1 && cd $(basename "$1" .tar.bz2) ;;
+	*.tar.gz)	tar xvzf $1 && cd $(basename "$1" .tar.gz) ;;
+	*.tar.xz)	tar Jxvf $1 && cd $(basename "$1" .tar.xz) ;;
+	*.bz2)		bunzip2 $1 && cd $(basename "$1" /bz2) ;;
+	*.rar)		unrar x $1 && cd $(basename "$1" .rar) ;;
+	*.gz)		gunzip $1 && cd $(basename "$1" .gz) ;;
+	*.tar)		tar xvf $1 && cd $(basename "$1" .tar) ;;
+	*.tbz2)		tar xvjf $1 && cd $(basename "$1" .tbz2) ;;
+	*.tgz)		tar xvzf $1 && cd $(basename "$1" .tgz) ;;
+	*.zip)		unzip $1 && cd $(basename "$1" .zip) ;;
+	*.Z)		uncompress $1 && cd $(basename "$1" .Z) ;;
+	*.7z)		7z x $1 && cd $(basename "$1" .7z) ;;
+	*)		echo "don't know how to extract '$1'..." ;;
+       esac
+   else
+       echo "'$1' is not a valid file!"
+   fi
+ }
+
+ refflat_down (){
+	wget http://hgdownload.cse.ucsc.edu/goldenPath/hg19/database/refFlat.txt.gz
+	gunzip refFlat.txt.gz
+	perl -F'\t' -anle'print join "\t", @F[2,4,5], (join ";", @F[0,1,3,8], $F[5]-$F[4]+1)' refFlat.txt > refFlat.txt.Gene.bed
+}
+
+
+# http://stackoverflow.com/questions/5195607/checking-bash-exit-status-of-several-commands-efficiently
+
+# . /etc/init.d/functions
+
+# Use step(), try(), and next() to perform a series of commands and print
+# [  OK  ] or [FAILED] at the end. The step as a whole fails if any individual
+# command fails.
+#
+# Example:
+#     step "Remounting / and /boot as read-write:"
+#     try mount -o remount,rw /
+#     try mount -o remount,rw /boot
+#     next
+step() {
+    echo -n "$@"
+
+    STEP_OK=0
+    [[ -w /tmp ]] && echo $STEP_OK > /tmp/step.$$
+}
+
+try() {
+    # Check for `-b' argument to run command in the background.
+    local BG=
+
+    [[ $1 == -b ]] && { BG=1; shift; }
+    [[ $1 == -- ]] && {       shift; }
+
+    # Run the command.
+    if [[ -z $BG ]]; then
+        "$@"
+    else
+        "$@" &
+    fi
+
+    # Check if command failed and update $STEP_OK if so.
+    local EXIT_CODE=$?
+
+    if [[ $EXIT_CODE -ne 0 ]]; then
+        STEP_OK=$EXIT_CODE
+        [[ -w /tmp ]] && echo $STEP_OK > /tmp/step.$$
+
+        if [[ -n $LOG_STEPS ]]; then
+            local FILE=$(readlink -m "${BASH_SOURCE[1]}")
+            local LINE=${BASH_LINENO[0]}
+
+            echo "$FILE: line $LINE: Command \`$*' failed with exit code $EXIT_CODE." >> "$LOG_STEPS"
+        fi
+    fi
+
+    return $EXIT_CODE
+}
+
+next() {
+    [[ -f /tmp/step.$$ ]] && { STEP_OK=$(< /tmp/step.$$); rm -f /tmp/step.$$; }
+    [[ $STEP_OK -eq 0 ]]  && echo_success || echo_failure
+    echo
+
+    return $STEP_OK
+}
+
+hsort ()
+{
+   if [ "$1" == "-h" ]; then
+       echo "Sort a file or standard input, treating the first line as a header.";
+       echo "The first argument is the file or '-' for standard input. Additional";
+       echo "arguments to sort follow the first argument, including other files.";
+       echo "File syntax : $ hsort file [sort-options] [file...]";
+       echo "STDIN syntax: $ hsort - [sort-options] [file...]";
+       return 0;
+   elif [ -f "$1" ]; then
+       local file=$1;
+       shift;
+       (head -n 1 $file && tail -n +2 $file | sort $*);
+   elif [ "$1" == "-" ]; then
+       shift;
+       (read -r; printf "%s\n" "$REPLY"; sort $*);
+   else
+       >&2 echo "Error. File not found: $1";
+       >&2 echo "Use either 'hsort <file> [sort-options]' or 'hsort - [sort-options]'";
+       return 1 ;
+   fi
+}
+
+#$ hsort myfile.txt
+#$ head -n 100 myfile.txt | hsort -
+#$ hsort myfile.txt -k 2,2 | head -n 20 | hsort - -r
+
+ts_gen() {  
+    while IFS= read -r line; do
+        echo "$(date +%Y%m%d-%H:%M:%S) $line"
+    done
+}
+
+roundup() {  
+    echo $( printf %.0f $( echo "scale=1;((10*$1)+0.5)/10" | bc ))
+}
+
+roundup2() {  
+    minor=${1#*.} # 소수자리만 남기고 지운다
+    prc=$(( 10 ** ${#minor})) # 자리수 개수만큼 10의 제곱으로 구한다
+    echo $( printf %.0f $( echo "scale=${#minor};(($prc*$1)+0.5)/$prc" | bc ))
+}
+
+
+#http://lunatine.net/bash-faq-part-1/
+
+
+
+# http://stackoverflow.com/questions/1494178/how-to-define-hash-tables-in-bash
+hinit() {
+		    rm -rf /tmp/hashmap.$1
+			    mkdir -p /tmp/hashmap.$1
+}
+
+hput() {
+		    printf "$3" > /tmp/hashmap.$1/$2
+}
+
+hget() {
+		    cat /tmp/hashmap.$1/$2
+}
+
+hkeys() {
+		    ls -1 /tmp/hashmap.$1
+}
+
+hdestroy() {
+		    rm -rf /tmp/hashmap.$1
+}
+
+ ###hinit ids
+ ###
+ ###for (( i = 0; i < 10000; i++ )); i
+ ###do
+ ###   hput ids "key$i" "value$i"
+ ###done
+ ###
+ ###for (( i = 0; i < 10000; i++ )); 
+ ###do
+ ###	printf '%s\n' $(hget ids "key$i") > /dev/null
+ ###done
+ ###
+ ###hdestroy ids
+
+
+## test : is data from pipe or stdin
+function show_input_type()
+{
+	[ -p /dev/fd/0 ] && echo PIPE || echo STDIN
+}
+
+var() { 
+	set | grep home | perl -nle'print join "\t", $1, $2 if /^(\w{1,2})=(.+)/' 
+} 
+
+
+#SCRIPT_LOG="\home\buddy\logfile.txt"
+
+ ### exe () {
+ ###  echo "$@"
+ ###   message=$1
+ ###   shift
+ ###   params="$@"                       # Put all of the command-line into "params"
+ ### #  params=$( printf ' "%q"' "$@" )                       # Put all of the command-line into "params"
+ ### #  printf "[%s]\t[$message]\t$params\n" "$(date)" #>> "$SCRIPT_LOG"   # Print the command to the log file
+ ###   echo -e `date`."\t[$message]\t$params\n"  #>> "$SCRIPT_LOG"   # Print the command to the log file
+ ###   #$params                           # Execute the command
+ ### }
+
+#exe rm -rf /Library/LaunchAgents/offendingfile
+#exe rm -rf /Library/LaunchAgents/secondoffendingfile
+
+
+exe () {
+#echo "$@"
+  message=$1
+  shift
+#  params="$*"                       # Put all of the command-line into "params"
+  params="$@"                       # Put all of the command-line into "params"
+  echo -e `date`."\t$message\t$params\t$PWD\n"  #>> "$SCRIPT_LOG"   # Print the command to the log file
+
+# echo "${params}" | sh                            # Execute the command
+
+#set -x
+#   params=$( printf ' "%q"' "$@" )
+#	$params
+#   cmd=$(echo $params | sed s/"'"/""/g)
+   cmd=$(eval ${params})
+   ${cmd}
+#set +x
+
+#  bg_pid=$!                           # store the background job pid.
+#  echo "[In exe] $bg_pid"  
+}
+
+
+_exe () {
+#echo "$@"
+#  params="$*"                       # Put all of the command-line into "params"
+  params="$@"                       # Put all of the command-line into "params"
+  echo -e "$params\n"  #>> "$SCRIPT_LOG"   # Print the command to the log file
+
+# echo "${params}" | sh                            # Execute the command
+
+#set -x
+#   params=$( printf ' "%q"' "$@" )
+#	$params
+#   cmd=$(echo $params | sed s/"'"/""/g)
+   cmd=$(eval ${params})
+   ${cmd}
+#set +x
+
+#  bg_pid=$!                           # store the background job pid.
+#  echo "[In exe] $bg_pid"  
+}
+
+
+_echo() { 
+	echo "$@" > /dev/stderr
+}
+

@@ -1,0 +1,1 @@
+sh xxx.sh >> log 2>&1

@@ -1,0 +1,34 @@
+#!/bin/sh
+
+# GenomeAnalysisTK.sh 
+# $1 must be [XXX.bam]
+# output      
+#             
+#             
+
+source ~/.GATKrc
+
+if [ $# -eq 0 ];then
+	echo "usage : `basename $0` XXXX.bam "
+	java $JMEM -jar $EGATK -T IndelGenotyperV2 --help
+	exit 1
+fi
+
+
+# MAX_INSERT_SIZE=1000[default:100000]
+java $JMEM -jar $EGATK \
+-T IndelGenotyperV2 \
+-l INFO \
+-R $REF \
+-I $1 \
+-bed $1.bed \
+-verbose $1.indel.txt \
+-o $1.indel.vcf \
+--minCoverage 20 \
+--minFraction 0.3 \
+--minIndelCount 20 \
+--refseq $MRNA \
+>& $1.IndelGenotyperV2.log
+ 
+
+# -L chr1

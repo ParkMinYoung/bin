@@ -1,0 +1,100 @@
+# manual installation
+ wget https://cran.r-project.org/src/base/R-3/R-3.4.3.tar.gz 
+ 
+ tar xvzf R-3.4.3.tar.gz
+  cd R-3.4.3/
+ ./configure --prefix=/opt/R/R-3.4.3 --enable-R-shlib --with-blas --with-lapack
+ make 
+ make install
+
+
+# CentOS yum 과 Ubuntu apt Mirror를 국내 사이트로 설정하기
+# https://www.lesstif.com/pages/viewpage.action?pageId=20776717
+
+
+# http://www.dnalinklabs.com/wiki/pages/viewpage.action?pageId=10815808&src=search
+
+yum remove epel-release-6-5.noarch
+rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+
+# installation using yum
+
+cd /etc/yum.repos.d/ 
+bzip2 /etc/yum.repos.d/CentOS-*.repo
+
+echo '[base]
+name=CentOS-$releasever - Base
+baseurl=http://ftp.daum.net/centos/$releasever/os/$basearch/
+gpgcheck=0
+[updates]
+name=CentOS-$releasever - Updates
+baseurl=http://ftp.daum.net/centos/$releasever/updates/$basearch/
+gpgcheck=0
+[extras]
+name=CentOS-$releasever - Extras
+baseurl=http://ftp.daum.net/centos/$releasever/extras/$basearch/
+gpgcheck=0' > /etc/yum.repos.d/Daum.repo
+
+ 
+#bunzip2 /etc/yum.repos.d/CentOS-* 
+
+
+# metalink error epel.repo
+
+# [base] baseurl uncheck
+# [base] mirorlink check
+
+
+yum update
+#yum update --skip-broken
+
+yum check-update
+
+yum install R-base R-devel curllib-devel openssl-devel
+
+
+# cleanup
+yum clean all ; yum makecache ; yum grouplist ; yum list all
+rpm -Va --nofiles --nodigest
+ 
+
+# check available packages
+yum list available 'graphviz*'
+
+
+# check installed
+yum list installed java*jdk
+yum list installed graphviz-tcl*
+
+
+# delete
+yum remove java-1.7.0-openjdk.x86_64
+
+
+yum install libcurl-devel
+yum install openssl-devel
+
+# recheck
+yum list installed java*jdk
+
+# mirror sites in KOREA
+#http://cran.nexr.com/	NexR Corporation, Seoul
+#http://healthstat.snu.ac.kr/CRAN/	Graduate School of Public Health, Seoul National University, Seoul
+#http://cran.biodisk.org/	The Genome Institute of UNIST (Ulsan National Institute of Science and Technology)
+
+install.packages("curl", repos='http://cran.nexr.com/')
+install.packages("openssl")
+install.packages("httr")
+install.packages("git2r")
+install.packages("devtools")
+install.packages("pacman")
+library(pacman)
+
+
+source("https://bioconductor.org/biocLite.R")
+biocLite()
+biocLite("BiocUpgrade")
+
+biocLite("BiSeq")
+
+

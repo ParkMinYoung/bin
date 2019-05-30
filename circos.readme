@@ -1,0 +1,13 @@
+circos -conf circos.conf -outputfile bt1 -param chromosomes_display_default=no -param chromosomes=bt1
+circos -conf /home/adminrig/workspace.min/Motie.WES.SomaticAnalysis.CancerTreatmentProfile.Circos/Circos.v2/human.heatmap.conf/circos.conf -outputfile hs1 -param chromosomes_display_default=no -param chromosomes=hs1
+
+
+alias cir='circos -conf circos.conf '
+circos -cdump  | less 
+
+ls *hist | sort > hist.list
+## manual modify order of list
+perl -nle'print "ln -s $_ UMD.",$c++,".txt" ' hist.list  | sh
+perl -nle'print "ln -s $_ UMD.heatmap.",$c++,".txt" ' hist.list  | sh
+
+

@@ -1,0 +1,13 @@
+# https://www.biostars.org/p/154702/
+
+less /home/adminrig/src/short_read_assembly/bin/bcftools.stats.readme
+
+vcf-stats try.vcf > out
+# https://vcftools.github.io/perl_examples.html
+
+
+cat variants.vcf | java -jar SnpSift.jar filter " ( countHet() == 2 )" | grep -v '#' | wc -l 
+
+vcf-stats input.vcf
+
+

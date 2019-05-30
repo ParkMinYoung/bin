@@ -1,0 +1,38 @@
+#!/bin/sh
+
+# GenomeAnalysisTK.sh 
+# $6 must be [XXX.bam]
+# output      
+#             
+#             
+
+source ~/.GATKrc
+source ~/.bash_function
+GATK_param
+
+EGATK=/home/adminrig/src/GATK.2.0/GenomeAnalysisTK-2.0-35-g2d70733/GenomeAnalysisTK.jar
+
+if [ $# -eq 0 ];then
+	echo "usage : `basename $0` XXXX.bam yyyy.bam zzz.bam ..."
+	java $JMEM -jar $EGATK -T VariantEval --help	
+	exit 1
+fi
+
+# T=$(date '+%Y%m%d%H%M')
+# READGROUP=$2
+# RG=${READGROUP:=$T}
+
+#TMPDIR=$(dirname $1)
+TMPDIR=$PWD
+
+# MAX_INSERT_SIZE=1000[default:100000]
+java $JMEMMAX128 -Djava.io.tmpdir=$TMPDIR -jar $EGATK   \
+-T VariantEval			\
+-l INFO 				\
+-R $REF 				\
+-eval $1 				\
+--dbsnp $VCF			\
+-ST Sample -noST		\
+-o $1.eval.GATK2		\
+>& $1.eval.GATK2.log
+

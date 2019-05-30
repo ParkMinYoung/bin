@@ -1,0 +1,24 @@
+{
+VAR=x00 VAR2=ClusterSignal.txt sh -c '~/src/short_read_assembly/bin/ExtractTable.sh $VAR $VAR2'
+}
+
+
+http://unix.stackexchange.com/questions/23179/how-to-send-variable-to-sub-shell
+
+{ VAR=x00 VAR2=ClusterSignal.txt sh -c 'echo single $VAR $VAR2'; }
+single x00 ClusterSignal.txt
+{ VAR=x00 VAR2=ClusterSignal.txt sh -c 'echo "single ${0} ${1}"' $VAR $VAR2; }
+single x00 ClusterSignal.txt
+{ VAR=x00 VAR2=ClusterSignal.txt sh -c 'echo "single  $@"' _ $VAR $VAR2; }
+
+
+
+.var_init.sh
+
+VAR="Test"
+from the command line:
+
+sh -c ". .var_init.sh && echo \$VAR" # Make sure to properly escape the '$'
+
+
+

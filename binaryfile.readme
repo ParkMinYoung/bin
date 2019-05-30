@@ -1,0 +1,5 @@
+hexdump -C /home/adminrig/workspace.min/AFFX/untested_library_files/Axiom_KORV1.1/Axiom_KORV1_1.r1.cdf | less 
+od -xc /home/adminrig/workspace.min/AFFX/untested_library_files/Axiom_KORV1.1/Axiom_KORV1_1.r1.cdf | less -S 
+xxd -b /home/adminrig/workspace.min/AFFX/untested_library_files/Axiom_KORV1.1/Axiom_KORV1_1.r1.cdf | less 
+xxd  /home/adminrig/workspace.min/AFFX/untested_library_files/Axiom_KORV1.1/Axiom_KORV1_1.r1.cdf | less 
+

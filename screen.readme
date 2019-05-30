@@ -1,0 +1,19 @@
+# screen sharing
+# http://technonstop.com/screen-commands-for-terminal-sharing
+screen -d -R share_session
+screen -x share_session
+
+
+
+screen -ls ## list session
+screen -wipe ## remove dead session
+
+
+
+
+split display horizontally	C-a S
+split display vertically	C-a | or C-a V (for the vanilla vertical screen patch)
+jump to next display region	C-a tab
+remove current region	C-a X
+remove all regions but the current one	C-a Q
+

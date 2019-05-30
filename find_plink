@@ -1,0 +1,6 @@
+
+defvalue=1
+VALUE=${1:-$defvalue}   
+
+find -maxdepth $VALUE -name "*.bim"  | sed 's/.bim//'
+

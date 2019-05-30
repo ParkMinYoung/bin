@@ -1,0 +1,1 @@
+/home/adminrig/workspace.min/AFFX/Axiom_KORV1.0/Analysis/010006/batch/GGally/PCA.R

@@ -1,0 +1,2 @@
+ cat $1 | /home/adminrig/bin/verticalize | less -S 
+

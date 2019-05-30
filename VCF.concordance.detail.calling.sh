@@ -1,0 +1,1 @@
+ls *vcf | perl -MMath::Combinatorics -nle'push @vcf,$_; }{ map { ($A,$B)= @{$_};$A=~s/\.vcf//;$B=~s/\.vcf//; print "qsub -N vcftools -j y -o queue.log -q high.q /home/adminrig/src/short_read_assembly/bin/sub VCF.concordance.detail.sh $A $B @{$_}\nsleep 10"  } combine(2, @vcf)'

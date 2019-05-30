@@ -1,0 +1,80 @@
+###########################
+### R rmarkdown snippet ###
+###########################
+
+R_snippet_dir=/home/adminrig/src/short_read_assembly/bin/R/Function
+R_snippet_file=$R_snippet_dir/snippet
+
+alias r_list='ls $R_snippet_dir'
+
+function r_create(){
+
+        r_file=$R_snippet_dir/$1
+
+        if [ -f "$r_file" ];then
+                
+                _H1 blue red "existed file : $r_file"
+                r_insert $1
+
+        else
+                _H1 blue red "create file : $r_file"
+                cat >> $r_file
+                
+        fi 
+
+}
+
+
+function r_show(){
+        
+    r_file=$R_snippet_dir/$1
+
+        if [ -f "$r_file" ];then
+
+                _H1 blue red "reading file : $r_file"
+                less -S $r_file
+
+        else
+
+                _H1 blue red "reading default : $R_snippet_file"
+                less -S $R_snippet_file
+
+        fi
+}
+
+
+function r_edit(){
+        
+        r_file=$R_snippet_dir/$1
+
+        if [ -f "$r_file" ];then
+                
+                _H1 blue red "will be edited file : $r_file"
+                vi $r_file
+
+        else
+
+                _H1 blue red "will be edited default : $R_snippet_file"
+                vi $R_snippet_file
+        fi
+
+}
+
+
+function r_insert(){
+
+    r_file=$R_snippet_dir/$1
+
+        if [ -f "$r_file" ];then
+
+                _H1 blue red "insert contents to : $r_file"
+                cat >> $r_file 
+
+        else
+                
+                _H1 blue red "insert contents to default : $R_snippet_file"
+                cat >> $R_snippet_file
+        fi
+}
+
+

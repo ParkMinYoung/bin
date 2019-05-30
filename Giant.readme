@@ -1,0 +1,42 @@
+# excute time : 2016-10-31 14:57:38 : get target bed
+grep BRCA SNU.BangYoungJu.430k.bed | bedtools sort -i stdin | bedtools merge -i stdin -c 6 -o distinct | perl -F'\t' -anle'$F[3]="$F[3].".++$h{$F[3]}; print join "\t", @F' > BRCA.Target.bed 
+cat BRCA.Gene.bed >> BRCA.Target.bed
+
+IGV.batch.sh BRCA.Target.bed `ls *bam | grep N | sort` BRCA.Target.bed SNU.BangYoungJu.430k.bed > script 
+/home/adminrig/src/IGV/IGV_2.3.49/igv.sh -b script 
+
+
+# excute time : 2016-10-31 15:39:34 : get Amplicon bed
+grep BRCA SNU.BangYoungJu.430k.bed > BRCA.Amplicon.bed 
+
+
+# excute time : 2016-10-31 16:10:18 : get Amplicon and Group info
+bedtools intersect -a BRCA.Amplicon.bed -b BRCA.Target.bed.all -wa -wb | grep -v -e BRCA1$ -e BRCA2$ | perl -nle's/BRCA\d\.(\d+)$/\1/; print' | cut -f1-6,10 > BRCA.Amplicon.Group.bed 
+
+
+# excute time : 2016-10-31 16:11:51 : get mean depth
+for i in `ls *bam | grep N | sort`; do bedtools.Coverage.Target_BAM.meanDepth.sh BRCA.Amplicon.Group.bed $i ; done & 
+
+
+# excute time : 2016-10-31 16:24:17 : get meanDP table
+perl -F'\t' -MMin -ane'chomp@F; $k=join "\t", @F[3,5,6]; $h{$k}{$ARGV}=$F[7] }{ mmfss("depthCov", %h)' *meanDP 
+
+
+# excute time : 2016-10-31 16:28:26 : get IDs
+head -1 depthCov.txt | tr "\t" "\n" | perl -nle'print $& if /snuh\d+/;' | tr "\n" " " > IDs 
+
+
+# excute time : 2016-10-31 16:30:18 : AddHeader
+AddHeader.sh depthCov.txt DepthCov Amplicon Gene Num $(cat IDs) 
+
+
+
+
+# excute time : 2016-11-01 15:00:34 : CCP Target.bed
+bedtools sort -i SNU.BangYoungJu.430k.bed | bedtools merge -i stdin -c 6 -o distinct | perl -F'\t' -anle'$F[3]="$F[3].".++$h{$F[3]}; print join "\t", @F' > CCP.Target.bed 
+
+
+# excute time : 2016-11-01 15:02:40 : CCP Group
+bedtools intersect -a SNU.BangYoungJu.430k.bed -b CCP.Target.bed -wa -wb | perl -nle's/\w+\.(\d+)$/\1/; print' | cut -f1-6,10 > CCP.Target.Group.bed 
+
+

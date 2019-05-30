@@ -1,0 +1,2 @@
+sudo vi  /usr/lib/rstudio-server/resources/templates/r_markdown_notebook.Rmd
+

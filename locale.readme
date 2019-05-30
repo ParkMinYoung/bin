@@ -1,0 +1,25 @@
+$ locale
+
+LANG=ko_KR.eucKR
+LC_CTYPE="ko_KR.eucKR"
+LC_NUMERIC="ko_KR.eucKR"
+LC_TIME=C
+LC_COLLATE="ko_KR.eucKR"
+LC_MONETARY="ko_KR.eucKR"
+LC_MESSAGES="ko_KR.eucKR"
+LC_PAPER="ko_KR.eucKR"
+LC_NAME="ko_KR.eucKR"
+LC_ADDRESS="ko_KR.eucKR"
+LC_TELEPHONE="ko_KR.eucKR"
+LC_MEASUREMENT="ko_KR.eucKR"
+LC_IDENTIFICATION="ko_KR.eucKR"
+LC_ALL=
+
+# for korean date
+export LANG=ko_KR.eucKR 
+
+# for english date 
+export LC_TIME=C
+
+# Dinver://kldp.org/node/90631
+

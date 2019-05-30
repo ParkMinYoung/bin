@@ -1,0 +1,22 @@
+AxiomDB.show.byChipType_Client.sh  |  AddMatrixTotal.sh | TAB2FixedLen.sh
+cd /home/adminrig/workspace.min/AFFX/Axiom_KORV1.1/Analysis && for i in 020??? ; do (cd $i && echo `date`, $i && apt-probeset-genotype.foot.sh) ; done
+manual_KNIH.KORV1.1.Githup.2018.sh          # saved time : 2018-07-04 14:47:07 : manually update moritering page
+AxiomDB.show.byCEL.sh KORV1_1_020  | lesss           # saved time : 2018-07-04 15:34:39 : extract KNIH Project 2018 Result
+GATK3.Summary.sh /wes/TEST/Novarseq/V5/ SSV5    
+ssh -q -x 211.174.205.69 "cd $PWD && run.RMD.sh GATK3.VarEval.Rmd"          # saved time : 2018-07-16 10:23:32 : 
+crosstab.sh $F 12 4 | AddMatrixTotal.sh           # saved time : 2018-07-18 13:33:03 : 
+crosstab.sh $F 12 4 | AddMatrixTotal.sh | TAB2FixedLen.sh           # saved time : 2018-07-18 13:33:31 : 
+ Extract.GT.DP.AD.GQ.FromVCF.PairComparativeAnalysis.sh Novaseq.selectsample.vcf Pairs MatchAnalysis          # saved time : 2018-07-18 13:35:42 : 
+GATK3.genotypeconcordance.sh /home/wes/src/GATK/resource_bundle/latest/b37/human_g1k_v37.fasta NA12878_100M_L3.all.vcf NA12878.SSV5.all.vcf try          # saved time : 2018-07-24 14:29:08 : 
+GATK3.ValidationReport.VarTypeSplit.sh NA12878_100M_L3.vcf NA12878.SSV5.vcf NA12878_100M_L3 >& log &          # saved time : 2018-07-24 14:48:29 : 
+for i in $(ls *.fastq.gz | grep "_S\\d+_L00\\d" -P); do /home/adminrig/src/short_read_assembly/bin/FastqRename.InsertIndex.sh $i; done           # saved time : 2018-08-16 12:59:45 : novaseq fastq to hiseq fastq
+UniqueGeneRegionBed_FromGeneAndrefFlat.sh GeneList ## get unique bed from genelist using refflat files
+~/src/short_read_assembly/bin/GetGeneBedFromUCSCrefFlat.sh ## get unique gene bed from refflat
+bedtools.Coverage.Target_BAM.meanDepth.sh refFlat.Gene.bed P_MSC_170201.mergelanes.dedup.bam
+tblmutate -e '$Type =~ /(NT|TT|X0|X1|X2)/' Summary.txt.ID |datamash -H -s -g 54 unique 48 countunique 48 
+ /home/adminrig/src/short_read_assembly/bin/ExtractVariantToTabFormatUsingSift.SampleOrder.sh          # saved time : 2018-09-12 16:21:24 : get VCF tab data
+snpeff_extract_genelist.sh 878.selectsample.snpeff.dbNSFP.vartype.gwas.vcf genelist.final
+for i in $(cat genelist.final); do ExtractVariantToTabFormatUsingSift.SampleList.ByFile.sh $i.vcf NT_TT_X0_X1_X2 ; done 
+KOR.BlindTest.sh ../../Pairs step1 /home/adminrig/workspace.min/AFFX/Axiom_KORV1.1/AnalysisResult/Summary.txt 1
+curl -s "http://hgdownload.cse.ucsc.edu/goldenPath/hg19/database/knownGene.txt.gz" | gunzip -c | /home/adminrig/src/Jvarkit/jvarkit/dist/kg2bed > knowngene.tab
+exe "run " "echo \"sqrt(4)\" | R --vanilla --silent --slave > AAA"          # saved time : 2018-11-30 18:46:00 : 

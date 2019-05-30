@@ -1,0 +1,42 @@
+
+
+
+#/usr/sbin/service docker stop
+systemctl stop docker 
+
+cd /var/lib 
+mv docker docker.tmp
+mkdir docker 
+mount --rbind /dlst/docker/ /var/lib/docker
+
+
+systemctl start docker 
+# systemctl daemon-reload
+
+
+alias start="systemctl start docker"
+alias start2="systemctl daemon-reload"
+alias end="systemctl stop docker"
+alias mount1="mount --rbind /dlst/docker/ /var/lib/docker"
+alias mount2="umount /var/lib/docker"
+alias vii="vi /lib/systemd/system/docker.service"
+
+start2;end;start
+
+
+–data-root /bigdisk/docker
+
+## do not use below lines
+
+perl -i.bak -ple'if(/ExecStart/){$_="$_ \$DOCKER_OPTS"}' /lib/systemd/system/docker.service
+
+
+cat <<EOF > /etc/docker/daemon.json 
+{
+  //...
+  "graph": "/mnt/docker",
+  //...
+ }
+EOF
+
+

@@ -1,0 +1,53 @@
+date "+%F %T"
+
+http://www.thegeekstuff.com/2013/05/date-command-examples/?utm_source=feedburner&utm_medium=email&utm_campaign=Feed%3A+TheGeekStuff+(The+Geek+Stuff)
+
+
+
+Format options	Purpose of Option	Output
+date +%a	Displays Weekday name in short (like Mon, Tue, Wed)	Thu
+date +%A	Displays Weekday name in full short (like Monday, Tuesday)	Thursday
+date +%b	Displays Month name in short (like Jan, Feb, Mar )	Feb
+date +%B	Displays Month name in full short (like January, February)	February
+date +%d	Displays Day of month (e.g., 01)	07
+date +%D	Displays Current Date; shown in MM/DD/YY	02/07/13
+date +%F	Displays Date; shown in YYYY-MM-DD	2013-02-07
+date +%H	Displays hour in (00..23) format	23
+date +%I	Displays hour (01..12) format	11
+date +%j	Displays day of year (001..366)	038
+date +%m	Displays month (01..12)	02
+date +%M	Displays minute (00..59)	44
+date +%S	Displays second (00..60)	17
+date +%N	Displays nanoseconds (000000000..999999999)	573587606
+date +%T	Displays time; shown as HH:MM:SS
+Note: Hours in 24 Format	23:44:17
+date +%u	Displays day of week (1..7); 1 is Monday	4
+date +%U	Displays week number of year, with Sunday as first day of week (00..53)	05
+date +%Y	Displays full year i.e. YYYY	2013
+date +%Z	alphabetic time zone abbreviation (e.g., EDT)	IS
+
+# set time
+sudo date -s "8 hours ago"
+
+# http://armines.tistory.com/entry/%EA%B8%B0%EB%B3%B8-%EC%A0%95%EB%A6%AC-date-%ED%99%9C%EC%9A%A9-%EC%BC%80%EC%9D%B4%EC%8A%A4
+
+
+https://ma.ttias.be/linux-date-format-change-the-date-output-for-scripts-or-commands/
+date +"%Y-%m-%d %k:%M:%S" -d "$(echo "09SEP2012:23:58:46" | sed 's/:/ /')"
+
+
+
+perl -MDate::Calc=Decode_Month -MDateTime -snle'
+BEGIN{print join "\t", qw/DATE ACC WHO PWD CMD OK/}
+/^(\w{3})\s+(\d+) (\d{2}:\d{2}:\d{2}) \w+ (\w+): \[(.*)\]\[\d+\]\[(.+)\]: (.+) \[(\d)\]/; 
+($mon, $day, $time, $acc, $whoami, $pwd, $cmd, $ok)=($1,$2,$3,$4,$5,$6,$7,$8);
+
+($h,$m,$s) = split ":", $time;
+$mon=Decode_Month($mon);
+
+$dt = DateTime->new(year=> $year, month=> $mon, day=> $day, hour=> $h, minute=> $m, second=> $s);
+$date = $dt->strftime( "%Y-%m-%d %H:%M:%S" );
+
+print join "\t", $date, $acc, $whoami, $pwd, $cmd, $ok
+
+

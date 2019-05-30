@@ -1,0 +1,24 @@
+## sudo setting
+
+# as login root
+# http://thinkpro.tistory.com/16
+sudo visudo ## (or vi /etc/sudoers)
+# add below line
+adminrig        ALL=(ALL)       NOPASSWD: ALL
+
+
+
+sudo mount -t cifs //211.174.205.50/WetData /home/adminrig/workspace.min/211.174.205.50 -o user=minmin3,password=dn@link$
+
+
+
+## cron setting
+# http://egloos.zum.com/program/v/802690
+## check crontab demon
+ps -ef | grep crond
+
+## crond start
+=> /etc/rc.d/init.d/crond start{restart | stop}
+
+
+

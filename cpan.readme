@@ -1,0 +1,12 @@
+install CPAN
+reload CPAN
+#install CPAN, reload CPAN (so the cpan client is up to date)
+conf prerequisites_policy 'follow'
+conf build_requires_install_policy yes
+conf commit
+
+# for cpan history 
+install Term::ReadLine
+install Term::ReadLine::Perl 
+install Term::ReadKey 
+

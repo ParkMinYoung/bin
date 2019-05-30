@@ -1,0 +1,5 @@
+
+./psh all mkdir -p bin
+for i in `awk '{print $1}' host `;do scp Ion.Input/Report.sh $i:bin; done
+./psh all "echo 'export PATH=\$PATH:\${HOME}/bin' >> ~/.bashrc ;cat ~/.bashrc"
+

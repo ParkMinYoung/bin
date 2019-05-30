@@ -1,0 +1,37 @@
+#!/bin/sh
+
+# GenomeAnalysisTK.sh 
+# $6 must be [XXX.bam]
+# output      
+#             
+#             
+
+source ~/.GATKrc
+
+EGATK=/home/adminrig/src/GATK/GenomeAnalysisTK-1.2-60-g585a45b/GenomeAnalysisTK.jar
+
+if [ $# -eq 0 ];then
+	echo "usage : `basename $0` XXXX.vcf"
+	java $JMEM -jar $EGATK -T Pileup --help	
+	exit 1
+fi
+
+# T=$(date '+%Y%m%d%H%M')
+# READGROUP=$2
+# RG=${READGROUP:=$T}
+
+
+TMPDIR=$PWD
+
+# MAX_INSERT_SIZE=1000[default:100000]
+java $JMEMMAX -Djava.io.tmpdir=$TMPDIR -jar $EGATK   \
+-T Pileup 			\
+-l INFO 			\
+-R $REF 			\
+-I $1				\
+-o $1.pileup		\
+-show_indels		\
+>& $1.pileup.log
+
+
+

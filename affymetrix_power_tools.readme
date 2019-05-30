@@ -1,0 +1,20 @@
+
+
+NotYetCopyCEL.sh /home/adminrig/workspace.min/AFFX/Axiom_APMRA /microarray_CEL/OtherChips/Axiom_APMRA
+NotYetCopyCEL.sh /home/adminrig/workspace.min/AFFX/Axiom_PMRA /microarray_CEL/OtherChips/Axiom_PMRA
+NotYetCopyCEL.sh /home/adminrig/workspace.min/AFFX/Axiom_KORV1.1 /microarray_CEL/KORV1.1.v2
+
+
+/home/adminrig/src/short_read_assembly/bin/AffyChipAutoAnalysis.APMRA.sh /home/adminrig/workspace.min/AFFX/Axiom_APMRA &> /home/adminrig/workspace.min/AFFX/Axiom_APMRA/log
+/home/adminrig/src/short_read_assembly/bin/AffyChipAutoAnalysis.PMRA.sh /home/adminrig/workspace.min/AFFX/Axiom_PMRA &> /home/adminrig/workspace.min/AFFX/Axiom_PMRA/log
+/home/adminrig/src/short_read_assembly/bin/AffyChipAutoAnalysis.KORV1.1.sh /home/adminrig/workspace.min/AFFX/Axiom_KORV1.1 &> /home/adminrig/workspace.min/AFFX/Axiom_KORV1.1.log
+
+
+
+/home/adminrig/src/short_read_assembly/bin/apt-probeset-genotype.KORV1.1.sh Analysis/017001/CEL &> Analysis/017001/CEL/log &
+/home/adminrig/src/short_read_assembly/bin/apt-probeset-genotype.KORV1.1.sh Analysis/018001/CEL &> Analysis/018001/CEL/log &
+
+
+
+
+

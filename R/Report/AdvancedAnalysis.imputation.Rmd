@@ -1,0 +1,319 @@
+---
+params:
+    dynamictitle: "Advanced Analysis<br>Imputation using Shapeit and Impute2"
+    reportdate: !r Sys.Date()
+output: 
+        html_notebook:
+#         html_document:
+         toc: true
+         toc_float: true
+         depth: 3
+#         number_section: true
+#         theme: readable
+         theme: united
+         highlight: tango
+#         fig_caption: true
+#         df_print: paged
+#         df_print: tibble
+#         df_print: kable
+#         fig_caption: yes 
+#         fig_retina: 1 
+#         code_download: false
+         
+#kable
+title: "`r params$dynamictitle`"
+#date: "`r params$reportdate`"
+author: Park MinYoung(minmin@dnalink.com) in BI, DNA Link
+    
+---
+
+***
+
+```{r setting, echo=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, fig.width=7)
+options(DT.options = list(pageLength = 10, language = list(search = 'Filter:')))
+#setwd("/home/adminrig/workspace.min/SNPTest/Requested")
+```
+
+```{r library, include=FALSE}
+library(pacman)
+p_load(ggplot2, tidyr, dplyr, DT, scales, tibble)
+
+library(gplots)
+library(IdeoViz)
+
+# http://rstudio.github.io/DT/extensions.html
+```
+
+<br>
+
+# Imputation
+
+<br>
+
+Imputation 을 하기 위해서는 IMPUTE2(https://mathgen.stats.ox.ac.uk/impute/impute_v2.html) 라는 프로그램을 사용.  
+
+이는 recombination rates 와 reference panel(or data) 의 genotype 을 Markov Chain Monte Carlo (MCMC) 알고리즘 통해 관련 샘플들의 결측된 genotype 을 추정함. 하플로타입은 하나의 염색체상에 통계적으로 연관된 단일 핵산염기 다형현상(SNP, Single Nucleotide Polymorphism) 집합인데, 이를 추정하는 단계를 포함해야 좀 더 정확한 Imputation 을 진행할 수 있음. 이러한 단계를 pre-phasing 이라 하며, 아래와 anlaysis flow 같이 SHAPEIT or IMPUTE2 를 사용해서 진행할 수 있음. 현재 우리는 분석 가이드에 따라서 SHAPEIT 를 사용한 방식을 사용.  
+
+<br>
+
+### [Pre-phasing with SHAPEIT](https://mathgen.stats.ox.ac.uk/impute/impute_v2.html#prephasing)
+
+<br>
+
+IMPUTE2's pre-phasing approach now works with phased haplotypes from SHAPEIT, a highly accurate phasing algorithm that can handle mixtures of unrelateds, duos, and trios. Details are available here. We highly recommend using SHAPEIT to infer the haplotypes underlying your study genotypes, then passing these to IMPUTE2 for imputation as shown in the second step of this example.
+ 
+
+
+<br>
+
+### Analysis Flow
+
+<br>
+
+Reference Panel : [1000genome phase3](https://mathgen.stats.ox.ac.uk/impute/1000GP%20Phase%203%20haplotypes%206%20October%202014.html)    
+
+![](/home/adminrig/Genome/image/imputation.pipeline.overview.png)
+
+
+reference : http://cfile5.uf.tistory.com/image/020E9D4451277F2702C046
+
+
+<br>
+
+### Command Lines 
+
+<br>
+
+**shapeit ( prephasing )**  
+
+> shapeit -B plink.chr -M genetic_map_chr_combined_b37.txt --effective-size 14269 --output-max chr_phased.haps chr_phased.sample -T $TREAD --output-log chr_shapeitv2_log
+
+<br>
+
+**impute2 ( imputation )**  
+
+> impute2 -use_prephased_g -m $map -h $hap -l $legend -known_haps_g $known_hap -int $start $end buffer 1000 Ne 14269 -o_gz -o $out -filt_rules_l \"EAS==0\" -allow_large_regions
+
+ * East Asian MAF > 0  
+ 
+<br>
+
+
+### Imputation Result Summary
+
+<br>
+
+
+**Report Criteria**  
+
+ * [Info score >= 0.8 : confidently imputed](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4306552)  
+
+
+Basically, IMPUTE2 reports an information metric (info score). This metric typically takes values between 0 and 1, where values near 1 indicate that a SNP has been imputed with high certainty. The info metric is often used to remove poorly imputed SNPs from the association testing results. 
+
+
+<br>
+
+
+```{r read file}
+
+#chrOrder<-c(1:22, "X", "Y", "MT")
+chrOrder<-1:22
+
+
+df<-read.table("VariantCountPer1M",header=T, sep="\t")
+
+
+df$chr<-factor(df$chr, levels=chrOrder, ordered=TRUE)
+
+```
+
+
+```{r count}
+ChrTable<-
+df %>% 
+  group_by(chr, Analysis) %>% 
+  dplyr::summarise(Count=sum(count)) %>% 
+  spread(Analysis, Count) %>% 
+  mutate(Pass_rate = round(Pass/Total,4)) %>% 
+  dplyr::rename(Chromosome=chr, Total_Marker=Total, Reportable_Marker=Pass, Percent=Pass_rate) %>% 
+  dplyr::ungroup()
+
+
+
+
+
+ChrSum<-
+ChrTable %>% 
+  dplyr::summarise( Total_Marker = sum( Total_Marker ), Reportable_Marker= sum(Reportable_Marker), Percent=round(Reportable_Marker/Total_Marker, 4) )
+
+
+# datatable(ChrSum, options = list(
+#   initComplete = JS(
+#     "function(settings, json) {",
+#     "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
+#     "}")
+# ))
+
+
+```
+
+
+
+```{r}
+datatable(ChrSum, rownames = F, options = list( dom = 'tip')) %>% 
+  formatPercentage('Percent', 2) %>% 
+  formatCurrency('Total_Marker',currency = "", interval = 3, mark = ",", digits=0) %>% 
+  formatCurrency('Reportable_Marker',currency = "", interval = 3, mark = ",", digits=0)
+  
+```
+
+ * Total Marker : raw imputation 된 변이 수  
+ * Reportable Marker : Info score >= 0.8  
+ 
+ 
+<br><br>
+
+  **Marker Status by Chromosome**  
+
+<br>
+
+```{r}
+
+ChrTable$Chromosome <- factor(ChrTable$Chromosome, levels=chrOrder, ordered=TRUE)
+
+ChrTable %>% 
+  dplyr::select(-Percent) %>% 
+  filter( Chromosome %in% as.character( 1:22 ) ) %>% 
+  gather("Type", "Count", 2:3) %>% 
+  ggplot(aes(Chromosome, Count,col=Type)) + 
+  geom_point() +
+  scale_y_continuous(label=unit_format(unit="M", scale=1e-6, digits=1)) + 
+  labs(y="Marker Count")
+
+```
+
+
+<br>
+
+
+
+```{r}
+
+# https://stackoverflow.com/questions/29242011/add-comma-to-numbers-every-three-digits-in-datatable-r
+
+
+ChrTable$Chromosome<-as.numeric(ChrTable$Chromosome)
+filename_dt="CountTablebyChr"
+  
+datatable( 
+  ChrTable,
+  rownames = FALSE,
+  extensions = 'Buttons', options = list( 
+    dom = 'Bfrtip',
+    buttons = list('copy', 
+                   list(extend='excel',filename=filename_dt),
+                   list(extend='csv',filename=filename_dt)),
+    lengthMenu = c( 10, 15, 20, 100)
+    )
+) %>% 
+  formatPercentage('Percent', 2) %>% 
+  formatCurrency('Total_Marker',currency = "", interval = 3, mark = ",", digits=0) %>% 
+  formatCurrency('Reportable_Marker',currency = "", interval = 3, mark = ",", digits=0) %>% 
+  formatCurrency('Chromosome',currency = "", interval = 3, mark = ",", digits=0) 
+
+
+
+```
+
+
+```{r}
+ideo<-getIdeo("hg19")
+
+
+hg19_ideo<-ideo[ grep("_", ideo$chrom, invert=T), ]
+
+hg19_ideo$chrom<-as.factor( as.character(hg19_ideo$chrom) )
+
+
+hg19_ideo<-droplevels(hg19_ideo)
+
+```
+
+```{r}
+require(RColorBrewer) ### nice colours
+# 
+# bin<-read.table("human.genome.1Mb.bed", sep="\t", header=F,stringsAsFactors=T) 
+# colnames(bin)<- c('chr','start','end')
+# bin_gr<-with(bin, GRanges(chr, IRanges(start,end), "+"))
+
+
+
+Totalbed<-
+  filter(df, Analysis == "Total") %>% 
+  dplyr::select(1:4) 
+
+colnames(Totalbed)[1:4]<- c('chr','start','end','total')
+Totalbed$chr = paste0("chr",Totalbed$chr)
+
+Totalbed$chr<-as.factor(Totalbed$chr)  
+# 
+# Totalbed_gr<-with(Totalbed, GRanges(chr, IRanges(start,end), "+"))
+# match<-findOverlaps(Totalbed_gr, bin_gr)
+
+
+
+Passbed <-
+  filter(df, Analysis == "Pass") %>% 
+  dplyr::select(1:4) 
+  
+colnames(Passbed)[1:4]<- c('chr','start','end','pass')
+Passbed$chr = paste0("chr",Passbed$chr)
+
+Passbed$chr<-as.factor(Passbed$chr)  
+
+
+bin<-
+  dplyr::bind_cols(Totalbed, dplyr::select(Passbed, pass)) 
+
+
+genome<-with(bin, GRanges(chr, IRanges(start,end), "+", total, pass))
+ 
+```
+
+<br>
+
+# Chromosome Ideograms
+
+<br>
+
+염색체 별로 1Mbp씩 binning 하여 imputation 된 variants count 를 histogram 으로 표기.   
+
+ * orange : raw imputation markers
+ * green : reportable markers
+ 
+<br>
+
+```{r, fig.width=15, fig.height=20}
+
+#unique(hg19_ideo$chrom)
+#head(bin)
+#unique(bin$chr)
+plotOnIdeo(chrom = seqlevels(genome),
+           ideoTable=hg19_ideo,
+           values_GR=genome,
+           value_cols=colnames(mcols(genome)[1:2]),
+           #value_cols=colnames(mcols(bed)[2:3]),
+           col=c('darkorange','green'), addScale=F,
+           #col=brewer.pal(n=2, 'Spectral'),
+           plotType='rect',
+           #val_range=c(-2500,30000),
+           ylab="value",
+           plot_title="Reportable Marker Status",
+           cex.axis=2, chromName_cex=1.5)
+           
+```
+
+
+

@@ -1,0 +1,26 @@
+---
+output: pdf_document
+---
+
+# **Service Information**
+
+<br>
+
+The table below contains the service information related to the samples you have submitted.
+
+<br>
+
+Description                     |Information                      
+--------------------------------|-------------------------------------
+***Company/Institute***         | client_company   
+***Client***                    | name_email   
+***Service ID***                | service_id  
+***Service Request Type***      | MethylSeq  
+***Number of Samples***         | count    
+***Platform***                  | [NovaSeq6000 Sequencer](https://www.illumina.com/systems/sequencing-platforms/novaseq.html)   
+***Panel Infomation***          | [SureSelect Methyl-Seq](https://www.genomics.agilent.com/article.jsp?crumbAction=push&pageId=3038)  
+***Panel Target Region***       | [Target Region Bed file](http://211.174.205.50/Methylseq/S03770311_Regions.bed.tgz)  
+***Sample Species***            | Human  
+
+Table: Basic Information
+

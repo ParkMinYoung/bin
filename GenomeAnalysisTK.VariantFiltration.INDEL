@@ -1,0 +1,48 @@
+#!/bin/sh
+
+# GenomeAnalysisTK.sh 
+# $6 must be [XXX.bam]
+# output      
+#             
+#             
+
+source ~/.bash_function
+source ~/.GATKrc
+GATK_param
+
+EGATK=/home/adminrig/src/GATK/GenomeAnalysisTK-1.2-60-g585a45b/GenomeAnalysisTK.jar
+
+if [ $# -eq 0 ];then
+	echo "usage : `basename $0` XXXX.vcf"
+	java $JMEM -jar $EGATK -T VariantFiltration --help	
+	exit 1
+fi
+
+# T=$(date '+%Y%m%d%H%M')
+# READGROUP=$2
+# RG=${READGROUP:=$T}
+
+
+TMPDIR=$PWD
+
+# MAX_INSERT_SIZE=1000[default:100000]
+java $JMEMMAX -Djava.io.tmpdir=$TMPDIR -jar $EGATK   \
+-T VariantFiltration \
+-l INFO \
+-R $REF \
+--variant $1 								\
+--filterExpression "QD < 2.0 || ReadPosRankSum < -20.0 || InbreedingCoeff < -0.8 || FS > 200.0"							\
+--filterName "StandardFilters" 				\
+-o $1.VariantFiltration.INDEL.vcf 			\
+--filterExpression "MQ0 >= 4 && ((MQ0 / (1.0 * DP)) > 0.1)" \
+--filterName "HARD_TO_VALIDATE"								\
+>& $1.VariantFiltration.INDEL.log
+ 
+# --filterExpression "QD < 2.0" \
+# --filterName QDFilter \
+# --filterExpression "ReadPosRankSum < -20.0" \
+# --filterName ReadPosFilter \
+# --filterExpression "InbreedingCoeff < -0.8" \
+# --filterName InbreedingFilter \
+# --filterExpression "FS > 200.0" \
+# --filterName FSFilter \

@@ -1,0 +1,47 @@
+#!/bin/sh
+
+source ~/.bashrc
+
+if [ -f "$1" ];then
+
+## divide SNP, INDEL
+GenomeAnalysisTK.SelectVariants $1 
+
+#### SNP
+## Filtering
+GenomeAnalysisTK.VariantFiltration $1.SelectVariants.SNP.vcf
+## VCF Recalibration
+GenomeAnalysisTK.VariantRecalibrator.SmallSampleSize $1.SelectVariants.SNP.vcf.VariantFiltration.vcf
+## Make Recalibrated VCF
+GenomeAnalysisTK.ApplyRecalibration $1.SelectVariants.SNP.vcf.VariantFiltration.vcf $1.SelectVariants.SNP.vcf.VariantFiltration.vcf.recal $1.SelectVariants.SNP.vcf.VariantFiltration.vcf.VariantRecalibrator.tranches
+
+
+
+#### INDEL
+## Filtering
+GenomeAnalysisTK.VariantFiltration.INDEL $1.SelectVariants.INDEL.vcf
+## VCF Recalibration
+GenomeAnalysisTK.VariantRecalibrator.INDEL.SmallSampleSize $1.SelectVariants.INDEL.vcf.VariantFiltration.INDEL.vcf
+## Make Recalibreated VCF
+GenomeAnalysisTK.ApplyRecalibration.INDEL $1.SelectVariants.INDEL.vcf.VariantFiltration.INDEL.vcf $1.SelectVariants.INDEL.vcf.VariantFiltration.INDEL.vcf.recal $1.SelectVariants.INDEL.vcf.VariantFiltration.INDEL.vcf.VariantRecalibrator.INDEL.tranches
+
+
+### Merge SNP, INDEL
+GenomeAnalysisTK.CombineVariants.sh $1.SelectVariants.SNP.vcf.VariantFiltration.vcf.ApplyRecalibration.vcf $1.SelectVariants.INDEL.vcf.VariantFiltration.INDEL.vcf.ApplyRecalibration.INDEL.vcf
+GetVCFInfo.sh $1.SelectVariants.SNP.vcf.VariantFiltration.vcf.ApplyRecalibration.vcf.CombineVariants.vcf 
+
+GetVCFStatistics.sh $1.SelectVariants.SNP.vcf.VariantFiltration.vcf.ApplyRecalibration.vcf.CombineVariants.vcf.VCFInfo.txt
+
+mkdir SNP INDEL
+mv `ls | grep SelectVariants.SNP | grep -v CombineVariants` SNP
+mv `ls | grep SelectVariants.INDEL | grep -v CombineVariants` INDEL
+
+(cd SNP; Ext2DirMv.sh *.log)
+(cd INDEL; Ext2DirMv.sh *.log)
+
+
+else
+	usage "xxx.vcf"
+fi
+
+

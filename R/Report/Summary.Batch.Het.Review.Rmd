@@ -1,0 +1,66 @@
+---
+title: "GT2 scan에 따른 High Het issue"
+output: html_notebook
+---
+
+***
+
+### BackGround
+
+아산병원 정선주선생님 데이터 기반으로 one group call 후 PCA 분석 상 2개의 group 으로 나누어지는 현황 파악.  
+이후 이러한 그룹이 특정 plate 에 따라서 나누어지는 것을 확인.  
+이 plate 는 00000{2,5,8,10} 4개 이였고, 이들이 장비 특성이 있는 지 확인하였는데, GT2 장비 하나로 통일됨.  
+정선주 데이터 생산 완료 후, 바로 KORV1_1 실험이 들어 갔고, 초기 plate 15 개를 선택해서 one group call 과 plate 별 call 을 아래와 같이 비교하는 작업을 함.  
+또한 장비의 문제라면 정선주와 같은 현상이 재현될 것이라 가정하고 다음과 같이 확인함.  
+
+역시나 GT2 에 해당하는 2,3,5,8 의 경우 Het 의 비율이 좀 더 높게 나타나는 것을 확인했고, 이는 one group call 일 경우 더 크게 차이가 벌어짐.  
+즉 장비에 따라서 intensity sift 가 있는 것으로 확인됨.  
+
+현재 이슈가 되는 삼성병원 홍경수의 경우는 위와 같이 장비에 의한 이슈는 아님.  
+아직 정확한 원인이 확인되지 않음.  
+
+
+```{r setup}
+
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE)
+
+```
+
+```{r library}
+
+
+setwd("/home/adminrig/workspace.min/AFFX/Axiom_KORV1.1/Axiom_KORV1.1_BatchTest/Analysis/OneGroupCall.vs.PlateGroupCall")
+
+
+library(pacman)
+p_load(dplyr, ggplot2, tidyr)
+
+
+df<-read.table("Summary.final.txt",header=T, sep="\t")
+
+```
+
+
+```{r, fig.height=10}
+ggplot(df, aes(set, het_rate, col=set)) + 
+  geom_boxplot() +
+  facet_grid(.~batch) + 
+  theme(axis.text.x= element_text(angle=90, hjust=1, vjust=.5)) + 
+  theme(legend.position="none")
+
+```
+
+```{r, fig.height=10}
+ggplot(df, aes(batch, het_rate, col=set)) + 
+  geom_boxplot() +
+  facet_wrap(~set, ncol=8, scales="free_x") + 
+  theme(axis.text.x= element_text(angle=90, hjust=1, vjust=.5))
+
+
+```
+
+```{r}
+
+
+```
+

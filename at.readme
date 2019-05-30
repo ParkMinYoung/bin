@@ -1,0 +1,23 @@
+https://zetawiki.com/wiki/%EB%A6%AC%EB%88%85%EC%8A%A4_1%ED%9A%8C%EC%84%B1_%EC%98%88%EC%95%BD%EC%9E%91%EC%97%85_at,_atd
+
+# list jobs
+atq # at -l
+
+# remove jobs
+atrm job_num
+
+# write "hello" string to the /root/hellow.txt on the 2014.02.13 23:30
+echo "echo hello > /root/hello.txt" | at 23:30 2014-02-13
+
+# run hello.sh at the 4 hour later
+at now + 4 hour -f hello.sh 
+
+echo "echo hello > hello.txt" | at now + 3 min
+
+echo "echo hello > hello.txt" | at now + 4 hour
+
+echo "echo hello > hello.txt" |  at midnight + 10minutes
+
+# at 6 am Sunday
+
+d

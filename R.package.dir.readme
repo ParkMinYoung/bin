@@ -1,0 +1,6 @@
+source("https://bioconductor.org/biocLite.R")
+biocLite("ggtree")
+
+
+system.file("exec", "sequenza-utils.py", package="sequenza")
+

@@ -1,0 +1,6 @@
+
+id
+chmod -R 775 workspace.min/MethylSeq/20180914_KCDCP_ParkMihyunMethyl_1/DMR/Cov/
+chgrp -R "Isilon_Users" workspace.min/MethylSeq/20180914_KCDCP_ParkMihyunMethyl_1/DMR/Cov/
+
+

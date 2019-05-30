@@ -1,0 +1,22 @@
+
+#!/bin/sh
+
+#$ -v path
+#$ -cwd
+#$ -S /bin/sh
+#$ -pe make 1
+#$# -S /bin/bash
+
+source /home/adminrig/.bashrc
+source /home/adminrig/.bash_function
+REF=~/Genome/hg19.bwa/hg19.fasta
+dbSNP=/home/adminrig/Genome/SNP/WholeExome/snp131.SNP_INDEL.Region
+
+if [ $# -eq 1 ] && [ -f "$1" ];then
+
+	#samtools mpileup -D -Q 20 -q 20 -d 5000 -C 50 -o 50 -r $CHR -ugf $REF -b $BAMLIST 2>tmp.dir/$CHR.log > tmp.dir/$CHR
+	bcftools view -cg -l $dbSNP $1 > $1.vcf
+else
+	usage "chr1"
+fi
+

@@ -1,0 +1,43 @@
+2018-12-11 15:41:33	/home/adminrig/workspace.min/TwistTest	Comparison Twist vs. V7
+2018-12-11 15:50:56	/home/adminrig/workspace.min/DNALink.PDX/sequencza.Tumor	sequenza Analysis directory using only TT specimens
+2018-12-11 15:51:58	/home/adminrig/workspace.min/AFFX/Axiom_KORV1.1/Analysis	KNIH1 Chip Analysis Directory
+2018-12-11 15:52:49	/home/adminrig/workspace.min/DNALink.PDX/Pembrolizumab	PDX Pembrolizumab Analysis Directory
+2018-12-11 15:54:48	/home/adminrig/workspace.min/10X	10X genomics Demo Data Directory
+2018-12-11 15:56:07	/home/adminrig/workspace.min/deepTools	DeepTools : PCA Analysis using BAM or Methylation call(bedgraph, bw) and Heatmap Plot
+2018-12-11 15:57:29	/home/adminrig/Genome/SureSelect/WES.Target	Agilent SureSelect Bed File Directory
+2018-12-11 15:57:57	/home/adminrig/Genome/TwistExome	Twist Bed File Directory
+2018-12-11 16:38:01	/wes/TEST/report	WES Report Directory
+2018-12-12 09:57:08	/dlst/wes/workspace.krc/20181019_DNALink_PembrolizumabWES/Alignment_total	Pembrolizumab Analysis directory
+2018-12-13 09:32:19	/dlst/wes/workspace.krc/20181029_DNALink_Twist/VCF_re/Concordance	V7_Twist sampling files
+2018-12-13 15:57:17	/home/wes/src/10X/longranger/latest	Long Ranger install Path
+2018-12-13 15:59:16	/home/wes/src/10X/longranger/refdata-b37-2.1.0/fasta	Long Rager b37 Reference path
+2018-12-14 14:21:12	/dlst/wes/workspace.krc/20181029_DNALink_Twist/VCF_re/sampling6G	TWIST 203,301,302 6G sampling files
+2018-12-19 10:13:37	/home/adminrig/workspace.pyg/GWAS/array	Axiom_DB
+2018-12-24 11:45:18	/dlst/wes/workspace.krc/20181029_DNALink_Twist/VCF_re/spanTarget	TWIST 203,301,302 6G sampling files using spanning BED files
+2018-12-26 15:32:15	/wes/TEST/TWIST/compare/V5	SureSelect V5 Analysis Dir
+2018-12-28 08:54:17	/dlst/wes/workspace.krc/20181226_DNALINK_TWIST/Alignment	TWIST 9 samples
+2019-01-02 09:01:13	/dlst/wes/workspace.krc/20181029_DNALink_Twist/VCF_re/V5spanTarget	V5 203,301,302 6G sampling files using spanning BED file
+2019-01-02 19:30:52	/dlst/wes/workspace.krc/20181226_DNALINK_TWIST/Alignment2	TWIST total samples using twist bed file including gl000228 112604..113879 : $RMD/Twist_Test
+2019-01-03 11:51:14	/wes/TEST/ChoSungkwon2/Alignment	V5 45 samples
+2019-01-04 15:35:31	/dlst/wes/workspace.krc/20181029_DNALink_Twist/V7/sampling/RefSeqTWIST	TWIST 5G samples using refSeq bed file
+2019-01-07 09:08:52	/wes/TEST/ChoSungkwon2/Alignment/DeepSeqInterval	V5 45 samples using DeepSeqInterval BED file
+2019-01-07 09:11:21	/dlst/wes/workspace.krc/20181029_DNALink_Twist/VCF_re/DeepSeqIntervalV5	TWIST 203,301,302 6G sampling files using DeepSeqInterval BED file
+2019-01-09 17:20:25	/dlst/wes/workspace.krc/20181016_SMC_KSJWES/Alignment	Pembro Series & Others
+2019-01-17 10:04:57	/home/adminrig/workspace.pyg/works/2019/19.01/GQN/Result	list
+2019-01-17 12:25:10	/wes/TEST/report/SimSungmi/Report	Word Report of SimSungmi WGS 50 samples
+2019-01-17 14:44:40	/home/adminrig/workspace.min/analysisReport.tar	
+2019-01-17 20:07:32	/home/adminrig/workspace.min/MethylSeq/20181022_Korea_AhnJiHoon/DMR/Cov	
+2019-01-23 11:01:38	/hiseq_ds2/novaseq/190118_A00547_0032_BHGLH7DSXX/Data/Intensities/BaseCalls/Fastq_dual/20180329_dnalink_TwistRun_1	Twist
+2019-01-23 17:17:26	/dlst/wes/workspace.krc/20181005_Pembrolizumab_PDX_1/Alignment	Pembro Series & 4 Others
+2019-01-24 11:44:57	/dlst/wes/workspace.krc/20181029_DNALink_Twist/VCF_re/Hi_Nova	TWSIT Hiseq/Novaseq samples
+2019-02-01 09:17:34	/home/adminrig/workspace.krc/20181005_Pembrolizumab_PDX_1/Somatic	Pembro Series & 4 Others
+2019-02-01 14:02:07	/home/adminrig/workspace.krc/20181109_KCDCP_SimSungmi_1/bam	SimSungmi md5sum
+2019-02-11 10:19:07	/home/adminrig/workspace.pyg/GWAS/array/Axiom_KORV1.1/2019/190211_CEO/96/AnalysisResult	/home/adminrig/workspace.pyg/GWAS/array/Axiom_KORV1.1/2019/190211_CEO/96/AnalysisResult
+2019-02-11 10:55:14	/home/adminrig/workspace.min	showq
+2019-03-04 09:08:45	/dlst/wes/workspace.krc/PDX/20181214/SCP	PDX SCP 4 samples
+2019-03-06 14:03:42	/dlst/wes/workspace.krc/PDX/analysis/PDX_ANALYSIS_LATEST	PDX Analysis Directory
+2019-03-08 13:49:10	/wes/TEST/YooGeompyung	YooGeompyung
+2019-03-18 09:22:13	/home/adminrig/workspace.pyg/GWAS/annotation/Porcine	Porcine Annotation
+2019-03-20 15:09:22	/dlst/wes/workspace.krc/YooGeompyung/All	YooGeompyung All Samples
+2019-04-10 15:40:56	/home/adminrig/workspace.min/MethylSeq/20180625_cau_MyeongSuncheol/with_DEG	CAU MyoungSunChul intersect between DMR and DEG
+2019-04-11 09:37:24	/home/adminrig/workspace.krc/YooGeompyung/Somaticseq	help

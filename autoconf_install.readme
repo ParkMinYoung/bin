@@ -1,0 +1,38 @@
+#### 
+
+# REF : http://shonm.tistory.com/436
+
+## m4 download and installation
+wget http://ftp.gnu.org/gnu/m4/m4-latest.tar.xz
+
+xz -d m4-latest.tar.xz
+tar xvf m4-latest.tar
+cd m4-1.4.17/
+ ./configure --prefix=/usr
+make && make install
+
+
+## autoconf
+
+wget ftp://ftp.gnu.org/gnu/autoconf/autoconf-latest.tar.xz
+
+xz -d autoconf-latest.tar.xz
+tar xvf autoconf-latest.tar
+cd autoconf-2.69/
+
+ ./configure --prefix=/usr
+make && make install
+
+
+## automake
+
+wget ftp://ftp.gnu.org/gnu/automake/automake-1.15.1.tar.xz
+
+xz -d automake-1.15.1.tar.xz
+tar xvf automake-1.15.1.tar
+cd automake-1.15.1
+
+ ./configure --prefix=/usr
+make && make install
+
+

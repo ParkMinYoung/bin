@@ -1,0 +1,50 @@
+
+
+A=/home/adminrig/src/bcl2fastq/bcl2fastq/bcl2fastq-build
+B=/home/adminrig/apps/bin
+C=/home/adminrig/src/matlab_compiler_runtime/build/v81/sys/os/glnxa64
+
+
+
+#../src/configure CC=/opt/gcc-4.9.3/bin/gcc CXX=/opt/gcc-4.9.3/bin/g++ --prefix=/home/adminrig/apps/
+
+export LD_LIBRARY_PATH=''
+CC=/opt/gcc-4.9.4/bin/gcc CXX=/opt/gcc-4.9.4/bin/g++  ../src/configure --prefix=/home/adminrig/apps/
+
+
+#CC="gcc-4.9" ../src/configure --prefix=/home/adminrig/apps/ 
+
+
+
+CC=/opt/gcc-4.9.4/bin/gcc CXX=/opt/gcc-4.9.4/bin/g++  make -j10 
+CC=/opt/gcc-4.9.4/bin/gcc CXX=/opt/gcc-4.9.4/bin/g++  make install 
+
+
+cd /usr/lib64/libstdc++.so.6 
+sudo cp /opt/gcc-4.9.4/lib64/libstdc++.so.6.0.20 ./
+sudo rm libstdc++.so.6
+sudo ln -s libstdc++.so.6.0.20 libstdc++.so.6
+
+
+
+
+
+# export LD_LIBRARY_PATH=/opt/glibc-2.15/lib:/opt/gcc-4.9.3/lib64:$LD_LIBRARY_PATH
+# export LC_ALL="C"
+# export LANG="C"
+# unset LC_CTYPE
+
+
+# export LDFLAGS="-L/opt/gcc-4.9.3/lib64/"
+# export CFLAGS="-I/opt/gcc-4.9.3/include"
+
+
+
+# gcc configure
+# ./configure --disable-multilib --enable-languages=c,c++ --prefix=/opt/gcc-4.9.4/
+
+
+# CPLUS_INCLUDE_PATH=/usr/local/include/c++/4.8.1
+# -I$CPLUS_INCLUDE_PATH 
+
+
