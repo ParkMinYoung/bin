@@ -25,3 +25,7 @@ git config --global user.email "p791227@gmail.com"
 git config --global credential.helper 'cache --timeout=864000' 
 
 
+# execute time : 2019-05-30 15:55:30 : 
+ln -s $PWD/{.bash_color,.bash_function,.bash_minyoung,.bash_r_file} ~/
+
+
